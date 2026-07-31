@@ -152,7 +152,7 @@ export function liveSuggestions(
   if (!out.length) {
     out.push({
       type: 'collection',
-      label: `Search “${q}” in The Edit`,
+      label: `Search “${q}” in Collection`,
       blurb: 'Browse all pieces',
       href: shopHref({ q }),
     })

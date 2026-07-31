@@ -2,10 +2,12 @@
 
 | File | Use |
 |---|---|
-| `rivlet-mark.png` | Logo mark — header, mobile, whisper rail (dark ink) |
-| `rivlet-wordmark.png` | Wordmark — header, mobile (dark ink) |
-| `rivlet-mark-light.png` | Logo mark — navy footer |
-| `rivlet-wordmark-light.png` | Wordmark — navy footer |
-| `favicon-mark.png` | Source for site favicon |
+| `rivlet-lockup.png` | Combined mark + wordmark — header & footer |
+| `rivlet-hero-wordmark.png` | Hero brand wordmark |
+| `rivlet-mark.png` | Logo mark — whisper rail (dark ink) |
+| `rivlet-wordmark.png` | Wordmark fallback |
+| `rivlet-mark-light.png` | Logo mark — light surfaces |
+| `rivlet-wordmark-light.png` | Wordmark — light surfaces |
+| `favicon-mark.png` | Source for favicon / Google search icon |
 
-Official files are wired into header, mobile nav, footer, and favicon.
+Site icons live in `/public`: `favicon.png`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `site.webmanifest`.
