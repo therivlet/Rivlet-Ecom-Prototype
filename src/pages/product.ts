@@ -1,4 +1,4 @@
-import '../styles/tokens.css'
+﻿import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -21,7 +21,7 @@ if (!product) {
   content.innerHTML = `
     <section class="section container">
       <h1 class="display">Piece not found</h1>
-      <p class="lede" style="margin:1rem 0 1.5rem">This SKU isn’t in The Edit.</p>
+      <p class="lede" style="margin:1rem 0 1.5rem">This SKU isn’t in the collection.</p>
       <a class="btn btn--primary" href="../shop/">Back to shop</a>
     </section>`
 } else {
@@ -66,12 +66,12 @@ if (!product) {
           </div>
         </div>
         <div class="pdp-buy">
-          <p class="eyebrow">${product!.platform} · ${product!.role}</p>
+          <p class="eyebrow">${product!.platform} Â· ${product!.role}</p>
           <h1>${product!.name}</h1>
           <p class="product-card__price">${formatPrice(product!.mrp)}</p>
           <p style="color:var(--color-ink-soft)">${product!.feeling}</p>
           <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Colour · ${COLORS[color].name}</p>
+            <p class="eyebrow" style="margin-bottom:0.75rem">Colour Â· ${COLORS[color].name}</p>
             <div class="color-picker">
               ${product!.colors
                 .map(
@@ -82,7 +82,7 @@ if (!product) {
             </div>
           </div>
           <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Size ${product!.cupInclusive ? '· cup-inclusive' : ''}</p>
+            <p class="eyebrow" style="margin-bottom:0.75rem">Size ${product!.cupInclusive ? 'Â· cup-inclusive' : ''}</p>
             <div class="size-grid">
               ${product!.sizes
                 .map(
@@ -91,7 +91,7 @@ if (!product) {
                 )
                 .join('')}
             </div>
-            <p class="fit-note">Fits true to size · South-Asian block · XS–2XL</p>
+            <p class="fit-note">Fits true to size Â· South-Asian block Â· XSâ€“2XL</p>
           </div>
           <button class="btn btn--primary btn--block" type="button" data-atc ${size ? '' : 'disabled'}>Add to bag</button>
           <button class="btn btn--ghost btn--block wish-pdp ${isWishlisted(product!.id, color) ? 'is-on' : ''}" type="button" data-pdp-wish>
@@ -103,7 +103,7 @@ if (!product) {
               : ''
           }
           <ul class="trust-strip">
-            <li>Easy exchanges · prototype preview</li>
+            <li>Easy exchanges Â· prototype preview</li>
             <li>${product!.platform} engineered</li>
             <li>${product!.heroFeature}</li>
           </ul>
@@ -117,7 +117,7 @@ if (!product) {
           <p class="lede">${product!.feeling}</p>
         </div>
         <div class="story-block">
-          <p class="eyebrow">Problem → solution</p>
+          <p class="eyebrow">Problem â†’ solution</p>
           <h2>What this piece resolves</h2>
           <ul class="story-list">
             ${product!.problems.map((p) => `<li><strong>${p.title}</strong><span>${p.solution}</span></li>`).join('')}
@@ -126,7 +126,7 @@ if (!product) {
         <div class="story-block">
           <p class="eyebrow">Technology</p>
           <h2>${product!.platform}</h2>
-          <p style="color:var(--color-ink-soft);margin-bottom:1rem">${product!.material} · ${product!.gsm}</p>
+          <p style="color:var(--color-ink-soft);margin-bottom:1rem">${product!.material} Â· ${product!.gsm}</p>
           <ul class="tech-list">
             ${product!.tech.map((t) => `<li>${t}</li>`).join('')}
           </ul>
@@ -135,13 +135,13 @@ if (!product) {
           <p class="eyebrow">Fit</p>
           <h2>${product!.fit}</h2>
           <p class="lede">${product!.fitNotes}</p>
-          ${product!.support ? `<p class="eyebrow" style="margin-top:1rem">Support · ${product!.support}</p>` : ''}
+          ${product!.support ? `<p class="eyebrow" style="margin-top:1rem">Support Â· ${product!.support}</p>` : ''}
         </div>
         <div class="story-block">
           <p class="eyebrow">Reviews</p>
           <h2>Confidence from the body</h2>
           <div class="reviews">
-            ${REVIEWS.map((r) => `<blockquote class="review-card"><p>“${r.text}”</p><span>${r.name} · ${r.city}</span></blockquote>`).join('')}
+            ${REVIEWS.map((r) => `<blockquote class="review-card"><p>â€œ${r.text}â€</p><span>${r.name} Â· ${r.city}</span></blockquote>`).join('')}
           </div>
         </div>
         <div class="story-block" style="max-width:none">
@@ -194,5 +194,5 @@ if (!product) {
   }
 
   paint()
-  document.title = `${product.name} · Rivlet`
+  document.title = `${product.name} Â· Rivlet`
 }

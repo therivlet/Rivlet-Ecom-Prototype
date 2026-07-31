@@ -107,7 +107,7 @@ ol {
 
 .page__main {
   flex: 1;
-  padding-top: calc(var(--header-h) + var(--safe-top));
+  padding-top: calc(var(--header-h) + var(--header-rail-h) + var(--safe-top));
 }
 
 .container {

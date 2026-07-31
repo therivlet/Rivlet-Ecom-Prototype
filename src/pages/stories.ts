@@ -1,4 +1,4 @@
-import '../styles/tokens.css'
+﻿import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -50,9 +50,9 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head">
         <p class="eyebrow">Fit</p>
         <h2 class="display">Made for your body.</h2>
-        <p class="lede">South-Asian block. Cup-inclusive grading on support pieces. XS–2XL across The Edit.</p>
+        <p class="lede">South-Asian block. Cup-inclusive grading on support pieces. XS–2XL across the collection.</p>
       </div>
-      <a class="btn btn--primary" href="${shopHref()}">Shop The Edit</a>
+      <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
     </div>
   </section>
 </div>`

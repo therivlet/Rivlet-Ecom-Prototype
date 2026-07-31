@@ -86,7 +86,7 @@ export function defaultSuggestions(shopHref: (p?: Record<string, string>) => str
   return [
     {
       type: 'collection',
-      label: 'The Edit',
+      label: 'Collection',
       blurb: 'Six engineered pieces · Midnight & Cardamom',
       href: shopHref(),
     },
@@ -133,7 +133,7 @@ export function liveSuggestions(
   if (t.some((tok) => ['edit', 'collection', 'women', 'shop'].some((w) => w.startsWith(tok) || tok.startsWith(w)))) {
     out.unshift({
       type: 'collection',
-      label: 'The Edit',
+      label: 'Collection',
       blurb: 'View the full collection',
       href: shopHref({ q }),
     })

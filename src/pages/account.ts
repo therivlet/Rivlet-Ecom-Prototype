@@ -1,4 +1,4 @@
-import '../styles/tokens.css'
+﻿import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -97,7 +97,7 @@ function paint() {
             </div>
             <div class="account-stat">
               <span class="eyebrow">Shop</span>
-              <strong>The Edit</strong>
+              <strong>Collection</strong>
               <a class="text-link" href="${shopHref()}">Browse</a>
             </div>
           </div>

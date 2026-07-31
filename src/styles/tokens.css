@@ -55,7 +55,8 @@
   --pad-page: clamp(1.1rem, 4vw, 3rem);
   --max-width: 72rem;
   --max-narrow: 40rem;
-  --header-h: 4.85rem;
+  --header-h: 4.25rem;
+  --header-rail-h: 2rem;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
   --touch: 2.75rem;
@@ -72,7 +73,8 @@
 
 @media (max-width: 899px) {
   :root {
-    --header-h: 4.15rem;
+    --header-h: 3.75rem;
+    --header-rail-h: 1.75rem;
     --text-hero: clamp(2.6rem, 14vw, 4.25rem);
     --pad-section: clamp(2.75rem, 10vw, 4.5rem);
   }

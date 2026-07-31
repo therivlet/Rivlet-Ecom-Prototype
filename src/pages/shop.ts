@@ -1,4 +1,4 @@
-import '../styles/tokens.css'
+﻿import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -41,13 +41,13 @@ function title(): string {
   if (form === 'bottoms') return 'Bottoms'
   if (situation) {
     const s = SITUATIONS.find((x) => x.id === situation)
-    return s ? s.label : 'The Edit'
+    return s ? s.label : 'Collection'
   }
   if (category) {
     const c = categories.find((x) => x.id === category)
-    return c?.label ?? 'The Edit'
+    return c?.label ?? 'Collection'
   }
-  return 'The Edit'
+  return 'Collection'
 }
 
 function activeFilterCount(): number {
@@ -190,7 +190,7 @@ function render() {
           </details>
           <details>
             <summary>Is this graded for South Asian bodies?</summary>
-            <p>Yes. The Edit uses a South-Asian block across XS–2XL, with cup-inclusive grading on the bra and built-in-support tanks.</p>
+            <p>Yes. The collection uses a South-Asian block across XS–2XL, with cup-inclusive grading on the bra and built-in-support tanks.</p>
           </details>
           <details>
             <summary>Hard water — will it pill or fade?</summary>

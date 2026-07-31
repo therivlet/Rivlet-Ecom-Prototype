@@ -1,4 +1,4 @@
-import {
+﻿import {
   COLORS,
   COORD_SET,
   SITUATIONS,
@@ -107,109 +107,113 @@ export function renderHeader(): string {
   <header class="site-header" data-header>
     <div class="site-header__rail">
       <p class="site-header__whisper">
-        <img class="site-header__whisper-mark" src="${brand}brand/rivlet-mark.png" alt="" width="18" height="18" />
+        <img class="site-header__whisper-mark" src="${brand}brand/rivlet-mark.png" alt="" width="16" height="16" />
         Move like water, feel like air
       </p>
     </div>
+    <div class="site-header__bar">
       <div class="site-header__inner">
         <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">${icon('menu')}</button>
-        <nav class="site-nav" aria-label="Primary">
-        <div class="site-nav__shop">
-          <a class="site-nav__link" href="${shopHref()}" data-mega-trigger>
-            Shop
-            <span class="site-nav__chevron" aria-hidden="true"></span>
+
+        <div class="site-header__cluster">
+          <a class="site-logo" href="${brand}" aria-label="Rivlet home">
+            <img class="site-logo__lockup" src="${brand}brand/rivlet-lockup.png" alt="Rivlet" width="800" height="165" />
           </a>
-          <div class="mega" role="menu" aria-label="Shop menu">
-            <div class="mega__inner">
-              <div class="mega__col">
-                <p class="mega__eyebrow">What are you shopping for?</p>
-                <div class="mega__grid">
-                  ${situationCards}
+
+          <nav class="site-nav" aria-label="Primary">
+            <div class="site-nav__shop">
+              <a class="site-nav__link" href="${shopHref()}" data-mega-trigger>
+                Shop
+                <span class="site-nav__chevron" aria-hidden="true"></span>
+              </a>
+              <div class="mega" role="menu" aria-label="Shop menu">
+                <div class="mega__inner">
+                  <div class="mega__col">
+                    <p class="mega__eyebrow">What are you shopping for?</p>
+                    <div class="mega__grid">
+                      ${situationCards}
+                    </div>
+                  </div>
+                  <div class="mega__aside">
+                    <a class="mega__feature" href="${shopHref()}">
+                      <span class="mega__eyebrow">Featured</span>
+                      <strong>Full collection</strong>
+                      <span>Six engineered pieces · Midnight &amp; Cardamom</span>
+                    </a>
+                    <a class="mega__feature mega__feature--soft" href="${brand}sets/">
+                      <span class="mega__eyebrow">Set</span>
+                      <strong>Crop + Short</strong>
+                      <span>One fabric. One colour. Graded together.</span>
+                    </a>
+                  </div>
                 </div>
               </div>
-              <div class="mega__aside">
-                <a class="mega__feature" href="${shopHref()}">
-                  <span class="mega__eyebrow">Collection</span>
-                  <strong>The Edit</strong>
-                  <span>Six engineered pieces · Midnight &amp; Cardamom</span>
-                </a>
-                <a class="mega__feature mega__feature--soft" href="${brand}sets/">
-                  <span class="mega__eyebrow">Set</span>
-                  <strong>Crop + Short</strong>
-                  <span>One fabric. One colour. Graded together.</span>
-                </a>
-              </div>
+            </div>
+            <a class="site-nav__link" href="${shopHref()}" ${navCurrent('/shop')}>Collection</a>
+            <a class="site-nav__link" href="${brand}sets/" ${navCurrent('/sets')}>Sets</a>
+            <a class="site-nav__link" href="${brand}stories/" ${navCurrent('/stories')}>Stories</a>
+          </nav>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn" type="button" data-search-open aria-label="Search">${icon('search')}</button>
+          <div class="account-menu account-menu--desktop" data-account-menu>
+            <button
+              class="icon-btn account-menu__trigger"
+              type="button"
+              data-account-trigger
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Account menu"
+            >
+              ${icon('user')}
+              ${loggedIn ? `<span class="account-dot" title="${profile.name}"></span>` : ''}
+            </button>
+            <div class="account-menu__panel" role="menu" data-account-panel>
+              ${
+                loggedIn
+                  ? `
+                <div class="account-menu__hello">
+                  <span class="eyebrow">Signed in</span>
+                  <strong>${profile.name || 'Member'}</strong>
+                  <span>${profile.email}</span>
+                </div>
+                <a class="account-menu__item" role="menuitem" href="${accountHref()}">Profile</a>
+                <a class="account-menu__item" role="menuitem" href="${accountHref()}#details">Account details</a>
+                <button type="button" class="account-menu__item" role="menuitem" data-wish-open>Saved</button>
+                <a class="account-menu__item" role="menuitem" href="${pathPrefix()}checkout/">Orders &amp; bag</a>
+                <button type="button" class="account-menu__item account-menu__item--muted" role="menuitem" data-logout>Sign out</button>
+              `
+                  : `
+                <div class="account-menu__hello">
+                  <span class="eyebrow">Account</span>
+                  <strong>Welcome</strong>
+                  <span>Sign in to keep your Rivlet with you.</span>
+                </div>
+                <a class="account-menu__item" role="menuitem" href="${accountHref()}">Sign in</a>
+                <a class="account-menu__item" role="menuitem" href="${accountHref()}">Create account</a>
+                <button type="button" class="account-menu__item" role="menuitem" data-wish-open>Saved</button>
+                <a class="account-menu__item account-menu__item--muted" role="menuitem" href="${accountHref()}">Guest checkout tips</a>
+              `
+              }
             </div>
           </div>
-        </div>
-        <a class="site-nav__link" href="${shopHref()}" ${navCurrent('/shop')}>The Edit</a>
-        <a class="site-nav__link" href="${brand}sets/" ${navCurrent('/sets')}>Sets</a>
-        <a class="site-nav__link" href="${brand}stories/" ${navCurrent('/stories')}>Stories</a>
-      </nav>
-
-      <a class="site-logo" href="${brand}" aria-label="Rivlet home">
-        <img class="site-logo__icon" src="${brand}brand/rivlet-mark.png" alt="" width="52" height="52" />
-        <img class="site-logo__wordmark" src="${brand}brand/rivlet-wordmark.png" alt="Rivlet" height="64" />
-      </a>
-
-      <div class="header-actions">
-        <button class="icon-btn" type="button" data-search-open aria-label="Search">${icon('search')}</button>
-        <div class="account-menu account-menu--desktop" data-account-menu>
-          <button
-            class="icon-btn account-menu__trigger"
-            type="button"
-            data-account-trigger
-            aria-expanded="false"
-            aria-haspopup="true"
-            aria-label="Account menu"
-          >
-            ${icon('user')}
-            ${loggedIn ? `<span class="account-dot" title="${profile.name}"></span>` : ''}
+          <button class="icon-btn" type="button" data-wish-open aria-label="Saved pieces">
+            ${icon('heart')}
+            <span class="cart-count wish-count" data-wish-count hidden>0</span>
           </button>
-          <div class="account-menu__panel" role="menu" data-account-panel>
-            ${
-              loggedIn
-                ? `
-              <div class="account-menu__hello">
-                <span class="eyebrow">Signed in</span>
-                <strong>${profile.name || 'Member'}</strong>
-                <span>${profile.email}</span>
-              </div>
-              <a class="account-menu__item" role="menuitem" href="${accountHref()}">Profile</a>
-              <a class="account-menu__item" role="menuitem" href="${accountHref()}#details">Account details</a>
-              <button type="button" class="account-menu__item" role="menuitem" data-wish-open>Saved</button>
-              <a class="account-menu__item" role="menuitem" href="${pathPrefix()}checkout/">Orders &amp; bag</a>
-              <button type="button" class="account-menu__item account-menu__item--muted" role="menuitem" data-logout>Sign out</button>
-            `
-                : `
-              <div class="account-menu__hello">
-                <span class="eyebrow">Account</span>
-                <strong>Welcome</strong>
-                <span>Sign in to keep your Rivlet with you.</span>
-              </div>
-              <a class="account-menu__item" role="menuitem" href="${accountHref()}">Sign in</a>
-              <a class="account-menu__item" role="menuitem" href="${accountHref()}">Create account</a>
-              <button type="button" class="account-menu__item" role="menuitem" data-wish-open>Saved</button>
-              <a class="account-menu__item account-menu__item--muted" role="menuitem" href="${accountHref()}">Guest checkout tips</a>
-            `
-            }
-          </div>
+          <button class="icon-btn" type="button" data-cart-open aria-label="Open bag">
+            ${icon('bag')}
+            <span class="cart-count" data-cart-count hidden>0</span>
+          </button>
         </div>
-        <button class="icon-btn" type="button" data-wish-open aria-label="Saved pieces">
-          ${icon('heart')}
-          <span class="cart-count wish-count" data-wish-count hidden>0</span>
-        </button>
-        <button class="icon-btn" type="button" data-cart-open aria-label="Open bag">
-          ${icon('bag')}
-          <span class="cart-count" data-cart-count hidden>0</span>
-        </button>
       </div>
     </div>
   </header>
   <div class="mobile-nav" data-mobile-nav aria-hidden="true">
     <p class="mobile-nav__motto">Move like water, feel like air.</p>
     <nav class="mobile-nav__links" aria-label="Mobile">
-      <a href="${shopHref()}">The Edit</a>
+      <a href="${shopHref()}">Collection</a>
       <a href="${brand}sets/">Sets</a>
       <a href="${brand}stories/">Stories</a>
     </nav>
@@ -244,8 +248,7 @@ export function renderFooter(): string {
     <div class="container site-footer__top">
       <div class="site-footer__brand-block">
         <div class="site-footer__lockup">
-          <img class="site-footer__mark" src="${brand}brand/rivlet-mark-light.png" alt="" width="40" height="40" />
-          <img class="site-footer__wordmark" src="${brand}brand/rivlet-wordmark-light.png" alt="Rivlet" height="34" />
+          <img class="site-footer__lockup-img" src="${brand}brand/rivlet-lockup.png" alt="Rivlet" width="800" height="165" />
         </div>
         <p class="site-footer__motto">Move like water, feel like air.</p>
         <p class="site-footer__lede">Premium Indian-crafted activewear engineered for heat, humidity, and real days — without compromise.</p>
@@ -254,7 +257,7 @@ export function renderFooter(): string {
         <div>
           <h3>Shop</h3>
           <ul>
-            <li><a href="${shopHref()}">The Edit</a></li>
+            <li><a href="${shopHref()}">Collection</a></li>
             <li><a href="${brand}sets/">Co-ord set</a></li>
             <li><a href="${shopHref({ form: 'tops' })}">Tops</a></li>
             <li><a href="${shopHref({ form: 'bottoms' })}">Bottoms</a></li>
@@ -317,12 +320,12 @@ export function renderCartChrome(): string {
     <div class="search-panel" role="dialog" aria-label="Search">
       <div class="search-panel__bar">
         <span class="search-panel__icon" aria-hidden="true">${icon('search')}</span>
-        <input class="search-panel__input" type="search" data-search-input placeholder="Search The Edit…" autocomplete="off" />
+        <input class="search-panel__input" type="search" data-search-input placeholder="Search collection." autocomplete="off" />
         <button type="button" class="icon-btn" data-search-close aria-label="Close search">${icon('close')}</button>
       </div>
       <div class="search-panel__meta">
         <p class="eyebrow" data-search-label>Suggested</p>
-        <a class="search-panel__all" href="${shopHref()}" data-search-all>View The Edit</a>
+        <a class="search-panel__all" href="${shopHref()}" data-search-all>View Collection</a>
       </div>
       <div class="search-panel__results" data-search-results></div>
     </div>
@@ -414,7 +417,7 @@ function renderCartBody(): void {
     body.innerHTML = `
       <div class="cart-empty">
         <p>Your bag is open water — ready for the first piece.</p>
-        <a class="btn btn--primary" href="${shopHref()}">Shop The Edit</a>
+        <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
       </div>`
     foot.innerHTML = ''
     return
@@ -473,7 +476,7 @@ function renderWishBody(): void {
       <div class="cart-empty wish-empty">
         <p class="eyebrow" style="margin-bottom:0.75rem">Save for later</p>
         <p>Heart a piece while browsing — no account needed. Move it to your bag when you’re ready.</p>
-        <a class="btn btn--primary" href="${shopHref()}">Explore The Edit</a>
+        <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
       </div>`
     foot.innerHTML = ''
     return
@@ -577,7 +580,7 @@ function renderSearchResults(query: string): void {
   if (label) label.textContent = query.trim() ? 'Results' : 'Suggested for you'
   if (all) {
     all.href = query.trim() ? shopHref({ q: query.trim() }) : shopHref()
-    all.textContent = query.trim() ? `See all for “${query.trim()}”` : 'View The Edit'
+    all.textContent = query.trim() ? `See all for “${query.trim()}”` : 'View Collection'
   }
 
   box.innerHTML = suggestions
@@ -725,12 +728,26 @@ export function mountShell(root: HTMLElement): void {
     megaCloseTimer = setTimeout(closeMega, 120)
   }
   if (shopNav && mega) {
+    const megaTrigger = shopNav.querySelector<HTMLElement>('[data-mega-trigger]')
     shopNav.querySelector('[data-mega-trigger]')?.addEventListener('mouseenter', openMega)
     mega.addEventListener('mouseenter', openMega)
     shopNav.addEventListener('mouseleave', scheduleCloseMega)
     shopNav.addEventListener('focusin', openMega)
     shopNav.addEventListener('focusout', (e) => {
       if (!shopNav.contains(e.relatedTarget as Node)) closeMega()
+    })
+    megaTrigger?.addEventListener('click', (e) => {
+      // Keep link usable; open mega on intentional click without leaving yet on desktop hover devices
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        openMega()
+        return
+      }
+      e.preventDefault()
+      if (shopNav.classList.contains('is-open')) closeMega()
+      else openMega()
+    })
+    document.addEventListener('click', (e) => {
+      if (!shopNav.contains(e.target as Node)) closeMega()
     })
     root.querySelectorAll<HTMLElement>('.site-nav > .site-nav__link').forEach((link) => {
       link.addEventListener('mouseenter', closeMega)

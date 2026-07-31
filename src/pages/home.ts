@@ -1,4 +1,4 @@
-import '../styles/tokens.css'
+﻿import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -27,11 +27,19 @@ app.innerHTML = `<div data-page-content>
       </video>
     </div>
     <div class="hero__content">
-      <p class="eyebrow" style="color:rgba(255,252,247,0.7);margin-bottom:1rem">Women · The Edit</p>
-      <h1 class="hero__brand">Rivlet</h1>
+      <p class="eyebrow" style="color:rgba(255,252,247,0.7);margin-bottom:1rem">Women · Collection</p>
+      <h1 class="hero__brand">
+        <img
+          class="hero__brand-mark"
+          src="${assetHref('brand/rivlet-hero-wordmark.png')}"
+          alt="Rivlet"
+          width="938"
+          height="273"
+        />
+      </h1>
       <p class="hero__motto">Move like water, feel like air.</p>
       <p class="hero__support">A wardrobe engineered for tropical heat and long days — no patch, no smell, no rub. Indian-crafted. Globally held.</p>
-      <a class="btn btn--light" href="${shopHref()}">Shop The Edit</a>
+      <a class="btn btn--light hero__cta" href="${shopHref()}">Explore Collection</a>
     </div>
   </section>
 
@@ -108,7 +116,7 @@ app.innerHTML = `<div data-page-content>
   <section class="section" style="padding-top:0">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow">The Edit</p>
+        <p class="eyebrow">Collection</p>
         <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
         <p class="lede">Midnight and Cardamom. XS–2XL. Engineered for South Asian bodies and hard-water realities.</p>
       </div>
@@ -212,7 +220,7 @@ app.innerHTML = `<div data-page-content>
   <section class="section final-cta">
     <p class="eyebrow">Begin</p>
     <h2 class="display">Every ocean was first fed by a rivlet.</h2>
-    <a class="btn btn--primary" href="${shopHref()}">Shop The Edit</a>
+    <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
   </section>
 </div>`
 

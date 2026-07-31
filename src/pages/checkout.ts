@@ -1,4 +1,4 @@
-import '../styles/tokens.css'
+﻿import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -12,7 +12,7 @@ if (!app) throw new Error('#app missing')
 function summaryHTML(): string {
   const lines = getCart()
   if (!lines.length) {
-    return `<p style="color:var(--color-ink-muted)">Your bag is empty. <a href="${shopHref()}"><strong>Shop The Edit</strong></a></p>`
+    return `<p style="color:var(--color-ink-muted)">Your bag is empty. <a href="${shopHref()}"><strong>Explore Collection</strong></a></p>`
   }
   return `
     ${lines

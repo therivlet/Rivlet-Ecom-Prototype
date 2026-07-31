@@ -56,11 +56,16 @@
 }
 
 .hero__brand {
-  font-family: var(--font-display);
-  font-size: var(--text-hero);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: var(--space-4);
+  margin: 0 0 var(--space-4);
+  line-height: 0;
+}
+
+.hero__brand-mark {
+  display: block;
+  width: min(100%, 34rem);
+  max-width: 92vw;
+  height: auto;
+  margin-left: -0.15em;
 }
 
 .hero__motto {
@@ -732,8 +737,11 @@
   }
 
   .hero__brand {
-    letter-spacing: 0.1em;
     margin-bottom: var(--space-3);
+  }
+
+  .hero__brand-mark {
+    width: min(100%, 22rem);
   }
 
   .hero__motto {
