@@ -989,35 +989,52 @@ button.color-dot:hover {
 
 .sheet {
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: 0;
   z-index: 65;
-  width: min(100%, 28rem);
-  translate: -50% 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   background: var(--color-surface);
-  padding: var(--space-5);
-  transform: translateY(110%);
+  padding:
+    var(--space-5)
+    max(var(--pad-page), env(safe-area-inset-right, 0px))
+    calc(var(--space-5) + var(--safe-bottom))
+    max(var(--pad-page), env(safe-area-inset-left, 0px));
+  transform: translate3d(0, 110%, 0);
   transition: transform var(--duration) var(--ease-out);
   border-top: 1px solid var(--color-line);
+  border-radius: 1rem 1rem 0 0;
+  max-height: min(92dvh, 40rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .sheet.is-open {
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 900px) {
   .sheet {
+    left: 50%;
+    right: auto;
     bottom: auto;
     top: 50%;
-    translate: -50% -50%;
-    transform: translateY(12px) scale(0.98);
+    width: min(100% - 2rem, 28rem);
+    max-height: none;
+    border-radius: 0;
+    padding: var(--space-5);
+    transform: translate3d(-50%, calc(-50% + 12px), 0) scale(0.98);
     opacity: 0;
     visibility: hidden;
     border: 1px solid var(--color-line);
     box-shadow: var(--shadow-soft);
   }
   .sheet.is-open {
-    transform: translateY(0) scale(1);
+    transform: translate3d(-50%, -50%, 0) scale(1);
     opacity: 1;
     visibility: visible;
   }
@@ -1654,11 +1671,32 @@ button.color-dot:hover {
   }
 
   .sheet {
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
+    max-width: none;
     max-height: min(92dvh, 40rem);
-    overflow: auto;
-    padding: var(--space-5) var(--pad-page) calc(var(--space-5) + var(--safe-bottom));
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding:
+      var(--space-5)
+      max(var(--pad-page), env(safe-area-inset-right, 0px))
+      calc(var(--space-5) + var(--safe-bottom))
+      max(var(--pad-page), env(safe-area-inset-left, 0px));
     border-radius: 1rem 1rem 0 0;
+  }
+
+  .sheet__head {
+    align-items: flex-start;
+  }
+
+  .sheet .size-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sheet .btn--block {
+    width: 100%;
   }
 
   .search-overlay {
