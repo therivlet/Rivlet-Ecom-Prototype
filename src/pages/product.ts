@@ -2,8 +2,8 @@ import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
-import { COLORS, REVIEWS, formatPrice, getProduct, type Colorway, type Size } from '../data/products'
-import { addCoordSet, addToCart, mountShell, openCart, productCardHTML, products, initPageMotion, toggleWishlist, isWishlisted } from '../ui/shell'
+import { COLORS, REVIEWS, formatPrice, getProduct, getProductImages, type Colorway, type Size } from '../data/products'
+import { addCoordSet, addToCart, mountShell, openCart, productCardHTML, products, initPageMotion, toggleWishlist, isWishlisted, assetHref } from '../ui/shell'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
@@ -44,17 +44,25 @@ if (!product) {
 
   function paint() {
     const hex = COLORS[color].hex
+    const gallery = getProductImages(product!, color)
+    const hasPhotos = gallery.length > 0
+    const activeSrc = hasPhotos ? assetHref(gallery[galleryTone % gallery.length]) : ''
+    const thumbCount = hasPhotos ? gallery.length : 3
+
     content!.innerHTML = `
       <div class="container pdp">
         <div class="pdp-gallery">
-          <div class="pdp-gallery__hero" style="background:${swatch(hex, galleryTone)}" data-hero></div>
-          <div class="pdp-gallery__thumbs">
-            ${[0, 1, 2]
-              .map(
-                (i) =>
-                  `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" style="background:${swatch(hex, i)}" aria-label="View angle ${i + 1}"></button>`,
-              )
-              .join('')}
+          <div class="pdp-gallery__hero ${hasPhotos ? 'pdp-gallery__hero--photo' : ''}" ${hasPhotos ? '' : `style="background:${swatch(hex, galleryTone)}"`} data-hero>
+            ${hasPhotos ? `<img src="${activeSrc}" alt="${product!.name} in ${COLORS[color].name}" width="764" height="1024" />` : ''}
+          </div>
+          <div class="pdp-gallery__thumbs" style="grid-template-columns: repeat(${thumbCount}, 1fr)">
+            ${Array.from({ length: thumbCount }, (_, i) => {
+              if (hasPhotos) {
+                const src = assetHref(gallery[i])
+                return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" aria-label="View angle ${i + 1}"><img src="${src}" alt="" width="200" height="200" /></button>`
+              }
+              return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" style="background:${swatch(hex, i)}" aria-label="View angle ${i + 1}"></button>`
+            }).join('')}
           </div>
         </div>
         <div class="pdp-buy">
@@ -148,6 +156,7 @@ if (!product) {
     content!.querySelectorAll<HTMLElement>('[data-color]').forEach((btn) => {
       btn.addEventListener('click', () => {
         color = btn.dataset.color as Colorway
+        galleryTone = 0
         paint()
       })
     })

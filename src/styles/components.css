@@ -744,6 +744,8 @@
 .cart-line__swatch {
   aspect-ratio: 3 / 4;
   background: var(--swatch, var(--color-midnight));
+  background-size: cover;
+  background-position: center top;
 }
 
 .cart-line__meta {
@@ -879,6 +881,14 @@
   position: absolute;
   inset: 0;
   transition: opacity var(--duration) var(--ease-out), transform var(--duration-slow) var(--ease-out);
+}
+
+.product-card__media .swatch-panel--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
 .product-card:hover .swatch-panel {
@@ -1836,7 +1846,11 @@ button.color-dot:hover {
     transform: none;
   }
 
+  .situation-tile:hover .situation-tile__img {
+    transform: none;
+  }
+
   .situation-tile:active {
-    border-color: var(--color-navy);
+    opacity: 0.92;
   }
 }

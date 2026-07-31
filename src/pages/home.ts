@@ -2,7 +2,7 @@ import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
-import { mountShell, productCardHTML, products, shopHref } from '../ui/shell'
+import { mountShell, productCardHTML, products, shopHref, assetHref } from '../ui/shell'
 import { COORD_SET, FABRIC_PLATFORMS, REVIEWS, SITUATIONS, formatPrice, getProduct } from '../data/products'
 
 const app = document.querySelector<HTMLDivElement>('#app')
@@ -13,7 +13,19 @@ const bottom = getProduct(COORD_SET.bottomId)
 
 app.innerHTML = `<div data-page-content>
   <section class="hero hero--enter">
-    <div class="hero__media" aria-hidden="true"></div>
+    <div class="hero__media" aria-hidden="true">
+      <video
+        class="hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      >
+        <source src="${assetHref('media/hero.mp4')}" type="video/mp4" />
+        <source src="${assetHref('media/hero.mov')}" type="video/quicktime" />
+      </video>
+    </div>
     <div class="hero__content">
       <p class="eyebrow" style="color:rgba(255,252,247,0.7);margin-bottom:1rem">Women · The Edit</p>
       <h1 class="hero__brand">Rivlet</h1>
@@ -59,8 +71,11 @@ app.innerHTML = `<div data-page-content>
         ${SITUATIONS.map(
           (s) => `
           <a class="situation-tile" href="${shopHref({ situation: s.id })}">
-            <strong>${s.label}</strong>
-            <span>${s.blurb}</span>
+            <img class="situation-tile__img" src="${assetHref(s.image)}" alt="" width="800" height="1000" loading="lazy" />
+            <span class="situation-tile__copy">
+              <strong>${s.label}</strong>
+              <span>${s.blurb}</span>
+            </span>
           </a>`,
         ).join('')}
       </div>
@@ -70,15 +85,21 @@ app.innerHTML = `<div data-page-content>
   <section class="section" style="padding-top:0">
     <div class="container">
       <div class="split-shop">
-        <a class="split-shop__tile" href="${shopHref({ form: 'tops' })}" style="--tile:linear-gradient(160deg,#2a2118,#0c1e34)">
-          <span class="eyebrow" style="color:rgba(255,252,247,0.7)">Form</span>
-          <strong>Tops</strong>
-          <span>Bras · tanks · tee</span>
+        <a class="split-shop__tile" href="${shopHref({ form: 'tops' })}">
+          <img class="split-shop__img" src="${assetHref('media/forms/tops.png')}" alt="" width="900" height="1100" loading="lazy" />
+          <span class="split-shop__copy">
+            <span class="eyebrow">Form</span>
+            <strong>Tops</strong>
+            <span>Bras · tanks · tee</span>
+          </span>
         </a>
-        <a class="split-shop__tile" href="${shopHref({ form: 'bottoms' })}" style="--tile:linear-gradient(160deg,#7a5c3a,#1a1208)">
-          <span class="eyebrow" style="color:rgba(255,252,247,0.7)">Form</span>
-          <strong>Bottoms</strong>
-          <span>Leggings · shorts</span>
+        <a class="split-shop__tile" href="${shopHref({ form: 'bottoms' })}">
+          <img class="split-shop__img" src="${assetHref('media/forms/bottoms.png')}" alt="" width="900" height="1100" loading="lazy" />
+          <span class="split-shop__copy">
+            <span class="eyebrow">Form</span>
+            <strong>Bottoms</strong>
+            <span>Leggings · shorts</span>
+          </span>
         </a>
       </div>
     </div>
@@ -196,3 +217,16 @@ app.innerHTML = `<div data-page-content>
 </div>`
 
 mountShell(app)
+
+const heroVideo = document.querySelector<HTMLVideoElement>('.hero__video')
+if (heroVideo && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  heroVideo.muted = true
+  heroVideo.playsInline = true
+  const tryPlay = () => {
+    void heroVideo.play().catch(() => {
+      /* autoplay may be blocked until interaction; muted usually allows it */
+    })
+  }
+  if (heroVideo.readyState >= 2) tryPlay()
+  else heroVideo.addEventListener('loadeddata', tryPlay, { once: true })
+}

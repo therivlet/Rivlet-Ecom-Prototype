@@ -213,6 +213,9 @@ ol {
   .hero__media::after {
     animation: none !important;
   }
+  .hero__video {
+    display: none;
+  }
   .reveal {
     opacity: 1;
     transform: none;

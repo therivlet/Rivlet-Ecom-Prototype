@@ -31,6 +31,8 @@ export interface Product {
   situations: Situation[]
   colors: ColorInfo[]
   sizes: Size[]
+  /** Public paths relative to site root, keyed by colorway (e.g. media/products/…). */
+  images?: Partial<Record<Colorway, string[]>>
   setWith?: string[]
   cupInclusive?: boolean
 }
@@ -42,12 +44,12 @@ export const COLORS: Record<Colorway, ColorInfo> = {
 
 export const SIZES: Size[] = ['XS', 'S', 'M', 'L', 'XL', '2XL']
 
-export const SITUATIONS: { id: Situation; label: string; blurb: string }[] = [
-  { id: 'gym', label: 'Gym', blurb: 'Lift, run, stretch — stay dry and secure.' },
-  { id: 'yoga', label: 'Yoga', blurb: 'Second-skin move without ride-up or dig.' },
-  { id: 'office', label: 'Office', blurb: 'Boardroom-ready pieces that still perform.' },
-  { id: 'travel', label: 'Travel', blurb: 'Fresh longer. Light on the body.' },
-  { id: 'summer', label: 'Summer', blurb: 'Engineered for heat and humidity.' },
+export const SITUATIONS: { id: Situation; label: string; blurb: string; image: string }[] = [
+  { id: 'gym', label: 'Gym', blurb: 'Lift, run, stretch — stay dry and secure.', image: 'media/situations/gym.png' },
+  { id: 'yoga', label: 'Yoga', blurb: 'Second-skin move without ride-up or dig.', image: 'media/situations/yoga.png' },
+  { id: 'office', label: 'Office', blurb: 'Boardroom-ready pieces that still perform.', image: 'media/situations/office.png' },
+  { id: 'travel', label: 'Travel', blurb: 'Fresh longer. Light on the body.', image: 'media/situations/travel.png' },
+  { id: 'summer', label: 'Summer', blurb: 'Engineered for heat and humidity.', image: 'media/situations/summer.png' },
 ]
 
 export const products: Product[] = [
@@ -80,6 +82,20 @@ export const products: Product[] = [
     situations: ['gym', 'yoga', 'summer', 'travel'],
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
+    images: {
+      midnight: [
+        'media/products/midnight-leggings-1.png',
+        'media/products/midnight-leggings-4.png',
+        'media/products/midnight-leggings-3.png',
+        'media/products/midnight-leggings-2.png',
+      ],
+      cardamom: [
+        'media/products/cardamom-leggings-1.png',
+        'media/products/cardamom-leggings-2.png',
+        'media/products/cardamom-leggings-3.png',
+        'media/products/cardamom-leggings-4.png',
+      ],
+    },
     setWith: ['RVL-BRA-002', 'RVL-TEE-005'],
   },
   {
@@ -113,6 +129,18 @@ export const products: Product[] = [
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
     cupInclusive: true,
+    images: {
+      midnight: [
+        'media/products/midnight-bra-1.png',
+        'media/products/midnight-bra-2.png',
+        'media/products/midnight-bra-3.png',
+        'media/products/midnight-bra-4.png',
+      ],
+      cardamom: [
+        'media/products/cardamom-bra-1.png',
+        'media/products/cardamom-bra-2.png',
+      ],
+    },
     setWith: ['RVL-LEG-001', 'RVL-SHT-004'],
   },
   {
@@ -146,6 +174,18 @@ export const products: Product[] = [
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
     cupInclusive: true,
+    images: {
+      midnight: [
+        'media/products/midnight-crop-1.png',
+        'media/products/midnight-crop-2.png',
+      ],
+      cardamom: [
+        'media/products/cardamom-crop-1.png',
+        'media/products/cardamom-crop-2.png',
+        'media/products/cardamom-crop-3.png',
+        'media/products/cardamom-crop-4.png',
+      ],
+    },
     setWith: ['RVL-SHT-004'],
   },
   {
@@ -210,6 +250,16 @@ export const products: Product[] = [
     situations: ['gym', 'yoga', 'summer', 'travel'],
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
+    images: {
+      midnight: [
+        'media/products/midnight-shorts-1.png',
+        'media/products/midnight-shorts-2.png',
+      ],
+      cardamom: [
+        'media/products/cardamom-shorts-1.png',
+        'media/products/cardamom-shorts-2.png',
+      ],
+    },
     setWith: ['RVL-TNK-003-C'],
   },
   {
@@ -259,6 +309,14 @@ export function formatPrice(inr: number): string {
 
 export function getProduct(id: string): Product | undefined {
   return products.find((p) => p.id === id)
+}
+
+export function getProductImages(product: Product, color: Colorway): string[] {
+  return product.images?.[color] ?? []
+}
+
+export function getProductImage(product: Product, color: Colorway, index = 0): string | undefined {
+  return getProductImages(product, color)[index]
 }
 
 export const FABRIC_PLATFORMS: {

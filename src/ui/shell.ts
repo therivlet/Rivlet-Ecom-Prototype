@@ -4,6 +4,7 @@ import {
   SITUATIONS,
   formatPrice,
   getProduct,
+  getProductImage,
   products,
   type Colorway,
   type Product,
@@ -337,6 +338,25 @@ function swatchStyle(hex: string): string {
     ${hex};`
 }
 
+function mediaPanelHTML(product: Product, color: Colorway): string {
+  const photo = getProductImage(product, color)
+  if (photo) {
+    return `<div class="swatch-panel swatch-panel--photo" data-card-swatch data-has-photo="true">
+      <img src="${assetHref(photo)}" alt="" width="600" height="800" loading="lazy" />
+    </div>`
+  }
+  const hex = COLORS[color].hex
+  return `<div class="swatch-panel" data-card-swatch style="${swatchStyle(hex)}"></div>`
+}
+
+function lineThumbStyle(product: Product, color: Colorway): string {
+  const photo = getProductImage(product, color)
+  if (photo) {
+    return `background-image:url('${assetHref(photo)}');background-size:cover;background-position:center;`
+  }
+  return `--swatch:${COLORS[color].hex}`
+}
+
 function cardActiveColor(product: Product): Colorway {
   return product.colors[0].id
 }
@@ -348,7 +368,7 @@ export function productCardHTML(product: Product): string {
   <article class="product-card" data-product-card="${product.id}">
     <div class="product-card__media-wrap">
       <a class="product-card__media" href="${productHref(product.id)}" aria-label="${product.name}">
-        <div class="swatch-panel" data-card-swatch style="${swatchStyle(primary.hex)}"></div>
+        ${mediaPanelHTML(product, primary.id)}
       </a>
       <button
         type="button"
@@ -407,7 +427,7 @@ function renderCartBody(): void {
       const color = COLORS[line.color]
       return `
       <div class="cart-line" data-line="${line.key}">
-        <div class="cart-line__swatch" style="--swatch:${color.hex}"></div>
+        <div class="cart-line__swatch" style="${lineThumbStyle(p, line.color)}"></div>
         <div class="cart-line__meta">
           <div class="cart-line__title">${p.name}</div>
           <div class="cart-line__detail">${color.name} · ${line.size}</div>
@@ -466,7 +486,7 @@ function renderWishBody(): void {
       const color = COLORS[line.color]
       return `
       <div class="cart-line wish-line" data-wish-line="${line.key}">
-        <a class="cart-line__swatch" href="${productHref(p.id)}" style="--swatch:${color.hex}" aria-label="${p.name}"></a>
+        <a class="cart-line__swatch" href="${productHref(p.id)}" style="${lineThumbStyle(p, line.color)}" aria-label="${p.name}"></a>
         <div class="cart-line__meta">
           <div class="cart-line__title">${p.name}</div>
           <div class="cart-line__detail">${color.name} · ${p.platform}</div>
@@ -849,7 +869,25 @@ export function mountShell(root: HTMLElement): void {
       e.stopPropagation()
       const card = colorDot.closest('[data-product-card]')
       const panel = card?.querySelector<HTMLElement>('[data-card-swatch]')
-      if (panel) panel.style.cssText = swatchStyle(colorDot.dataset.cardColor)
+      const productId = card?.getAttribute('data-product-card')
+      const product = productId ? getProduct(productId) : undefined
+      const colorId = (colorDot.dataset.cardColorId as Colorway) || undefined
+      if (panel && product && colorId) {
+        const photo = getProductImage(product, colorId)
+        if (photo) {
+          panel.classList.add('swatch-panel--photo')
+          panel.dataset.hasPhoto = 'true'
+          panel.removeAttribute('style')
+          panel.innerHTML = `<img src="${assetHref(photo)}" alt="" width="600" height="800" loading="lazy" />`
+        } else {
+          panel.classList.remove('swatch-panel--photo')
+          delete panel.dataset.hasPhoto
+          panel.innerHTML = ''
+          panel.style.cssText = swatchStyle(colorDot.dataset.cardColor)
+        }
+      } else if (panel) {
+        panel.style.cssText = swatchStyle(colorDot.dataset.cardColor)
+      }
       card?.querySelectorAll('[data-card-color]').forEach((d) => d.classList.remove('is-active'))
       colorDot.classList.add('is-active')
       const wishBtn = card?.querySelector<HTMLElement>('[data-wish-toggle]')

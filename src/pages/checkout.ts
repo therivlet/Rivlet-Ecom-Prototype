@@ -2,9 +2,9 @@ import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
-import { COLORS, formatPrice, getProduct } from '../data/products'
+import { COLORS, formatPrice, getProduct, getProductImage } from '../data/products'
 import { cartSubtotal, clearCart, getCart } from '../cart'
-import { mountShell, shopHref } from '../ui/shell'
+import { assetHref, mountShell, shopHref } from '../ui/shell'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
@@ -19,8 +19,12 @@ function summaryHTML(): string {
       .map((line) => {
         const p = getProduct(line.productId)
         if (!p) return ''
+        const photo = getProductImage(p, line.color)
+        const thumb = photo
+          ? `background-image:url('${assetHref(photo)}');background-size:cover;background-position:center top;`
+          : `--swatch:${COLORS[line.color].hex}`
         return `<div class="cart-line" style="grid-template-columns:3.5rem 1fr;border:none;padding:0.6rem 0">
-          <div class="cart-line__swatch" style="--swatch:${COLORS[line.color].hex}"></div>
+          <div class="cart-line__swatch" style="${thumb}"></div>
           <div>
             <div class="cart-line__title">${p.name}</div>
             <div class="cart-line__detail">${COLORS[line.color].name} · ${line.size} · ×${line.qty}</div>
