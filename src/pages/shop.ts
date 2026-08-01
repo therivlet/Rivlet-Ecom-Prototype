@@ -85,7 +85,7 @@ function render() {
         <div class="section-head plp-head">
           <p class="eyebrow">Women · Collection</p>
           <h1 class="display">${title()}</h1>
-          <p class="lede">${list.length} piece${list.length === 1 ? '' : 's'} · Midnight & Cardamom · XS–2XL</p>
+          <p class="lede">${list.length} piece${list.length === 1 ? '' : 's'} · Midnight & Cardamom · XS-2XL</p>
         </div>
 
         <div class="plp-bar">
@@ -176,7 +176,7 @@ function render() {
               ? list.map((p) => productCardHTML(p)).join('')
               : `<div class="plp-empty">
                   <p class="eyebrow">No matches</p>
-                  <p>Try clearing a filter or search another feeling — gym, yoga, no patch, SecondSkin.</p>
+                  <p>Try clearing a filter or search another feeling - gym, yoga, no patch, SecondSkin.</p>
                   <button type="button" class="btn btn--primary" data-clear-all>Reset filters</button>
                 </div>`
           }
@@ -190,10 +190,10 @@ function render() {
           </details>
           <details>
             <summary>Is this graded for South Asian bodies?</summary>
-            <p>Yes. The collection uses a South-Asian block across XS–2XL, with cup-inclusive grading on the bra and built-in-support tanks.</p>
+            <p>Yes. The collection uses a South-Asian block across XS-2XL, with cup-inclusive grading on the bra and built-in-support tanks.</p>
           </details>
           <details>
-            <summary>Hard water — will it pill or fade?</summary>
+            <summary>Hard water - will it pill or fade?</summary>
             <p>Yarn chemistry and colourfast finishing are specified for mineral-heavy laundering and UV. Care labels will follow lab-validated wash protocols.</p>
           </details>
         </div>

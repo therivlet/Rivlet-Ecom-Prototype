@@ -68,7 +68,7 @@ export const products: Product[] = [
     benefitChip: 'No ride-up',
     feeling: 'Compression that disappears. A waistband that stays put. Pockets that actually hold a phone while you move.',
     problems: [
-      { title: 'Inner-thigh chafe', solution: 'Flatlock inseam + bonded outer construction — zero rub in heat.' },
+      { title: 'Inner-thigh chafe', solution: 'Flatlock inseam + bonded outer construction - zero rub in heat.' },
       { title: 'Damp waistband', solution: 'Wicking inner-waistband facing so the band never sits wet against skin.' },
       { title: 'No pocket that holds', solution: 'Bonded thigh phone pockets, bartacked for motion + interior key pocket.' },
     ],
@@ -76,9 +76,9 @@ export const products: Product[] = [
       'AquaFlow™ tetra-channel wicking',
       'UPF knit for commute & outdoor work',
       'No-roll plush-back 5" waistband',
-      'South-Asian high-rise block, XS–2XL',
+      'South-Asian high-rise block, XS-2XL',
     ],
-    fitNotes: 'True high-rise second-skin fit. Sized for South-Asian proportions across XS–2XL.',
+    fitNotes: 'True high-rise second-skin fit. Sized for South-Asian proportions across XS-2XL.',
     situations: ['gym', 'yoga', 'summer', 'travel'],
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
@@ -112,9 +112,9 @@ export const products: Product[] = [
     mrp: 1299,
     heroFeature: 'Zoned under-bust sweat-barrier',
     benefitChip: 'No patch',
-    feeling: 'Medium support without the dig. The under-bust zone stays dry — the place longline bras usually leave wet.',
+    feeling: 'Medium support without the dig. The under-bust zone stays dry - the place longline bras usually leave wet.',
     problems: [
-      { title: 'Under-bust sweat patch', solution: 'Zoned breathable sweat-barrier at the band — the un-engineered longline zone.' },
+      { title: 'Under-bust sweat patch', solution: 'Zoned breathable sweat-barrier at the band - the un-engineered longline zone.' },
       { title: 'End-of-day odor', solution: 'Silver-ion (Ag⁺) in cup and under-bust knit.' },
       { title: 'Outline anxiety', solution: 'Molded removable pads + power-mesh liner for opacity.' },
     ],
@@ -124,7 +124,7 @@ export const products: Product[] = [
       'Power-mesh cup liner + removable molded pads',
       'Cup-inclusive South-Asian grading',
     ],
-    fitNotes: 'Medium-impact. Cup-inclusive grading (P1/P2/P3 pads). Distributed ribbed straps — nothing that digs by evening.',
+    fitNotes: 'Medium-impact. Cup-inclusive grading (P1/P2/P3 pads). Distributed ribbed straps - nothing that digs by evening.',
     situations: ['gym', 'yoga', 'summer'],
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
@@ -157,9 +157,9 @@ export const products: Product[] = [
     mrp: 1599,
     heroFeature: 'Built-in shelf + under-bust barrier + mid-back vent',
     benefitChip: 'No bra needed',
-    feeling: 'Light support built in. Gym to life without a second layer — and without under-bust damp.',
+    feeling: 'Light support built in. Gym to life without a second layer - and without under-bust damp.',
     problems: [
-      { title: 'Needing a bra under everything', solution: 'Internal power-mesh support shelf — light support, optional pads.' },
+      { title: 'Needing a bra under everything', solution: 'Internal power-mesh support shelf - light support, optional pads.' },
       { title: 'Under-bust sweat', solution: 'Zoned under-bust barrier + mid-back vent panel.' },
       { title: 'Gym → work → evening change', solution: 'Full-body Ag⁺ freshness with gym-to-life styling.' },
     ],
@@ -202,7 +202,7 @@ export const products: Product[] = [
     mrp: 1599,
     heroFeature: 'Built-in shelf + under-bust barrier + mid-back vent',
     benefitChip: 'All-day fresh',
-    feeling: 'The same engineered calm as the crop — full length for layering, commuting, and evenings that start at the gym.',
+    feeling: 'The same engineered calm as the crop - full length for layering, commuting, and evenings that start at the gym.',
     problems: [
       { title: 'Needing a bra under everything', solution: 'Internal power-mesh support shelf with optional pads.' },
       { title: 'Sweat-soaked back on seats', solution: 'Mid-back mesh/pointelle vent panel.' },
@@ -246,14 +246,14 @@ export const products: Product[] = [
     category: 'shorts',
     platform: 'SecondSkin™',
     material: '92% Nylon / 8% Elastane (seamless)',
-    gsm: '180–210 GSM',
+    gsm: '180-210 GSM',
     fit: 'True high-rise · 5" inseam',
     mrp: 1499,
     heroFeature: 'Silicone gripper at waist + both leg-bands',
     benefitChip: 'No chafe',
     feeling: 'A short that stays put. Seamless through the thighs. Matched to the crop for a true co-ord set.',
     problems: [
-      { title: 'Inner-thigh chafe', solution: 'Seamless circular knit — no inseam rub zone.' },
+      { title: 'Inner-thigh chafe', solution: 'Seamless circular knit - no inseam rub zone.' },
       { title: 'Ride-up & slip', solution: 'Dotted silicone gripper at waist and both leg-bands.' },
       { title: 'Damp waistband', solution: 'Wicking inner waist zone + Ag⁺ hygiene gusset.' },
     ],
@@ -295,7 +295,7 @@ export const products: Product[] = [
     feeling: 'The tee that doesn’t announce your workout. Underarms stay clean. Freshness holds through the day.',
     problems: [
       { title: 'Visible sweat patches', solution: 'Bonded underarm barrier stops sweat reaching the outer face.' },
-      { title: 'Yellow underarm staining', solution: 'Barrier membrane + Ag⁺ chemistry — no oxidation ring.' },
+      { title: 'Yellow underarm staining', solution: 'Barrier membrane + Ag⁺ chemistry - no oxidation ring.' },
       { title: 'One wear, done', solution: 'Full-body silver-ion odor control, wash after wash.' },
     ],
     tech: [
@@ -398,7 +398,7 @@ export const COORD_SETS: CoordSet[] = [
     name: 'Training Tee + Leggings',
     topId: 'RVL-TEE-005',
     bottomId: 'RVL-LEG-001',
-    blurb: 'The quiet uniform — from session to street.',
+    blurb: 'The quiet uniform - from session to street.',
     images: {
       midnight: [
         'media/coords/tee-leggings-midnight-1.png',
@@ -535,7 +535,7 @@ export const FABRIC_PLATFORMS: {
     id: 'SecondSkin™',
     label: 'SecondSkin™',
     blurb: 'Seamless support. Zoned barriers. All-day fresh.',
-    outcome: 'Bra, tanks & short — one fabric language',
+    outcome: 'Bra, tanks & short - one fabric language',
     image: 'media/platforms/secondskin.png',
   },
   {
@@ -597,5 +597,7 @@ export function filterProducts(opts: {
 export const REVIEWS = [
   { name: 'Ananya R.', city: 'Chennai', text: 'Finally a waistband that doesn’t roll in humidity. I forgot I was wearing them.', stars: 5 },
   { name: 'Meera K.', city: 'Bengaluru', text: 'The underarm claim on the tee is real. No patch after a packed commute.', stars: 5 },
-  { name: 'Divya S.', city: 'Hyderabad', text: 'Crop + short as a set feels intentional — same handfeel, same colour depth.', stars: 5 },
+  { name: 'Divya S.', city: 'Hyderabad', text: 'Crop + short as a set feels intentional - same handfeel, same colour depth.', stars: 5 },
+  { name: 'Priya M.', city: 'Mumbai', text: 'Built-in support that stays calm through a full day. No second layer. No dig.', stars: 5 },
+  { name: 'Kavya N.', city: 'Pune', text: 'After yoga and an auto ride home, still fresh. That silver-ion claim earns its keep.', stars: 5 },
 ]

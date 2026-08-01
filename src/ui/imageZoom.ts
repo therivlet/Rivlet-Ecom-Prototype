@@ -23,7 +23,7 @@ function ensureZoomImg(pane: HTMLElement): HTMLImageElement {
   return zoomImg
 }
 
-/** Parse CSS object-position into 0–1 keywords / percentages. */
+/** Parse CSS object-position into 0-1 keywords / percentages. */
 function parseObjectPosition(value: string): { x: number; y: number } {
   const map = (token: string | undefined, fallback: number): number => {
     if (!token) return fallback
@@ -75,7 +75,7 @@ export function bindImageZoom(opts: ImageZoomOptions): () => void {
     lens.hidden = true
     pane.hidden = true
     pane.setAttribute('aria-hidden', 'true')
-    // Clear inline display — it overrides the [hidden] attribute and left the pane stuck open.
+    // Clear inline display - it overrides the [hidden] attribute and left the pane stuck open.
     pane.style.display = 'none'
     restorePane()
   }

@@ -13,7 +13,7 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head">
         <p class="eyebrow">Stories</p>
         <h1 class="display">Feeling first. Tech underneath.</h1>
-        <p class="lede">Buyers don’t consciously buy SecondSkin™ — they buy no patch, no smell, no rub, no bra. The platforms prove the promise.</p>
+        <p class="lede">Buyers don’t consciously buy SecondSkin™ - they buy no patch, no smell, no rub, no bra. The platforms prove the promise.</p>
       </div>
       <div class="fabric-cards">
         <article class="fabric-card" id="climate">
@@ -29,7 +29,7 @@ app.innerHTML = `<div data-page-content>
         <article class="fabric-card">
           <p class="eyebrow">03</p>
           <h3>NeutralCore™</h3>
-          <p style="color:var(--color-ink-soft)">Training tee platform with bonded underarm shield — no patch, no yellow stain, all-day freshness.</p>
+          <p style="color:var(--color-ink-soft)">Training tee platform with bonded underarm shield - no patch, no yellow stain, all-day freshness.</p>
         </article>
       </div>
     </div>
@@ -50,7 +50,7 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head">
         <p class="eyebrow">Fit</p>
         <h2 class="display">Made for your body.</h2>
-        <p class="lede">South-Asian block. Cup-inclusive grading on support pieces. XS–2XL across the collection.</p>
+        <p class="lede">South-Asian block. Cup-inclusive grading on support pieces. XS-2XL across the collection.</p>
       </div>
       <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
     </div>

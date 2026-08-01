@@ -1,4 +1,4 @@
-# Rivlet Prototype — Design Notes
+# Rivlet Prototype - Design Notes
 
 ## Continuity with therivlet.com
 - Display: Cormorant Garamond
@@ -12,7 +12,7 @@
 2. Situation-first shopping
 3. Feeling → tech on every PDP
 4. Optimistic cart (localStorage)
-5. Mock checkout only — no payment
+5. Mock checkout only - no payment
 
 ## Motion
-Fade + scale 1.00→1.02 · 150–300ms · respect `prefers-reduced-motion`
+Fade + scale 1.00→1.02 · 150-300ms · respect `prefers-reduced-motion`

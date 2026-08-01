@@ -146,7 +146,7 @@ ol {
   animation: fadeIn var(--duration-slow) var(--ease-out) both;
 }
 
-/* Quiet scroll reveals — presence, not noise */
+/* Quiet scroll reveals - presence, not noise */
 .reveal {
   opacity: 0;
   transform: translate3d(0, 1.1rem, 0);
@@ -159,12 +159,12 @@ ol {
 
 .reveal.is-in {
   opacity: 1;
-  /* Must be `none` — identity translate still creates a containing block for position:fixed. */
+  /* Must be `none` - identity translate still creates a containing block for position:fixed. */
   transform: none;
   will-change: auto;
 }
 
-/* Hero load — staggered, calm */
+/* Hero load - staggered, calm */
 .hero--enter .hero__content > * {
   animation: fadeIn 0.95s var(--ease-out) both;
 }

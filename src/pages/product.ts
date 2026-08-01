@@ -11,6 +11,7 @@ import {
   productCardHTML,
   products,
   initPageMotion,
+  initReviewRails,
   toggleWishlist,
   isWishlisted,
   assetHref,
@@ -98,7 +99,7 @@ if (!product) {
       unbindZoom = bindImageZoom({ stage, img, lens, pane, cover, enabled: canZoom })
     }
 
-    /* —— Swipe / drag to next image —— */
+    /* Swipe / drag to next image */
     if (gallery.length > 1) {
       let startX = 0
       let startY = 0
@@ -270,7 +271,7 @@ if (!product) {
                 )
                 .join('')}
             </div>
-            <p class="fit-note">Fits true to size · South-Asian block · XS–2XL</p>
+            <p class="fit-note">Fits true to size · South-Asian block · XS-2XL</p>
           </div>
           <button class="btn btn--primary btn--block" type="button" data-atc ${size ? '' : 'disabled'}>Add to bag</button>
           <button class="btn btn--ghost btn--block wish-pdp ${isWishlisted(product!.id, color) ? 'is-on' : ''}" type="button" data-pdp-wish>
@@ -293,8 +294,8 @@ if (!product) {
         <div class="story-block" id="reviews">
           <p class="eyebrow">Reviews</p>
           <h2>Confidence from the body</h2>
-          <div class="reviews">
-            ${REVIEWS.map((r) => `<blockquote class="review-card"><p>“${r.text}”</p><span>${r.name} · ${r.city}</span></blockquote>`).join('')}
+          <div class="reviews" role="list" aria-label="Customer reviews">
+            ${REVIEWS.map((r) => `<blockquote class="review-card" role="listitem"><p>“${r.text}”</p><span>${r.name} · ${r.city}</span></blockquote>`).join('')}
           </div>
         </div>
         <div class="story-block" style="max-width:none">
@@ -335,6 +336,7 @@ if (!product) {
     })
 
     bindGalleryInteractions(gallery)
+    initReviewRails(content!)
 
     if (!motionReady) {
       initPageMotion(content!)

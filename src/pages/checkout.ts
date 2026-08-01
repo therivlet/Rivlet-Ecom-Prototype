@@ -44,7 +44,7 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head">
         <p class="eyebrow">Checkout</p>
         <h1 class="display">Almost there.</h1>
-        <p class="lede">Prototype checkout — nothing is charged. Trust the flow; payments come later.</p>
+        <p class="lede">Prototype checkout - nothing is charged. Trust the flow; payments come later.</p>
       </div>
       <div class="notice" style="margin-bottom:1.5rem">Prototype mode · No payment gateway · Order will simulate confirmation only</div>
       <form data-checkout-form>
@@ -82,11 +82,11 @@ app.innerHTML = `<div data-page-content>
         <div class="radio-stack" style="margin-bottom:1.5rem">
           <label class="radio-card">
             <input type="radio" name="shipping" value="standard" checked />
-            <span><strong>Standard</strong><br /><span style="color:var(--color-ink-muted);font-size:0.875rem">4–6 days · Free over ₹2,999 (preview)</span></span>
+            <span><strong>Standard</strong><br /><span style="color:var(--color-ink-muted);font-size:0.875rem">4-6 days · Free over ₹2,999 (preview)</span></span>
           </label>
           <label class="radio-card">
             <input type="radio" name="shipping" value="express" />
-            <span><strong>Express</strong><br /><span style="color:var(--color-ink-muted);font-size:0.875rem">2–3 days · ₹149 preview</span></span>
+            <span><strong>Express</strong><br /><span style="color:var(--color-ink-muted);font-size:0.875rem">2-3 days · ₹149 preview</span></span>
           </label>
         </div>
         <h2 style="font-size:var(--text-lg);margin:0 0 1rem">Payment</h2>

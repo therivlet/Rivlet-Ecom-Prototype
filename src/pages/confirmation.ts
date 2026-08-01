@@ -25,7 +25,7 @@ app.innerHTML = `<div data-page-content>
   <section class="container confirm fade-in">
     <p class="eyebrow">Order confirmed</p>
     <h1>You’re in the river.</h1>
-    <p class="lede" style="text-align:center">This is a prototype confirmation — no charge was made. When Rivlet launches, this is the calm after checkout.</p>
+    <p class="lede" style="text-align:center">This is a prototype confirmation - no charge was made. When Rivlet launches, this is the calm after checkout.</p>
     ${
       order
         ? `<div class="order-pill">${order.orderId}</div>

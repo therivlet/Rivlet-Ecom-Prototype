@@ -1,4 +1,4 @@
-/** Premium motion — scroll restore + quiet scroll reveals. */
+/** Premium motion - scroll restore + quiet scroll reveals. */
 
 const REVEAL_SELECTORS = [
   '.section-head',
@@ -14,7 +14,7 @@ const REVEAL_SELECTORS = [
   '.pdp-story--rail .story-block',
   '.pdp-story--full .story-block',
   '.trust-item',
-  '.review-card',
+  /* Review cards stay transform-free so the ribbon loop can measure positions reliably. */
   '.fabricology-cta',
   '.final-cta > *',
   '.fabric-card',
@@ -35,7 +35,7 @@ function reducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-/** Always land at top on load / refresh — never mid-page restore. */
+/** Always land at top on load / refresh - never mid-page restore. */
 export function lockScrollToTop(): void {
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'
@@ -109,6 +109,8 @@ export function initPageMotion(root: ParentNode = document): void {
       obs.observe(el)
     }
   })
+
+  initReviewRails(scope)
 }
 
 /** Autoplay promise films only while in view; pause when off-screen. */
@@ -164,8 +166,174 @@ export function initPromiseFilms(root: ParentNode = document): void {
   })
 }
 
+/** Horizontal review rails: ribbon loop; auto-advance while idle. */
+export function initReviewRails(root: ParentNode = document): void {
+  const rails = [...((root as Document | Element).querySelectorAll?.('.reviews') ?? [])] as HTMLElement[]
+  rails.forEach(bindReviewRail)
+}
+
+function bindReviewRail(rail: HTMLElement): void {
+  if (rail.dataset.reviewRail === '1') return
+  rail.dataset.reviewRail = '1'
+
+  // One full copy after the originals so the first card sits beside the last.
+  if (rail.dataset.reviewLoop !== '1') {
+    const source = [...rail.querySelectorAll<HTMLElement>('.review-card')]
+    source.forEach((node) => {
+      const clone = node.cloneNode(true) as HTMLElement
+      clone.setAttribute('aria-hidden', 'true')
+      clone.setAttribute('data-review-clone', '')
+      rail.appendChild(clone)
+    })
+    rail.dataset.reviewLoop = '1'
+  }
+
+  if (reducedMotion()) return
+
+  let paused = false
+  let inView = false
+  let index = 0
+  let timer: number | undefined
+  let resumeTimer: number | undefined
+  let animTimer: number | undefined
+
+  const originals = () =>
+    [...rail.querySelectorAll<HTMLElement>('.review-card:not([data-review-clone])')]
+  const allCards = () => [...rail.querySelectorAll<HTMLElement>('.review-card')]
+
+  /** Scroll offset that left-aligns a card with the rail’s content start. */
+  const offsetFor = (card: HTMLElement) => {
+    const first = originals()[0]
+    if (!first) return 0
+    return card.offsetLeft - first.offsetLeft
+  }
+
+  const goTo = (i: number, behavior: ScrollBehavior) => {
+    const cards = allCards()
+    const n = originals().length
+    if (n < 1 || !cards.length) return
+    const target = cards[((i % cards.length) + cards.length) % cards.length]
+    if (!target) return
+    rail.scrollTo({ left: offsetFor(target), behavior })
+  }
+
+  /** After landing on a clone, jump back to the matching original with no animation. */
+  const wrapIfNeeded = () => {
+    const n = originals().length
+    if (n < 1) return
+    if (index >= n) {
+      index = index % n
+      goTo(index, 'auto')
+    } else if (index < 0) {
+      index = ((index % n) + n) % n
+      goTo(index, 'auto')
+    }
+  }
+
+  const stop = () => {
+    if (timer !== undefined) {
+      window.clearInterval(timer)
+      timer = undefined
+    }
+  }
+
+  const step = () => {
+    if (paused || !inView || !rail.isConnected) return
+    const n = originals().length
+    if (n < 2) return
+
+    index += 1
+    goTo(index, 'smooth')
+    if (animTimer !== undefined) window.clearTimeout(animTimer)
+    animTimer = window.setTimeout(wrapIfNeeded, 750)
+  }
+
+  const start = () => {
+    stop()
+    if (!inView || paused) return
+    timer = window.setInterval(step, 2000)
+  }
+
+  const syncIndexFromScroll = () => {
+    const cards = originals()
+    const n = cards.length
+    if (n < 1) return
+    const x = rail.scrollLeft
+    let best = 0
+    let bestDist = Infinity
+    cards.forEach((card, i) => {
+      const d = Math.abs(offsetFor(card) - x)
+      if (d < bestDist) {
+        bestDist = d
+        best = i
+      }
+    })
+    // If user scrolled into the clone set, map back
+    const clone0 = rail.querySelector<HTMLElement>('[data-review-clone]')
+    if (clone0 && x >= offsetFor(clone0) - 8) {
+      const all = allCards()
+      let nearest = n
+      let nearestDist = Infinity
+      all.forEach((card, i) => {
+        const d = Math.abs(offsetFor(card) - x)
+        if (d < nearestDist) {
+          nearestDist = d
+          nearest = i
+        }
+      })
+      index = nearest
+      wrapIfNeeded()
+      return
+    }
+    index = best
+  }
+
+  const pauseForUser = () => {
+    paused = true
+    stop()
+    if (resumeTimer !== undefined) window.clearTimeout(resumeTimer)
+  }
+
+  const resumeLater = () => {
+    syncIndexFromScroll()
+    if (resumeTimer !== undefined) window.clearTimeout(resumeTimer)
+    resumeTimer = window.setTimeout(() => {
+      paused = false
+      start()
+    }, 3000)
+  }
+
+  rail.addEventListener('scrollend', () => {
+    if (paused) syncIndexFromScroll()
+    else wrapIfNeeded()
+  })
+  rail.addEventListener('pointerdown', pauseForUser)
+  rail.addEventListener('touchstart', pauseForUser, { passive: true })
+  rail.addEventListener('wheel', pauseForUser, { passive: true })
+  rail.addEventListener('pointerup', resumeLater)
+  rail.addEventListener('touchend', resumeLater, { passive: true })
+  rail.addEventListener('mouseenter', pauseForUser)
+  rail.addEventListener('mouseleave', resumeLater)
+
+  // Start aligned to the first card
+  goTo(0, 'auto')
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        inView = entry.isIntersecting && entry.intersectionRatio >= 0.25
+        if (inView) start()
+        else stop()
+      }
+    },
+    { threshold: [0, 0.25, 0.5] },
+  )
+  io.observe(rail)
+}
+
 export function bootMotion(root: HTMLElement): void {
   lockScrollToTop()
   initPageMotion(root)
   initPromiseFilms(root)
+  initReviewRails(root)
 }

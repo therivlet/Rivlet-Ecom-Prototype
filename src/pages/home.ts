@@ -80,7 +80,7 @@ app.innerHTML = `<div data-page-content>
         />
       </h1>
       <p class="hero__motto">Move like water, feel like air.</p>
-      <p class="hero__support">A wardrobe engineered for tropical heat and long days — no patch, no smell, no rub. Indian-crafted. Globally held.</p>
+      <p class="hero__support">A wardrobe engineered for tropical heat and long days - no patch, no smell, no rub. Indian-crafted. Globally held.</p>
       <a class="btn btn--light hero__cta" href="${shopHref()}">Explore Collection</a>
     </div>
   </section>
@@ -90,7 +90,7 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head">
         <p class="eyebrow">The friction</p>
         <h2 class="display">Western activewear wasn’t built for this climate.</h2>
-        <p class="lede">In humidity, sweat doesn’t leave — it spreads. Waistbands stay damp. Underarms yellow. Anxiety stays on the body all day.</p>
+        <p class="lede">In humidity, sweat doesn’t leave - it spreads. Waistbands stay damp. Underarms yellow. Anxiety stays on the body all day.</p>
       </div>
     </div>
   </section>
@@ -178,10 +178,28 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head">
         <p class="eyebrow">Collection</p>
         <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
-        <p class="lede">Midnight and Cardamom. XS–2XL. Engineered for South Asian bodies and hard-water realities.</p>
+        <p class="lede">Midnight and Cardamom. XS-2XL. Engineered for South Asian bodies and hard-water realities.</p>
       </div>
       <div class="product-grid">
         ${products.map((p) => productCardHTML(p)).join('')}
+      </div>
+    </div>
+  </section>
+
+  <section class="section coord-home">
+    <div class="container coord-band">
+      <a class="coord-visual coord-visual--photo" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name}">
+        <img class="coord-visual__img" src="${assetHref(coordFront)}" alt="" width="900" height="1200" loading="lazy" />
+        <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordAlt)}" alt="" width="900" height="1200" loading="lazy" />
+      </a>
+      <div>
+        <p class="eyebrow">The co-ord</p>
+        <h2 class="display" style="margin:0.75rem 0 1rem">${COORD_SETS.length} pairings. One language.</h2>
+        <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom.</p>
+        <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
+          From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
+        </p>
+        <a class="btn btn--primary" href="./sets/">Shop all sets</a>
       </div>
     </div>
   </section>
@@ -191,7 +209,8 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head section-head--platforms">
         <p class="eyebrow">Fabric platforms</p>
         <h2 class="display">Named tech. Clear outcomes.</h2>
-        <p class="lede">Shop by what the fabric does — not by a sale badge.</p>
+        <p class="lede">AquaFlow™ · SecondSkin™ · NeutralCore™ - shop by what the fabric does, then read the proof.</p>
+        <a class="platforms__learn" href="./stories/">Learn the platforms</a>
       </div>
     </div>
     <div class="platform-runway" role="list">
@@ -211,24 +230,6 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0;background:var(--color-canvas-deep)">
-    <div class="container coord-band">
-      <a class="coord-visual coord-visual--photo" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name}">
-        <img class="coord-visual__img" src="${assetHref(coordFront)}" alt="" width="900" height="1200" loading="lazy" />
-        <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordAlt)}" alt="" width="900" height="1200" loading="lazy" />
-      </a>
-      <div>
-        <p class="eyebrow">The co-ord</p>
-        <h2 class="display" style="margin:0.75rem 0 1rem">${COORD_SETS.length} pairings. One language.</h2>
-        <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee — matched to shorts or leggings in Midnight and Cardamom.</p>
-        <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
-          From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
-        </p>
-        <a class="btn btn--primary" href="./sets/">Shop all sets</a>
-      </div>
-    </div>
-  </section>
-
   <section class="section">
     <div class="container">
       <div class="section-head">
@@ -238,7 +239,7 @@ app.innerHTML = `<div data-page-content>
       <div class="trust-grid">
         <div class="trust-item">
           <h3>South-Asian block</h3>
-          <p>Graded for real proportions — including cup-inclusive support on bras and tanks.</p>
+          <p>Graded for real proportions - including cup-inclusive support on bras and tanks.</p>
         </div>
         <div class="trust-item">
           <h3>Hard-water ready</h3>
@@ -252,27 +253,16 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section section--ink" style="padding-block:clamp(3rem,6vw,4.5rem)">
-    <div class="container fabricology-cta">
-      <div>
-        <p class="eyebrow">Fabric platforms</p>
-        <h2 class="display" style="margin:0.75rem 0 1rem">How Rivlet is engineered.</h2>
-        <p class="lede">AquaFlow™ · SecondSkin™ · NeutralCore™ — feeling first, proof underneath.</p>
-      </div>
-      <a class="btn btn--light" href="./stories/">Learn the platforms</a>
-    </div>
-  </section>
-
   <section class="section">
     <div class="container">
       <div class="section-head">
         <p class="eyebrow">Early voices</p>
         <h2 class="display">Why women stay in it.</h2>
       </div>
-      <div class="reviews">
+      <div class="reviews" role="list" aria-label="Customer reviews">
         ${REVIEWS.map(
           (r) => `
-          <blockquote class="review-card">
+          <blockquote class="review-card" role="listitem">
             <p>“${r.text}”</p>
             <span>${r.name} · ${r.city} · ${'★'.repeat(r.stars)}</span>
           </blockquote>`,
@@ -290,7 +280,7 @@ app.innerHTML = `<div data-page-content>
 
 mountShell(app)
 
-/** Dual-buffer crossfade — avoids the black gap native `loop` leaves between cycles. */
+/** Dual-buffer crossfade - avoids the black gap native `loop` leaves between cycles. */
 function bindSeamlessHeroLoop(): void {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 

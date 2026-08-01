@@ -52,7 +52,7 @@ export function getProfile(): RivletProfile {
   return read().profile
 }
 
-/** Prototype login — any email + password (≥4) succeeds. */
+/** Prototype login - any email + password (≥4) succeeds. */
 export function login(email: string, password: string, name?: string): { ok: true } | { ok: false; error: string } {
   const clean = email.trim().toLowerCase()
   if (!clean.includes('@') || !clean.includes('.')) {

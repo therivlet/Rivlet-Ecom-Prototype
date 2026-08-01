@@ -30,7 +30,7 @@ import {
   wishlistCount,
 } from '../wishlist'
 import { liveSuggestions } from '../search'
-import { bootMotion, initPageMotion } from '../motion'
+import { bootMotion, initPageMotion, initReviewRails } from '../motion'
 
 function pathPrefix(): string {
   const parts = window.location.pathname
@@ -251,7 +251,7 @@ export function renderFooter(): string {
           <img class="site-footer__lockup-img" src="${brand}brand/rivlet-lockup.png" alt="Rivlet" width="800" height="165" />
         </div>
         <p class="site-footer__motto">Move like water, feel like air.</p>
-        <p class="site-footer__lede">Premium Indian-crafted activewear engineered for heat, humidity, and real days — without compromise.</p>
+        <p class="site-footer__lede">Premium Indian-crafted activewear engineered for heat, humidity, and real days - without compromise.</p>
       </div>
       <div class="site-footer__columns">
         <div>
@@ -426,7 +426,7 @@ function renderCartBody(): void {
   if (!lines.length) {
     body.innerHTML = `
       <div class="cart-empty">
-        <p>Your bag is open water — ready for the first piece.</p>
+        <p>Your bag is open water - ready for the first piece.</p>
         <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
       </div>`
     foot.innerHTML = ''
@@ -465,14 +465,14 @@ function renderCartBody(): void {
       ? `<div class="cart-hint">Complete the co-ord with the <a href="${productHref('RVL-SHT-004')}"><strong>Matching Short</strong></a>.</div>`
       : hasShort && !hasCrop
         ? `<div class="cart-hint">Complete the co-ord with the <a href="${productHref('RVL-TNK-003-C')}"><strong>Built-in-Support Crop</strong></a>.</div>`
-        : `<div class="cart-hint">Complete a co-ord — eight pairings in Midnight &amp; Cardamom.</div>`
+        : `<div class="cart-hint">Complete a co-ord - eight pairings in Midnight &amp; Cardamom.</div>`
 
   body.innerHTML += hint
 
   foot.innerHTML = `
     <div class="cart-subtotal"><span>Subtotal</span><strong>${formatPrice(cartSubtotal())}</strong></div>
     <a class="btn btn--primary btn--block" href="${pathPrefix()}checkout/">Checkout</a>
-    <p class="eyebrow" style="text-align:center">Prototype — no payment charged</p>`
+    <p class="eyebrow" style="text-align:center">Prototype - no payment charged</p>`
 }
 
 function renderWishBody(): void {
@@ -485,7 +485,7 @@ function renderWishBody(): void {
     body.innerHTML = `
       <div class="cart-empty wish-empty">
         <p class="eyebrow" style="margin-bottom:0.75rem">Save for later</p>
-        <p>Heart a piece while browsing — no account needed. Move it to your bag when you’re ready.</p>
+        <p>Heart a piece while browsing - no account needed. Move it to your bag when you’re ready.</p>
         <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
       </div>`
     foot.innerHTML = ''
@@ -996,6 +996,7 @@ export {
   getProduct,
   COLORS,
   initPageMotion,
+  initReviewRails,
   toggleWishlist,
   isWishlisted,
 }

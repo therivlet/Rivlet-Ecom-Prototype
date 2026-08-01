@@ -50,7 +50,7 @@ function paint() {
             </div>
             <p class="account-note" data-login-error hidden></p>
             <button class="btn btn--primary btn--block" type="submit">Sign in</button>
-            <p class="account-note">Prototype access — any valid email and a short password works.</p>
+            <p class="account-note">Prototype access - any valid email and a short password works.</p>
           </form>
         </div>
       </section>`
@@ -81,7 +81,7 @@ function paint() {
           <div class="section-head">
             <p class="eyebrow">Account</p>
             <h1 class="display">Hello, ${profile.name.split(' ')[0] || 'there'}.</h1>
-            <p class="lede">Your Rivlet profile — calm, minimal, and ready when you are.</p>
+            <p class="lede">Your Rivlet profile - calm, minimal, and ready when you are.</p>
           </div>
 
           <div class="account-stats">

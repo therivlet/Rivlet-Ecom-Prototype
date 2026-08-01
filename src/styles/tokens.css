@@ -1,5 +1,5 @@
 :root {
-  /* Canvas & ink — warm editorial (therivlet continuity) */
+  /* Canvas & ink - warm editorial (therivlet continuity) */
   --color-canvas: #f7f3ec;
   --color-canvas-deep: #efe8dc;
   --color-surface: #fffcf7;
@@ -67,7 +67,7 @@
   --duration: 280ms;
   --duration-slow: 480ms;
 
-  /* Elevation — barely there */
+  /* Elevation - barely there */
   --shadow-soft: 0 12px 40px rgba(14, 11, 7, 0.06);
 }
 
@@ -75,7 +75,14 @@
   :root {
     --header-h: 3.75rem;
     --header-rail-h: 1.75rem;
-    --text-hero: clamp(2.6rem, 14vw, 4.25rem);
-    --pad-section: clamp(2.75rem, 10vw, 4.5rem);
+    --text-sm: 0.8125rem;
+    --text-base: 0.9375rem;
+    --text-md: 0.975rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.4rem;
+    --text-2xl: clamp(1.5rem, 5.2vw, 2rem);
+    --text-3xl: clamp(1.6rem, 6.8vw, 2.25rem);
+    --text-hero: clamp(2.15rem, 11vw, 3.25rem);
+    --pad-section: clamp(2.5rem, 9vw, 4rem);
   }
 }
