@@ -689,8 +689,6 @@
   .coords-hero__copy {
     position: sticky;
     top: calc(var(--header-h) + var(--header-rail-h) + 1rem);
-    max-height: calc(100svh - var(--header-h) - var(--header-rail-h) - 2rem);
-    overflow-y: auto;
     padding-bottom: var(--space-4);
   }
 }
@@ -1113,8 +1111,6 @@ html.is-image-zooming .coords-hero__stage {
   .pdp-buy {
     position: sticky;
     top: calc(var(--header-h) + var(--header-rail-h) + 1rem);
-    max-height: calc(100svh - var(--header-h) - var(--header-rail-h) - 2rem);
-    overflow-y: auto;
     padding-bottom: var(--space-4);
   }
 }
