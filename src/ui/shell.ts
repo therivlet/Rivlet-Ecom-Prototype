@@ -62,6 +62,11 @@ export function lookProductHref(productId: string, lookSlug: string): string {
   return `${pathPrefix()}product/?${q.toString()}`
 }
 
+/** Looks checkout page for a specific pairing. */
+export function lookHref(lookSlug: string): string {
+  return `${pathPrefix()}sets/?set=${encodeURIComponent(lookSlug)}`
+}
+
 export function shopHref(params: Record<string, string> = {}): string {
   const q = new URLSearchParams(params).toString()
   return `${pathPrefix()}shop/${q ? `?${q}` : ''}`
@@ -467,13 +472,13 @@ function lookMediaHTML(set: CoordSet, color: Colorway): string {
     </div>`
 }
 
-/** Walk-out ready look card — same 2-up product card pattern with Quick add. */
+/** Walk-out ready look card — opens the look checkout page (sets), not a single PDP. */
 export function lookCardHTML(set: CoordSet): string {
   const color: Colorway = 'midnight'
   const top = getProduct(set.topId)
   const bottom = getProduct(set.bottomId)
   const total = coordSetPrice(set)
-  const pdp = lookProductHref(set.topId, set.slug)
+  const href = lookHref(set.slug)
   const saved = isWishlisted(set.topId, color)
   const chip = top?.benefitChip ?? bottom?.benefitChip ?? 'Look'
   const platform = top?.platform ?? bottom?.platform ?? 'SecondSkin™'
@@ -481,7 +486,7 @@ export function lookCardHTML(set: CoordSet): string {
   return `
   <article class="product-card look-product-card" data-look-card="${set.id}" data-look-top="${set.topId}">
     <div class="product-card__media-wrap">
-      <a class="product-card__media" href="${pdp}" aria-label="Shop ${set.name}">
+      <a class="product-card__media" href="${href}" aria-label="Shop ${set.name} look">
         ${lookMediaHTML(set, color)}
       </a>
       <span class="platform-badge ${platformBadgeClass(platform)}">${platform}</span>
@@ -498,7 +503,7 @@ export function lookCardHTML(set: CoordSet): string {
       <div class="product-card__meta product-card__meta--chips">
         <span class="benefit-chip">${chip}</span>
       </div>
-      <a class="product-card__name" href="${pdp}">${set.name}</a>
+      <a class="product-card__name" href="${href}">${set.name}</a>
       <div class="product-card__meta">
         <span class="product-card__price">${formatPrice(total)}</span>
         <div class="color-dots" aria-label="Colours">
@@ -511,7 +516,7 @@ export function lookCardHTML(set: CoordSet): string {
         </div>
       </div>
       <div class="product-card__actions">
-        <button class="btn btn--primary" type="button" data-quick-add="${set.topId}">Quick add</button>
+        <a class="btn btn--primary" href="${href}">Shop look</a>
       </div>
     </div>
   </article>`

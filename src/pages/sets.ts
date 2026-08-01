@@ -43,17 +43,18 @@ function setCardHTML(set: CoordSet): string {
   const bottom = getProduct(set.bottomId)
   const total = coordSetPrice(set)
   const selected = set.id === activeId
-  const pdp = lookProductHref(set.topId, set.slug)
 
   return `
   <article class="coord-card look-card ${selected ? 'is-active' : ''}" data-coord-card="${set.id}">
-    <a class="coord-card__media" href="${pdp}" aria-label="Shop ${set.name}">
+    <button type="button" class="coord-card__media" data-select-set="${set.id}" aria-label="Select ${set.name} look">
       <img class="coord-card__img" src="${assetHref(front)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
       <img class="coord-card__img coord-card__img--alt" src="${assetHref(alt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-    </a>
+    </button>
     <div class="coord-card__body">
       <div class="coord-card__top">
-        <h3 class="coord-card__name"><a href="${pdp}">${set.name}</a></h3>
+        <h3 class="coord-card__name">
+          <button type="button" class="coord-card__name-btn" data-select-set="${set.id}">${set.name}</button>
+        </h3>
         <p class="coord-card__price">${formatPrice(total)}</p>
       </div>
       <p class="coord-card__blurb">${set.blurb}</p>
@@ -75,9 +76,8 @@ function setCardHTML(set: CoordSet): string {
           .join('')}
       </div>
       <div class="look-card__actions">
-        <a class="btn btn--primary btn--block look-card__cta" href="${pdp}">Shop this look</a>
-        <button type="button" class="look-card__style" data-select-set="${set.id}">
-          Style both pieces
+        <button type="button" class="btn btn--primary btn--block look-card__cta" data-select-set="${set.id}">
+          Shop this look
         </button>
       </div>
     </div>
@@ -179,7 +179,7 @@ function render() {
         <div class="section-head">
           <p class="eyebrow">Walk-out ready</p>
           <h2 class="display">Eight looks. Two colours.</h2>
-          <p class="lede">Tap a look to open the product - or colour it here and add both pieces.</p>
+          <p class="lede">Tap a look to style both pieces - colour, size, and add the look to bag.</p>
         </div>
         <div class="coord-grid">
           ${COORD_SETS.map((s) => setCardHTML(s)).join('')}

@@ -9,7 +9,7 @@ import {
   products,
   shopHref,
   assetHref,
-  lookProductHref,
+  lookHref,
 } from '../ui/shell'
 import {
   COORD_SET,
@@ -182,11 +182,11 @@ app.innerHTML = `<div data-page-content>
     <div class="container">
       <div class="coord-band">
         <div class="coord-visual">
-          <a class="coord-visual__panel" href="${lookProductHref(COORD_SET.topId, COORD_SET.slug)}" aria-label="${COORD_SET.name} in Midnight">
+          <a class="coord-visual__panel" href="${lookHref(COORD_SET.slug)}" aria-label="${COORD_SET.name} in Midnight">
             <img class="coord-visual__img" src="${assetHref(coordMidnightFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
             <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordMidnightAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
           </a>
-          <a class="coord-visual__panel" href="${lookProductHref(COORD_SET.topId, COORD_SET.slug)}" aria-label="${COORD_SET.name} in Cardamom">
+          <a class="coord-visual__panel" href="${lookHref(COORD_SET.slug)}" aria-label="${COORD_SET.name} in Cardamom">
             <img class="coord-visual__img" src="${assetHref(coordCardamomFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
             <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordCardamomAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
           </a>
@@ -194,11 +194,11 @@ app.innerHTML = `<div data-page-content>
         <div>
           <p class="eyebrow">Looks</p>
           <h2 class="display" style="margin:0.75rem 0 1rem">One decision. Fully dressed.</h2>
-          <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom. Tap a look and land on the piece.</p>
+          <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom. Tap a look to open the look checkout.</p>
           <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
             From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
           </p>
-          <a class="btn btn--primary" href="${lookProductHref(COORD_SET.topId, COORD_SET.slug)}">Shop this look</a>
+          <a class="btn btn--primary" href="${lookHref(COORD_SET.slug)}">Shop this look</a>
         </div>
       </div>
 

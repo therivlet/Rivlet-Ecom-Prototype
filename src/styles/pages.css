@@ -603,12 +603,20 @@
   color: var(--color-navy);
 }
 
-.coord-card__name a {
+.coord-card__name a,
+.coord-card__name-btn {
   color: inherit;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.coord-card__name a:hover {
+.coord-card__name a:hover,
+.coord-card__name-btn:hover {
   color: var(--color-navy);
 }
 
