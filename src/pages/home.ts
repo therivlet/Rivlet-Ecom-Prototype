@@ -3,13 +3,21 @@ import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
 import { mountShell, productCardHTML, products, shopHref, assetHref } from '../ui/shell'
-import { COORD_SET, FABRIC_PLATFORMS, REVIEWS, SITUATIONS, formatPrice, getProduct } from '../data/products'
+import {
+  COORD_SET,
+  COORD_SETS,
+  FABRIC_PLATFORMS,
+  REVIEWS,
+  SITUATIONS,
+  coordSetPrice,
+  formatPrice,
+  getCoordImages,
+} from '../data/products'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
 
-const top = getProduct(COORD_SET.topId)
-const bottom = getProduct(COORD_SET.bottomId)
+const [coordFront, coordAlt] = getCoordImages(COORD_SET, 'midnight')
 
 const PROMISE_FILMS = [
   {
@@ -178,41 +186,45 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section" style="background:var(--color-canvas-deep)">
+  <section class="section platforms">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--platforms">
         <p class="eyebrow">Fabric platforms</p>
         <h2 class="display">Named tech. Clear outcomes.</h2>
         <p class="lede">Shop by what the fabric does — not by a sale badge.</p>
       </div>
-      <div class="platform-grid">
-        ${FABRIC_PLATFORMS.map(
-          (f) => `
-          <a class="platform-card" href="${shopHref({ platform: f.id })}">
-            <p class="eyebrow">${f.label}</p>
-            <h3>${f.outcome}</h3>
-            <p>${f.blurb}</p>
+    </div>
+    <div class="platform-runway" role="list">
+      ${FABRIC_PLATFORMS.map(
+        (f) => `
+        <a class="platform-card" href="${shopHref({ platform: f.id })}" role="listitem" aria-label="${f.label}">
+          <img class="platform-card__img" src="${assetHref(f.image)}" alt="" width="1200" height="1500" loading="lazy" decoding="async" />
+          <span class="platform-card__veil" aria-hidden="true"></span>
+          <span class="platform-card__meta">
+            <span class="platform-card__label">${f.label}</span>
+            <strong class="platform-card__title">${f.outcome}</strong>
+            <span class="platform-card__blurb">${f.blurb}</span>
             <span class="platform-card__cta">Shop platform</span>
-          </a>`,
-        ).join('')}
-      </div>
+          </span>
+        </a>`,
+      ).join('')}
     </div>
   </section>
 
   <section class="section" style="padding-top:0;background:var(--color-canvas-deep)">
     <div class="container coord-band">
-      <div class="coord-visual" aria-hidden="true">
-        <div></div>
-        <div></div>
-      </div>
+      <a class="coord-visual coord-visual--photo" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name}">
+        <img class="coord-visual__img" src="${assetHref(coordFront)}" alt="" width="900" height="1200" loading="lazy" />
+        <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordAlt)}" alt="" width="900" height="1200" loading="lazy" />
+      </a>
       <div>
         <p class="eyebrow">The co-ord</p>
-        <h2 class="display" style="margin:0.75rem 0 1rem">${COORD_SET.name}</h2>
-        <p class="lede" style="margin-bottom:1.5rem">${COORD_SET.blurb}</p>
+        <h2 class="display" style="margin:0.75rem 0 1rem">${COORD_SETS.length} pairings. One language.</h2>
+        <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee — matched to shorts or leggings in Midnight and Cardamom.</p>
         <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
-          ${top?.name ?? 'Crop'} ${formatPrice(top?.mrp ?? 0)} + ${bottom?.name ?? 'Short'} ${formatPrice(bottom?.mrp ?? 0)}
+          From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
         </p>
-        <a class="btn btn--primary" href="./sets/">Shop the set</a>
+        <a class="btn btn--primary" href="./sets/">Shop all sets</a>
       </div>
     </div>
   </section>

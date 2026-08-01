@@ -218,6 +218,23 @@ export const products: Product[] = [
     situations: ['office', 'travel', 'gym', 'summer'],
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
+    images: {
+      midnight: [
+        'media/products/midnight-tank-1.png',
+        'media/products/midnight-tank-2.png',
+        'media/products/midnight-tank-3.png',
+        'media/products/midnight-tank-6.png',
+        'media/products/midnight-tank-4.png',
+        'media/products/midnight-tank-5.png',
+        'media/products/midnight-tank-7.png',
+      ],
+      cardamom: [
+        'media/products/cardamom-tank-1.png',
+        'media/products/cardamom-tank-2.png',
+        'media/products/cardamom-tank-3.png',
+        'media/products/cardamom-tank-4.png',
+      ],
+    },
     cupInclusive: true,
     setWith: ['RVL-LEG-001', 'RVL-SHT-004'],
   },
@@ -291,16 +308,197 @@ export const products: Product[] = [
     situations: ['gym', 'office', 'travel', 'summer'],
     colors: [COLORS.midnight, COLORS.cardamom],
     sizes: SIZES,
+    images: {
+      midnight: [
+        'media/products/midnight-tee-1.png',
+        'media/products/midnight-tee-2.png',
+        'media/products/midnight-tee-3.png',
+      ],
+      cardamom: [
+        'media/products/cardamom-tee-1.png',
+        'media/products/cardamom-tee-2.png',
+        'media/products/cardamom-tee-3.png',
+        'media/products/cardamom-tee-4.png',
+        'media/products/cardamom-tee-5.png',
+      ],
+    },
     setWith: ['RVL-LEG-001', 'RVL-SHT-004'],
   },
 ]
 
-export const COORD_SET = {
-  id: 'SET-CROP-SHORT',
-  name: 'Crop + Short Co-ord',
-  topId: 'RVL-TNK-003-C',
-  bottomId: 'RVL-SHT-004',
-  blurb: 'One fabric. One colour. Graded together — so one design sells as a set.',
+export interface CoordSet {
+  id: string
+  slug: string
+  name: string
+  topId: string
+  bottomId: string
+  blurb: string
+  /** Front + alt image paths per colourway (hover uses index 1). */
+  images: Record<Colorway, [string, string]>
+}
+
+export const COORD_SETS: CoordSet[] = [
+  {
+    id: 'SET-BRA-SHORT',
+    slug: 'bra-shorts',
+    name: 'Sports Bra + Shorts',
+    topId: 'RVL-BRA-002',
+    bottomId: 'RVL-SHT-004',
+    blurb: 'Support and hold, graded as one language.',
+    images: {
+      midnight: [
+        'media/coords/bra-shorts-midnight-1.png',
+        'media/coords/bra-shorts-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/bra-shorts-cardamom-1.png',
+        'media/coords/bra-shorts-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-BRA-LEG',
+    slug: 'bra-leggings',
+    name: 'Sports Bra + Leggings',
+    topId: 'RVL-BRA-002',
+    bottomId: 'RVL-LEG-001',
+    blurb: 'Full-body hold for training days that run long.',
+    images: {
+      midnight: [
+        'media/coords/bra-leggings-midnight-1.png',
+        'media/coords/bra-leggings-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/bra-leggings-cardamom-1.png',
+        'media/coords/bra-leggings-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-TEE-SHORT',
+    slug: 'tee-shorts',
+    name: 'Training Tee + Shorts',
+    topId: 'RVL-TEE-005',
+    bottomId: 'RVL-SHT-004',
+    blurb: 'Commute-ready top. Stay-put short underneath.',
+    images: {
+      midnight: [
+        'media/coords/tee-shorts-midnight-1.png',
+        'media/coords/tee-shorts-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/tee-shorts-cardamom-1.png',
+        'media/coords/tee-shorts-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-TEE-LEG',
+    slug: 'tee-leggings',
+    name: 'Training Tee + Leggings',
+    topId: 'RVL-TEE-005',
+    bottomId: 'RVL-LEG-001',
+    blurb: 'The quiet uniform — from session to street.',
+    images: {
+      midnight: [
+        'media/coords/tee-leggings-midnight-1.png',
+        'media/coords/tee-leggings-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/tee-leggings-cardamom-1.png',
+        'media/coords/tee-leggings-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-TANK-LEG',
+    slug: 'tank-leggings',
+    name: 'Tank + Leggings',
+    topId: 'RVL-TNK-003-F',
+    bottomId: 'RVL-LEG-001',
+    blurb: 'Full-length calm. Built-in support, all-day rise.',
+    images: {
+      midnight: [
+        'media/coords/tank-leggings-midnight-1.png',
+        'media/coords/tank-leggings-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/tank-leggings-cardamom-1.png',
+        'media/coords/tank-leggings-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-TANK-SHORT',
+    slug: 'tank-shorts',
+    name: 'Tank + Shorts',
+    topId: 'RVL-TNK-003-F',
+    bottomId: 'RVL-SHT-004',
+    blurb: 'Layerable tank. Matched short. Heat-ready.',
+    images: {
+      midnight: [
+        'media/coords/tank-shorts-midnight-1.png',
+        'media/coords/tank-shorts-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/tank-shorts-cardamom-1.png',
+        'media/coords/tank-shorts-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-CROP-LEG',
+    slug: 'crop-leggings',
+    name: 'Crop + Leggings',
+    topId: 'RVL-TNK-003-C',
+    bottomId: 'RVL-LEG-001',
+    blurb: 'Cropped support over leggings that disappear.',
+    images: {
+      midnight: [
+        'media/coords/crop-leggings-midnight-1.png',
+        'media/coords/crop-leggings-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/crop-leggings-cardamom-1.png',
+        'media/coords/crop-leggings-cardamom-2.png',
+      ],
+    },
+  },
+  {
+    id: 'SET-CROP-SHORT',
+    slug: 'crop-shorts',
+    name: 'Crop + Shorts',
+    topId: 'RVL-TNK-003-C',
+    bottomId: 'RVL-SHT-004',
+    blurb: 'One fabric. One colour. Graded together.',
+    images: {
+      midnight: [
+        'media/coords/crop-shorts-midnight-1.png',
+        'media/coords/crop-shorts-midnight-2.png',
+      ],
+      cardamom: [
+        'media/coords/crop-shorts-cardamom-1.png',
+        'media/coords/crop-shorts-cardamom-2.png',
+      ],
+    },
+  },
+]
+
+/** Featured / default co-ord (legacy alias). */
+export const COORD_SET = COORD_SETS.find((s) => s.id === 'SET-CROP-SHORT')!
+
+export function getCoordSet(id: string): CoordSet | undefined {
+  return COORD_SETS.find((s) => s.id === id || s.slug === id)
+}
+
+export function getCoordImages(set: CoordSet, color: Colorway): [string, string] {
+  return set.images[color]
+}
+
+export function coordSetPrice(set: CoordSet): number {
+  const top = getProduct(set.topId)
+  const bottom = getProduct(set.bottomId)
+  return (top?.mrp ?? 0) + (bottom?.mrp ?? 0)
 }
 
 export function formatPrice(inr: number): string {
@@ -324,24 +522,28 @@ export const FABRIC_PLATFORMS: {
   label: string
   blurb: string
   outcome: string
+  image: string
 }[] = [
   {
     id: 'AquaFlow™',
     label: 'AquaFlow™',
     blurb: 'Visibly dry. Chafe-free. Built for humidity.',
     outcome: 'Leggings that disappear on the body',
+    image: 'media/platforms/aquaflow.png',
   },
   {
     id: 'SecondSkin™',
     label: 'SecondSkin™',
     blurb: 'Seamless support. Zoned barriers. All-day fresh.',
     outcome: 'Bra, tanks & short — one fabric language',
+    image: 'media/platforms/secondskin.png',
   },
   {
     id: 'NeutralCore™',
     label: 'NeutralCore™',
     blurb: 'No patch. No yellow stain. Commute-ready.',
     outcome: 'The tee that doesn’t announce your workout',
+    image: 'media/platforms/neutralcore.png',
   },
 ]
 

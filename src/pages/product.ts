@@ -3,7 +3,19 @@ import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
 import { COLORS, REVIEWS, formatPrice, getProduct, getProductImages, type Colorway, type Size } from '../data/products'
-import { addCoordSet, addToCart, mountShell, openCart, productCardHTML, products, initPageMotion, toggleWishlist, isWishlisted, assetHref } from '../ui/shell'
+import {
+  addCoordSet,
+  addToCart,
+  mountShell,
+  openCart,
+  productCardHTML,
+  products,
+  initPageMotion,
+  toggleWishlist,
+  isWishlisted,
+  assetHref,
+} from '../ui/shell'
+import { bindImageZoom } from '../ui/imageZoom'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
@@ -28,8 +40,12 @@ if (!product) {
   let color: Colorway = product.colors[0].id
   let size: Size | null = null
   let galleryTone = 0
+  let motionReady = false
+  let unbindZoom: (() => void) | null = null
 
-  const related = products.filter((p) => product.setWith?.includes(p.id) || (p.category === product.category && p.id !== product.id)).slice(0, 3)
+  const related = products
+    .filter((p) => product.setWith?.includes(p.id) || (p.category === product.category && p.id !== product.id))
+    .slice(0, 3)
 
   function swatch(hex: string, tone = 0): string {
     const shifts = [
@@ -40,38 +56,201 @@ if (!product) {
     return shifts[tone % shifts.length]
   }
 
-  let motionReady = false
+  function canZoom(): boolean {
+    return window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)').matches
+  }
+
+  function bindGalleryInteractions(gallery: string[]): void {
+    const stage = content!.querySelector<HTMLElement>('[data-zoom-stage]')
+    const img = content!.querySelector<HTMLImageElement>('[data-hero-img]')
+    const lens = content!.querySelector<HTMLElement>('[data-zoom-lens]')
+    const pane = content!.querySelector<HTMLElement>('[data-zoom-pane]')
+    const cover = content!.querySelector<HTMLElement>('.pdp-buy')
+    if (!stage || !img) return
+
+    const setTone = (index: number) => {
+      if (!gallery.length) {
+        galleryTone = index
+        paint()
+        return
+      }
+      const next = ((index % gallery.length) + gallery.length) % gallery.length
+      if (next === galleryTone) return
+      galleryTone = next
+      const src = assetHref(gallery[galleryTone])
+      img.src = src
+      content!.querySelectorAll<HTMLElement>('[data-tone]').forEach((btn) => {
+        btn.classList.toggle('is-active', Number(btn.dataset.tone) === galleryTone)
+      })
+      const dots = content!.querySelectorAll<HTMLElement>('[data-gallery-dot]')
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === galleryTone))
+    }
+
+    content!.querySelectorAll<HTMLElement>('[data-tone]').forEach((btn) => {
+      const i = Number(btn.dataset.tone)
+      btn.addEventListener('click', () => setTone(i))
+      btn.addEventListener('mouseenter', () => {
+        if (canZoom() || window.matchMedia('(hover: hover)').matches) setTone(i)
+      })
+    })
+
+    if (lens && pane && cover && gallery.length) {
+      unbindZoom = bindImageZoom({ stage, img, lens, pane, cover, enabled: canZoom })
+    }
+
+    /* —— Swipe / drag to next image —— */
+    if (gallery.length > 1) {
+      let startX = 0
+      let startY = 0
+      let dragging = false
+      let locked: 'h' | 'v' | null = null
+
+      stage.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (e.pointerType === 'mouse' && e.button !== 0) return
+          startX = e.clientX
+          startY = e.clientY
+          dragging = true
+          locked = null
+          stage.setPointerCapture?.(e.pointerId)
+        },
+        { passive: true },
+      )
+
+      stage.addEventListener(
+        'pointermove',
+        (e) => {
+          if (!dragging) return
+          const dx = e.clientX - startX
+          const dy = e.clientY - startY
+          if (!locked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+            locked = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v'
+          }
+        },
+        { passive: true },
+      )
+
+      const endDrag = (e: PointerEvent) => {
+        if (!dragging) return
+        dragging = false
+        const dx = e.clientX - startX
+        if (locked === 'h' && Math.abs(dx) > 48) {
+          setTone(galleryTone + (dx < 0 ? 1 : -1))
+        }
+        locked = null
+      }
+
+      stage.addEventListener('pointerup', endDrag)
+      stage.addEventListener('pointercancel', endDrag)
+    }
+
+    content!.querySelectorAll<HTMLElement>('[data-gallery-prev]').forEach((btn) => {
+      btn.addEventListener('click', () => setTone(galleryTone - 1))
+    })
+    content!.querySelectorAll<HTMLElement>('[data-gallery-next]').forEach((btn) => {
+      btn.addEventListener('click', () => setTone(galleryTone + 1))
+    })
+  }
 
   function paint() {
+    unbindZoom?.()
+    unbindZoom = null
+
     const hex = COLORS[color].hex
     const gallery = getProductImages(product!, color)
     const hasPhotos = gallery.length > 0
-    const activeSrc = hasPhotos ? assetHref(gallery[galleryTone % gallery.length]) : ''
+    if (hasPhotos) galleryTone = galleryTone % gallery.length
+    else galleryTone = galleryTone % 3
+    const activeSrc = hasPhotos ? assetHref(gallery[galleryTone]) : ''
     const thumbCount = hasPhotos ? gallery.length : 3
 
     content!.innerHTML = `
       <div class="container pdp">
-        <div class="pdp-gallery">
-          <div class="pdp-gallery__hero ${hasPhotos ? 'pdp-gallery__hero--photo' : ''}" ${hasPhotos ? '' : `style="background:${swatch(hex, galleryTone)}"`} data-hero>
-            ${hasPhotos ? `<img src="${activeSrc}" alt="${product!.name} in ${COLORS[color].name}" width="764" height="1024" />` : ''}
+        <div class="pdp-main">
+          <div class="pdp-gallery">
+            <div class="pdp-gallery__stage">
+              <div
+                class="pdp-gallery__hero ${hasPhotos ? 'pdp-gallery__hero--photo' : ''}"
+                ${hasPhotos ? '' : `style="background:${swatch(hex, galleryTone)}"`}
+                data-zoom-stage
+                data-hero
+              >
+                ${
+                  hasPhotos
+                    ? `<img class="pdp-gallery__img" data-hero-img src="${activeSrc}" alt="${product!.name} in ${COLORS[color].name}" width="764" height="1024" draggable="false" />`
+                    : ''
+                }
+                ${hasPhotos ? `<div class="pdp-zoom-lens" data-zoom-lens hidden></div>` : ''}
+                ${
+                  hasPhotos && gallery.length > 1
+                    ? `
+                  <div class="pdp-gallery__nav" aria-hidden="false">
+                    <button type="button" class="pdp-gallery__arrow" data-gallery-prev aria-label="Previous image">‹</button>
+                    <button type="button" class="pdp-gallery__arrow" data-gallery-next aria-label="Next image">›</button>
+                  </div>
+                  <div class="pdp-gallery__dots" role="tablist" aria-label="Image position">
+                    ${gallery
+                      .map(
+                        (_, i) =>
+                          `<button type="button" class="pdp-gallery__dot ${i === galleryTone ? 'is-active' : ''}" data-gallery-dot data-tone="${i}" aria-label="Image ${i + 1}"></button>`,
+                      )
+                      .join('')}
+                  </div>`
+                    : ''
+                }
+              </div>
+              ${hasPhotos ? `<div class="pdp-zoom-pane" data-zoom-pane hidden aria-hidden="true"></div>` : ''}
+            </div>
+            <div class="pdp-gallery__thumbs" style="grid-template-columns: repeat(${thumbCount}, 1fr)">
+              ${Array.from({ length: thumbCount }, (_, i) => {
+                if (hasPhotos) {
+                  const src = assetHref(gallery[i])
+                  return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" aria-label="View angle ${i + 1}"><img src="${src}" alt="" width="200" height="200" /></button>`
+                }
+                return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" style="background:${swatch(hex, i)}" aria-label="View angle ${i + 1}"></button>`
+              }).join('')}
+            </div>
+            ${hasPhotos && gallery.length > 1 ? `<p class="pdp-gallery__hint">Hover to zoom · Swipe or drag for next view</p>` : ''}
           </div>
-          <div class="pdp-gallery__thumbs" style="grid-template-columns: repeat(${thumbCount}, 1fr)">
-            ${Array.from({ length: thumbCount }, (_, i) => {
-              if (hasPhotos) {
-                const src = assetHref(gallery[i])
-                return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" aria-label="View angle ${i + 1}"><img src="${src}" alt="" width="200" height="200" /></button>`
-              }
-              return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" style="background:${swatch(hex, i)}" aria-label="View angle ${i + 1}"></button>`
-            }).join('')}
+
+          <div class="pdp-story pdp-story--rail">
+            <div class="story-block">
+              <p class="eyebrow">How it feels</p>
+              <h2>${product!.benefitChip}</h2>
+              <p class="lede">${product!.feeling}</p>
+            </div>
+            <div class="story-block">
+              <p class="eyebrow">Problem → solution</p>
+              <h2>What this piece resolves</h2>
+              <ul class="story-list">
+                ${product!.problems.map((p) => `<li><strong>${p.title}</strong><span>${p.solution}</span></li>`).join('')}
+              </ul>
+            </div>
+            <div class="story-block">
+              <p class="eyebrow">Technology</p>
+              <h2>${product!.platform}</h2>
+              <p style="color:var(--color-ink-soft);margin-bottom:1rem">${product!.material} · ${product!.gsm}</p>
+              <ul class="tech-list">
+                ${product!.tech.map((t) => `<li>${t}</li>`).join('')}
+              </ul>
+            </div>
+            <div class="story-block">
+              <p class="eyebrow">Fit</p>
+              <h2>${product!.fit}</h2>
+              <p class="lede">${product!.fitNotes}</p>
+              ${product!.support ? `<p class="eyebrow" style="margin-top:1rem">Support · ${product!.support}</p>` : ''}
+            </div>
           </div>
         </div>
-        <div class="pdp-buy">
-          <p class="eyebrow">${product!.platform} Â· ${product!.role}</p>
+
+        <aside class="pdp-buy">
+          <p class="eyebrow">${product!.platform} · ${product!.role}</p>
           <h1>${product!.name}</h1>
           <p class="product-card__price">${formatPrice(product!.mrp)}</p>
           <p style="color:var(--color-ink-soft)">${product!.feeling}</p>
           <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Colour Â· ${COLORS[color].name}</p>
+            <p class="eyebrow" style="margin-bottom:0.75rem">Colour · ${COLORS[color].name}</p>
             <div class="color-picker">
               ${product!.colors
                 .map(
@@ -82,7 +261,7 @@ if (!product) {
             </div>
           </div>
           <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Size ${product!.cupInclusive ? 'Â· cup-inclusive' : ''}</p>
+            <p class="eyebrow" style="margin-bottom:0.75rem">Size ${product!.cupInclusive ? '· cup-inclusive' : ''}</p>
             <div class="size-grid">
               ${product!.sizes
                 .map(
@@ -91,7 +270,7 @@ if (!product) {
                 )
                 .join('')}
             </div>
-            <p class="fit-note">Fits true to size Â· South-Asian block Â· XSâ€“2XL</p>
+            <p class="fit-note">Fits true to size · South-Asian block · XS–2XL</p>
           </div>
           <button class="btn btn--primary btn--block" type="button" data-atc ${size ? '' : 'disabled'}>Add to bag</button>
           <button class="btn btn--ghost btn--block wish-pdp ${isWishlisted(product!.id, color) ? 'is-on' : ''}" type="button" data-pdp-wish>
@@ -103,45 +282,19 @@ if (!product) {
               : ''
           }
           <ul class="trust-strip">
-            <li>Easy exchanges Â· prototype preview</li>
+            <li>Easy exchanges · prototype preview</li>
             <li>${product!.platform} engineered</li>
             <li>${product!.heroFeature}</li>
           </ul>
-        </div>
+        </aside>
       </div>
 
-      <div class="container pdp-story">
-        <div class="story-block">
-          <p class="eyebrow">How it feels</p>
-          <h2>${product!.benefitChip}</h2>
-          <p class="lede">${product!.feeling}</p>
-        </div>
-        <div class="story-block">
-          <p class="eyebrow">Problem â†’ solution</p>
-          <h2>What this piece resolves</h2>
-          <ul class="story-list">
-            ${product!.problems.map((p) => `<li><strong>${p.title}</strong><span>${p.solution}</span></li>`).join('')}
-          </ul>
-        </div>
-        <div class="story-block">
-          <p class="eyebrow">Technology</p>
-          <h2>${product!.platform}</h2>
-          <p style="color:var(--color-ink-soft);margin-bottom:1rem">${product!.material} Â· ${product!.gsm}</p>
-          <ul class="tech-list">
-            ${product!.tech.map((t) => `<li>${t}</li>`).join('')}
-          </ul>
-        </div>
-        <div class="story-block">
-          <p class="eyebrow">Fit</p>
-          <h2>${product!.fit}</h2>
-          <p class="lede">${product!.fitNotes}</p>
-          ${product!.support ? `<p class="eyebrow" style="margin-top:1rem">Support Â· ${product!.support}</p>` : ''}
-        </div>
-        <div class="story-block">
+      <div class="container pdp-story pdp-story--full">
+        <div class="story-block" id="reviews">
           <p class="eyebrow">Reviews</p>
           <h2>Confidence from the body</h2>
           <div class="reviews">
-            ${REVIEWS.map((r) => `<blockquote class="review-card"><p>â€œ${r.text}â€</p><span>${r.name} Â· ${r.city}</span></blockquote>`).join('')}
+            ${REVIEWS.map((r) => `<blockquote class="review-card"><p>“${r.text}”</p><span>${r.name} · ${r.city}</span></blockquote>`).join('')}
           </div>
         </div>
         <div class="story-block" style="max-width:none">
@@ -166,12 +319,6 @@ if (!product) {
         paint()
       })
     })
-    content!.querySelectorAll<HTMLElement>('[data-tone]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        galleryTone = Number(btn.dataset.tone)
-        paint()
-      })
-    })
     content!.querySelector('[data-atc]')?.addEventListener('click', () => {
       if (!size) return
       addToCart(product!.id, color, size, 1)
@@ -187,6 +334,8 @@ if (!product) {
       paint()
     })
 
+    bindGalleryInteractions(gallery)
+
     if (!motionReady) {
       initPageMotion(content!)
       motionReady = true
@@ -194,5 +343,5 @@ if (!product) {
   }
 
   paint()
-  document.title = `${product.name} Â· Rivlet`
+  document.title = `${product.name} · Rivlet`
 }

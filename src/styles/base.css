@@ -159,7 +159,8 @@ ol {
 
 .reveal.is-in {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  /* Must be `none` — identity translate still creates a containing block for position:fixed. */
+  transform: none;
   will-change: auto;
 }
 
@@ -230,6 +231,16 @@ ol {
     max-height: none !important;
   }
   .promise-film__video {
+    transition: none !important;
+    transform: none !important;
+  }
+  .platform-card__img {
+    transition: none !important;
+    transform: none !important;
+  }
+  .coord-card__img,
+  .coords-hero__img,
+  .coord-visual__img {
     transition: none !important;
     transform: none !important;
   }

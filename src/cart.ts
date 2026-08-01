@@ -82,7 +82,12 @@ export function clearCart(): void {
   write([])
 }
 
-export function addCoordSet(color: Colorway, size: Size): void {
-  addToCart('RVL-TNK-003-C', color, size, 1)
-  addToCart('RVL-SHT-004', color, size, 1)
+export function addCoordSet(
+  color: Colorway,
+  size: Size,
+  topId = 'RVL-TNK-003-C',
+  bottomId = 'RVL-SHT-004',
+): void {
+  addToCart(topId, color, size, 1)
+  addToCart(bottomId, color, size, 1)
 }

@@ -1,6 +1,5 @@
 ﻿import {
   COLORS,
-  COORD_SET,
   SITUATIONS,
   formatPrice,
   getProduct,
@@ -142,9 +141,9 @@ export function renderHeader(): string {
                       <span>Six engineered pieces · Midnight &amp; Cardamom</span>
                     </a>
                     <a class="mega__feature mega__feature--soft" href="${brand}sets/">
-                      <span class="mega__eyebrow">Set</span>
-                      <strong>Crop + Short</strong>
-                      <span>One fabric. One colour. Graded together.</span>
+                      <span class="mega__eyebrow">Sets</span>
+                      <strong>Co-ord edit</strong>
+                      <span>Eight pairings. Midnight &amp; Cardamom.</span>
                     </a>
                   </div>
                 </div>
@@ -259,7 +258,7 @@ export function renderFooter(): string {
           <h3>Shop</h3>
           <ul>
             <li><a href="${shopHref()}">Collection</a></li>
-            <li><a href="${brand}sets/">Co-ord set</a></li>
+            <li><a href="${brand}sets/">Co-ord sets</a></li>
             <li><a href="${shopHref({ form: 'tops' })}">Tops</a></li>
             <li><a href="${shopHref({ form: 'bottoms' })}">Bottoms</a></li>
           </ul>
@@ -466,7 +465,7 @@ function renderCartBody(): void {
       ? `<div class="cart-hint">Complete the co-ord with the <a href="${productHref('RVL-SHT-004')}"><strong>Matching Short</strong></a>.</div>`
       : hasShort && !hasCrop
         ? `<div class="cart-hint">Complete the co-ord with the <a href="${productHref('RVL-TNK-003-C')}"><strong>Built-in-Support Crop</strong></a>.</div>`
-        : `<div class="cart-hint">${COORD_SET.blurb}</div>`
+        : `<div class="cart-hint">Complete a co-ord — eight pairings in Midnight &amp; Cardamom.</div>`
 
   body.innerHTML += hint
 
