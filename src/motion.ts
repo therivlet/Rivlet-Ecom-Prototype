@@ -2,8 +2,8 @@
 
 const REVEAL_SELECTORS = [
   '.section-head',
-  '.promise-item',
-  '.situation-tile',
+  '.promise-film',
+  '.situation-panel',
   '.split-shop__tile',
   '.product-card',
   '.platform-card',
@@ -107,7 +107,61 @@ export function initPageMotion(root: ParentNode = document): void {
   })
 }
 
+/** Autoplay promise films only while in view; pause when off-screen. */
+export function initPromiseFilms(root: ParentNode = document): void {
+  const videos = [...root.querySelectorAll<HTMLVideoElement>('[data-promise-video]')]
+  if (!videos.length) return
+
+  const attachSrc = (video: HTMLVideoElement) => {
+    const src = video.dataset.src
+    if (!src || video.querySelector('source') || video.src) return
+    const source = document.createElement('source')
+    source.src = src
+    source.type = 'video/mp4'
+    video.appendChild(source)
+    video.load()
+  }
+
+  if (reducedMotion()) {
+    videos.forEach((video) => {
+      attachSrc(video)
+      video.pause()
+      video.removeAttribute('autoplay')
+    })
+    return
+  }
+
+  const playSafe = (video: HTMLVideoElement) => {
+    attachSrc(video)
+    video.muted = true
+    video.playsInline = true
+    void video.play().catch(() => {
+      /* muted autoplay usually allowed; ignore blocks */
+    })
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const video = entry.target as HTMLVideoElement
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+          playSafe(video)
+        } else {
+          video.pause()
+        }
+      }
+    },
+    { root: null, threshold: [0, 0.35, 0.6] },
+  )
+
+  videos.forEach((video) => {
+    attachSrc(video)
+    io.observe(video)
+  })
+}
+
 export function bootMotion(root: HTMLElement): void {
   lockScrollToTop()
   initPageMotion(root)
+  initPromiseFilms(root)
 }

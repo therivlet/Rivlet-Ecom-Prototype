@@ -11,19 +11,53 @@ if (!app) throw new Error('#app missing')
 const top = getProduct(COORD_SET.topId)
 const bottom = getProduct(COORD_SET.bottomId)
 
+const PROMISE_FILMS = [
+  {
+    id: 'no-patch',
+    title: 'No patch',
+    blurb: 'Zoned sweat-barriers. Outer face stays dry.',
+    src: 'media/promise/no-patch.mp4',
+  },
+  {
+    id: 'no-smell',
+    title: 'No smell',
+    blurb: 'Silver-ion freshness engineered at fibre level.',
+    src: 'media/promise/no-smell.mp4',
+  },
+  {
+    id: 'no-rub',
+    title: 'No rub',
+    blurb: 'Seamless where chafe starts.',
+    src: 'media/promise/no-rub.mp4',
+  },
+  {
+    id: 'no-ride-up',
+    title: 'No ride-up',
+    blurb: 'No-roll bands. Stay put.',
+    src: 'media/promise/no-ride-up.mp4',
+  },
+] as const
+
 app.innerHTML = `<div data-page-content>
   <section class="hero hero--enter">
     <div class="hero__media" aria-hidden="true">
       <video
-        class="hero__video"
-        autoplay
+        class="hero__video is-active"
         muted
-        loop
         playsinline
-        preload="metadata"
+        preload="auto"
+        data-hero-video
       >
         <source src="${assetHref('media/hero.mp4')}" type="video/mp4" />
-        <source src="${assetHref('media/hero.mov')}" type="video/quicktime" />
+      </video>
+      <video
+        class="hero__video"
+        muted
+        playsinline
+        preload="auto"
+        data-hero-video
+      >
+        <source src="${assetHref('media/hero.mp4')}" type="video/mp4" />
       </video>
     </div>
     <div class="hero__content">
@@ -53,40 +87,58 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section section--ink">
+  <section class="section section--ink promise">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--promise">
         <p class="eyebrow">The promise</p>
         <h2 class="display">Lead with the feeling. Prove with the tech.</h2>
       </div>
-      <div class="promise-grid">
-        <div class="promise-item"><h3>No patch</h3><p>Zoned sweat-barriers that keep the outer face visually dry.</p></div>
-        <div class="promise-item"><h3>No smell</h3><p>Silver-ion freshness engineered at fibre level.</p></div>
-        <div class="promise-item"><h3>No rub</h3><p>Seamless and flatlock construction where chafe starts.</p></div>
-        <div class="promise-item"><h3>No ride-up</h3><p>No-roll bands and silicone grippers that stay put.</p></div>
-      </div>
+    </div>
+    <div class="promise-runway" role="list">
+      ${PROMISE_FILMS.map(
+        (f) => `
+        <article class="promise-film" role="listitem" aria-label="${f.title}">
+          <div class="promise-film__media" aria-hidden="true">
+            <video
+              class="promise-film__video"
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              data-promise-video
+              data-src="${assetHref(f.src)}"
+            ></video>
+          </div>
+          <div class="promise-film__meta">
+            <h3 class="promise-film__title">${f.title}</h3>
+            <p class="promise-film__blurb">${f.blurb}</p>
+          </div>
+        </article>`,
+      ).join('')}
     </div>
   </section>
 
-  <section class="section">
+  <section class="section situations">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--situations">
         <p class="eyebrow">Shop by situation</p>
-        <h2 class="display">What are you shopping for today?</h2>
-        <p class="lede">People think in moments — not categories.</p>
+        <h2 class="display">Where the day takes you.</h2>
+        <p class="lede">Five moments. One wardrobe engineered for each.</p>
       </div>
-      <div class="situation-grid">
-        ${SITUATIONS.map(
-          (s) => `
-          <a class="situation-tile" href="${shopHref({ situation: s.id })}">
-            <img class="situation-tile__img" src="${assetHref(s.image)}" alt="" width="800" height="1000" loading="lazy" />
-            <span class="situation-tile__copy">
-              <strong>${s.label}</strong>
-              <span>${s.blurb}</span>
-            </span>
-          </a>`,
-        ).join('')}
-      </div>
+    </div>
+    <div class="situation-runway" role="list">
+      ${SITUATIONS.map(
+        (s) => `
+        <a class="situation-panel" href="${shopHref({ situation: s.id })}" role="listitem">
+          <img class="situation-panel__img" src="${assetHref(s.image)}" alt="" width="900" height="1200" loading="lazy" />
+          <span class="situation-panel__veil" aria-hidden="true"></span>
+          <span class="situation-panel__meta">
+            <strong class="situation-panel__title">${s.label}</strong>
+            <span class="situation-panel__blurb">${s.blurb}</span>
+            <span class="situation-panel__cta">View edit</span>
+          </span>
+        </a>`,
+      ).join('')}
     </div>
   </section>
 
@@ -226,15 +278,82 @@ app.innerHTML = `<div data-page-content>
 
 mountShell(app)
 
-const heroVideo = document.querySelector<HTMLVideoElement>('.hero__video')
-if (heroVideo && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  heroVideo.muted = true
-  heroVideo.playsInline = true
-  const tryPlay = () => {
-    void heroVideo.play().catch(() => {
-      /* autoplay may be blocked until interaction; muted usually allows it */
+/** Dual-buffer crossfade — avoids the black gap native `loop` leaves between cycles. */
+function bindSeamlessHeroLoop(): void {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  const videos = [...document.querySelectorAll<HTMLVideoElement>('[data-hero-video]')]
+  if (videos.length < 2) return
+
+  let active = videos[0]!
+  let standby = videos[1]!
+  let swapping = false
+  let raf = 0
+  const LEAD = 0.35
+
+  const prep = (v: HTMLVideoElement) => {
+    v.muted = true
+    v.defaultMuted = true
+    v.playsInline = true
+    v.loop = false
+    v.setAttribute('muted', '')
+    v.setAttribute('playsinline', '')
+  }
+  prep(active)
+  prep(standby)
+
+  const playSafe = (v: HTMLVideoElement) => {
+    void v.play().catch(() => {
+      /* muted autoplay usually allowed */
     })
   }
-  if (heroVideo.readyState >= 2) tryPlay()
-  else heroVideo.addEventListener('loadeddata', tryPlay, { once: true })
+
+  const swap = () => {
+    if (swapping) return
+    swapping = true
+    try {
+      standby.currentTime = 0.001
+    } catch {
+      /* ignore seek errors before metadata */
+    }
+    playSafe(standby)
+    standby.classList.add('is-active')
+    active.classList.remove('is-active')
+    const prev = active
+    active = standby
+    standby = prev
+    window.setTimeout(() => {
+      standby.pause()
+      try {
+        standby.currentTime = 0.001
+      } catch {
+        /* ignore */
+      }
+      swapping = false
+    }, 450)
+  }
+
+  const tick = () => {
+    if (Number.isFinite(active.duration) && active.duration > 0) {
+      if (!swapping && active.currentTime >= Math.max(0, active.duration - LEAD)) {
+        swap()
+      }
+    }
+    raf = requestAnimationFrame(tick)
+  }
+
+  playSafe(active)
+  if (active.readyState < 2) {
+    active.addEventListener('loadeddata', () => playSafe(active), { once: true })
+  }
+  raf = requestAnimationFrame(tick)
+  window.addEventListener(
+    'pagehide',
+    () => {
+      cancelAnimationFrame(raf)
+    },
+    { once: true },
+  )
 }
+
+bindSeamlessHeroLoop()

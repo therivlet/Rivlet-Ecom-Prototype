@@ -221,4 +221,16 @@ ol {
     transform: none;
     transition: none;
   }
+  .situation-panel__img,
+  .situation-panel__blurb,
+  .situation-panel__cta {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    max-height: none !important;
+  }
+  .promise-film__video {
+    transition: none !important;
+    transform: none !important;
+  }
 }

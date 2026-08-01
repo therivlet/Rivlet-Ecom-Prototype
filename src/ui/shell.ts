@@ -5,6 +5,7 @@
   formatPrice,
   getProduct,
   getProductImage,
+  getProductImages,
   products,
   type Colorway,
   type Product,
@@ -342,11 +343,21 @@ function swatchStyle(hex: string): string {
 }
 
 function mediaPanelHTML(product: Product, color: Colorway): string {
-  const photo = getProductImage(product, color)
-  if (photo) {
-    return `<div class="swatch-panel swatch-panel--photo" data-card-swatch data-has-photo="true">
-      <img src="${assetHref(photo)}" alt="" width="600" height="800" loading="lazy" />
-    </div>`
+  const images = getProductImages(product, color)
+  if (images.length) {
+    const primary = images[0]!
+    const alt = images[1]
+    return `
+      <div class="swatch-panel swatch-panel--photo" data-card-swatch data-has-photo="true">
+        <img class="swatch-panel__img" src="${assetHref(primary)}" alt="" width="600" height="800" loading="lazy" decoding="async" />
+      </div>
+      ${
+        alt
+          ? `<div class="swatch-panel swatch-panel--photo swatch-panel--alt" data-alt-swatch aria-hidden="true">
+        <img class="swatch-panel__img" src="${assetHref(alt)}" alt="" width="600" height="800" loading="lazy" decoding="async" />
+      </div>`
+          : ''
+      }`
   }
   const hex = COLORS[color].hex
   return `<div class="swatch-panel" data-card-swatch style="${swatchStyle(hex)}"></div>`
@@ -885,25 +896,12 @@ export function mountShell(root: HTMLElement): void {
       e.preventDefault()
       e.stopPropagation()
       const card = colorDot.closest('[data-product-card]')
-      const panel = card?.querySelector<HTMLElement>('[data-card-swatch]')
+      const media = card?.querySelector<HTMLElement>('.product-card__media')
       const productId = card?.getAttribute('data-product-card')
       const product = productId ? getProduct(productId) : undefined
       const colorId = (colorDot.dataset.cardColorId as Colorway) || undefined
-      if (panel && product && colorId) {
-        const photo = getProductImage(product, colorId)
-        if (photo) {
-          panel.classList.add('swatch-panel--photo')
-          panel.dataset.hasPhoto = 'true'
-          panel.removeAttribute('style')
-          panel.innerHTML = `<img src="${assetHref(photo)}" alt="" width="600" height="800" loading="lazy" />`
-        } else {
-          panel.classList.remove('swatch-panel--photo')
-          delete panel.dataset.hasPhoto
-          panel.innerHTML = ''
-          panel.style.cssText = swatchStyle(colorDot.dataset.cardColor)
-        }
-      } else if (panel) {
-        panel.style.cssText = swatchStyle(colorDot.dataset.cardColor)
+      if (media && product && colorId) {
+        media.innerHTML = mediaPanelHTML(product, colorId)
       }
       card?.querySelectorAll('[data-card-color]').forEach((d) => d.classList.remove('is-active'))
       colorDot.classList.add('is-active')
