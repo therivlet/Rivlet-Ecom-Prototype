@@ -110,6 +110,13 @@ ol {
   padding-top: calc(var(--header-h) + var(--header-rail-h) + var(--safe-top));
 }
 
+/* Home mobile: hero runs under a transparent header */
+@media (max-width: 899px) {
+  .page--hero .page__main {
+    padding-top: 0;
+  }
+}
+
 .container {
   width: min(100% - (var(--pad-page) * 2), var(--max-width));
   margin-inline: auto;
@@ -122,6 +129,51 @@ ol {
 
 .section {
   padding-block: var(--pad-section);
+}
+
+/* Shared deep-ocean canvas (The Circle / community band) */
+.ocean-band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #fffcf7;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(42, 78, 112, 0.55) 0%, transparent 58%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(122, 92, 58, 0.18) 0%, transparent 50%),
+    linear-gradient(180deg, #0a1828 0%, var(--color-navy) 42%, #07101c 100%);
+  background-color: var(--color-navy);
+}
+
+.ocean-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 252, 247, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 252, 247, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.ocean-band::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -20%;
+  z-index: 0;
+  width: min(140%, 52rem);
+  height: 45%;
+  translate: -50% 0;
+  background: radial-gradient(ellipse at center, rgba(255, 252, 247, 0.07) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.ocean-band > * {
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {

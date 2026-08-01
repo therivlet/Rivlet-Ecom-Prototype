@@ -73,7 +73,9 @@
 
 @media (max-width: 899px) {
   :root {
-    --header-h: 3.75rem;
+    --header-bar-h: 3.5rem;
+    --header-search-h: 3.15rem;
+    --header-h: calc(var(--header-bar-h) + var(--header-search-h));
     --header-rail-h: 1.75rem;
     --text-sm: 0.8125rem;
     --text-base: 0.9375rem;

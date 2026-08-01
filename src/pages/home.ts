@@ -2,7 +2,15 @@
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
-import { mountShell, productCardHTML, products, shopHref, assetHref } from '../ui/shell'
+import {
+  mountShell,
+  productCardHTML,
+  lookCardHTML,
+  products,
+  shopHref,
+  assetHref,
+  lookProductHref,
+} from '../ui/shell'
 import {
   COORD_SET,
   COORD_SETS,
@@ -92,7 +100,7 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section section--ink promise">
+  <section class="section section--ink promise ocean-band">
     <div class="container">
       <div class="section-head section-head--promise">
         <p class="eyebrow">The promise</p>
@@ -131,7 +139,7 @@ app.innerHTML = `<div data-page-content>
         <p class="lede">Five moments. One wardrobe engineered for each.</p>
       </div>
     </div>
-    <div class="situation-runway" role="list">
+    <div class="situation-runway" role="list" data-situation-rail>
       ${SITUATIONS.map(
         (s) => `
         <a class="situation-panel" href="${shopHref({ situation: s.id })}" role="listitem">
@@ -147,7 +155,7 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section split-shop-home">
     <div class="container">
       <div class="split-shop">
         <a class="split-shop__tile" href="${shopHref({ form: 'tops' })}">
@@ -170,7 +178,45 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section coord-home" id="looks">
+    <div class="container">
+      <div class="coord-band">
+        <div class="coord-visual">
+          <a class="coord-visual__panel" href="${lookProductHref(COORD_SET.topId, COORD_SET.slug)}" aria-label="${COORD_SET.name} in Midnight">
+            <img class="coord-visual__img" src="${assetHref(coordMidnightFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordMidnightAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+          </a>
+          <a class="coord-visual__panel" href="${lookProductHref(COORD_SET.topId, COORD_SET.slug)}" aria-label="${COORD_SET.name} in Cardamom">
+            <img class="coord-visual__img" src="${assetHref(coordCardamomFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordCardamomAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+          </a>
+        </div>
+        <div>
+          <p class="eyebrow">Looks</p>
+          <h2 class="display" style="margin:0.75rem 0 1rem">One decision. Fully dressed.</h2>
+          <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom. Tap a look and land on the piece.</p>
+          <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
+            From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
+          </p>
+          <a class="btn btn--primary" href="${lookProductHref(COORD_SET.topId, COORD_SET.slug)}">Shop this look</a>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top:var(--space-8);margin-bottom:var(--space-5)">
+        <p class="eyebrow">Walk-out ready</p>
+        <h2 class="display">Pick the look. Skip the guesswork.</h2>
+        <p class="lede">Every pairing is shoppable - straight to the product page.</p>
+      </div>
+      <div class="product-grid look-grid">
+        ${COORD_SETS.slice(0, 4).map((s) => lookCardHTML(s)).join('')}
+      </div>
+      <p class="looks-more">
+        <a class="btn btn--primary" href="./sets/">Explore all looks</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section collection-home">
     <div class="container">
       <div class="section-head">
         <p class="eyebrow">Collection</p>
@@ -183,37 +229,12 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section coord-home">
-    <div class="container coord-band">
-      <div class="coord-visual">
-        <a class="coord-visual__panel" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name} in Midnight">
-          <img class="coord-visual__img" src="${assetHref(coordMidnightFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-          <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordMidnightAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-        </a>
-        <a class="coord-visual__panel" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name} in Cardamom">
-          <img class="coord-visual__img" src="${assetHref(coordCardamomFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-          <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordCardamomAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-        </a>
-      </div>
-      <div>
-        <p class="eyebrow">The co-ord</p>
-        <h2 class="display" style="margin:0.75rem 0 1rem">${COORD_SETS.length} pairings. One language.</h2>
-        <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom.</p>
-        <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
-          From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
-        </p>
-        <a class="btn btn--primary" href="./sets/">Shop all sets</a>
-      </div>
-    </div>
-  </section>
-
   <section class="section platforms">
     <div class="container">
       <div class="section-head section-head--platforms">
         <p class="eyebrow">Fabric platforms</p>
         <h2 class="display">Named tech. Clear outcomes.</h2>
         <p class="lede">AquaFlow™ · SecondSkin™ · NeutralCore™ - shop by what the fabric does, then read the proof.</p>
-        <a class="platforms__learn" href="./stories/">Learn the platforms</a>
       </div>
     </div>
     <div class="platform-runway" role="list">
@@ -225,11 +246,16 @@ app.innerHTML = `<div data-page-content>
           <span class="platform-card__meta">
             <span class="platform-card__label">${f.label}</span>
             <strong class="platform-card__title">${f.outcome}</strong>
-            <span class="platform-card__blurb">${f.blurb}</span>
-            <span class="platform-card__cta">Shop platform</span>
+            <span class="platform-card__go">Shop <span aria-hidden="true">→</span></span>
           </span>
         </a>`,
       ).join('')}
+    </div>
+    <div class="platforms-foot">
+      <p class="platforms-foot__line">
+        How AquaFlow™, SecondSkin™, and NeutralCore™ earn their names - and what that means on your body.
+      </p>
+      <a class="platforms-foot__btn" href="./stories/">Learn the platforms</a>
     </div>
   </section>
 
@@ -274,14 +300,97 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section final-cta">
-    <p class="eyebrow">Begin</p>
-    <h2 class="display">Every ocean was first fed by a rivlet.</h2>
-    <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
+  <section class="section final-cta" id="community">
+    <div class="final-cta__media" aria-hidden="true">
+      <img
+        class="final-cta__img"
+        src="${assetHref('media/circle-bg.png')}"
+        alt=""
+        width="2048"
+        height="2048"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="final-cta__veil" aria-hidden="true"></div>
+    <div class="final-cta__inner">
+      <p class="eyebrow final-cta__eyebrow">The circle</p>
+      <h2 class="display final-cta__title">Every ocean was first fed by a rivlet.</h2>
+      <p class="final-cta__lede">Be a rivlet in our ocean. Early drops, fabric notes, and the quiet circle - first.</p>
+      <form class="community-join" data-community-join novalidate>
+        <div class="community-join__row">
+          <div class="community-join__field">
+            <label class="community-join__label" for="community-email">Your email</label>
+            <input
+              id="community-email"
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+              inputmode="email"
+              placeholder="name@domain.com"
+              class="community-join__input"
+            />
+          </div>
+          <button class="community-join__btn" type="submit">
+            <span>Join the ocean</span>
+            <span class="community-join__arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+        <p class="community-join__hint" data-community-hint>Private list. No noise - only the tide.</p>
+      </form>
+    </div>
   </section>
 </div>`
 
 mountShell(app)
+
+function bindCommunityJoin(): void {
+  const form = document.querySelector<HTMLFormElement>('[data-community-join]')
+  const hint = document.querySelector<HTMLElement>('[data-community-hint]')
+  const input = document.querySelector<HTMLInputElement>('#community-email')
+  if (!form || !hint || !input) return
+
+  const KEY = 'rivlet-community-email'
+  const saved = localStorage.getItem(KEY)
+  if (saved) {
+    form.classList.add('is-joined')
+    hint.textContent = `You're in the ocean as ${saved}. Welcome, rivlet.`
+    input.value = saved
+    input.disabled = true
+    const btn = form.querySelector<HTMLButtonElement>('.community-join__btn')
+    if (btn) {
+      btn.disabled = true
+      btn.textContent = "You're in"
+    }
+    return
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const email = input.value.trim().toLowerCase()
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      hint.textContent = 'Enter a valid email to join the community.'
+      hint.classList.add('is-error')
+      form.classList.add('is-error')
+      input.focus()
+      return
+    }
+    localStorage.setItem(KEY, email)
+    form.classList.add('is-joined')
+    form.classList.remove('is-error')
+    hint.classList.remove('is-error')
+    hint.textContent = `You're in the ocean as ${email}. Welcome, rivlet.`
+    input.disabled = true
+    const btn = form.querySelector<HTMLButtonElement>('.community-join__btn')
+    if (btn) {
+      btn.disabled = true
+      btn.textContent = "You're in"
+    }
+  })
+}
+
+bindCommunityJoin()
 
 /** Dual-buffer crossfade - avoids the black gap native `loop` leaves between cycles. */
 function bindSeamlessHeroLoop(): void {

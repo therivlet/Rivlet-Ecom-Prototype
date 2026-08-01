@@ -13,7 +13,7 @@ import {
   type CoordSet,
   type Size,
 } from '../data/products'
-import { addCoordSet, assetHref, mountShell, openCart, initPageMotion } from '../ui/shell'
+import { addCoordSet, assetHref, lookProductHref, mountShell, openCart, initPageMotion } from '../ui/shell'
 import { bindImageZoom } from '../ui/imageZoom'
 
 const app = document.querySelector<HTMLDivElement>('#app')
@@ -43,16 +43,17 @@ function setCardHTML(set: CoordSet): string {
   const bottom = getProduct(set.bottomId)
   const total = coordSetPrice(set)
   const selected = set.id === activeId
+  const pdp = lookProductHref(set.topId, set.slug)
 
   return `
-  <article class="coord-card ${selected ? 'is-active' : ''}" data-coord-card="${set.id}">
-    <button type="button" class="coord-card__media" data-select-set="${set.id}" aria-label="${set.name}">
+  <article class="coord-card look-card ${selected ? 'is-active' : ''}" data-coord-card="${set.id}">
+    <a class="coord-card__media" href="${pdp}" aria-label="Shop ${set.name}">
       <img class="coord-card__img" src="${assetHref(front)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
       <img class="coord-card__img coord-card__img--alt" src="${assetHref(alt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-    </button>
+    </a>
     <div class="coord-card__body">
       <div class="coord-card__top">
-        <h3 class="coord-card__name">${set.name}</h3>
+        <h3 class="coord-card__name"><a href="${pdp}">${set.name}</a></h3>
         <p class="coord-card__price">${formatPrice(total)}</p>
       </div>
       <p class="coord-card__blurb">${set.blurb}</p>
@@ -72,6 +73,12 @@ function setCardHTML(set: CoordSet): string {
           ></button>`,
           )
           .join('')}
+      </div>
+      <div class="look-card__actions">
+        <a class="btn btn--primary btn--block look-card__cta" href="${pdp}">Shop this look</a>
+        <button type="button" class="look-card__style" data-select-set="${set.id}">
+          Style both pieces
+        </button>
       </div>
     </div>
   </article>`
@@ -130,11 +137,11 @@ function render() {
           </div>
         </div>
         <aside class="coords-hero__copy">
-          <p class="eyebrow">Sets</p>
+          <p class="eyebrow">Looks</p>
           <h1 class="display">${set.name}</h1>
           <p class="lede">${set.blurb}</p>
           <p class="coords-hero__meta">${top.name} + ${bottom.name}</p>
-          <p class="coords-hero__price">${formatPrice(total)} · set</p>
+          <p class="coords-hero__price">${formatPrice(total)} · look</p>
           <div>
             <p class="eyebrow" style="margin-bottom:0.75rem">Colour · ${COLORS[color].name}</p>
             <div class="color-picker">
@@ -158,8 +165,11 @@ function render() {
             </div>
           </div>
           <button class="btn btn--primary btn--block" type="button" data-add-set ${size ? '' : 'disabled'} style="margin-top:1.25rem">
-            Add set to bag
+            Add look to bag
           </button>
+          <a class="btn btn--ghost btn--block look-card__cta" href="${lookProductHref(set.topId, set.slug)}" style="margin-top:0.75rem">
+            Shop this look
+          </a>
         </aside>
       </div>
     </section>
@@ -167,9 +177,9 @@ function render() {
     <section class="section coords-gallery" id="coord-suggestions">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">The edit</p>
-          <h2 class="display">Eight pairings. Two colours.</h2>
-          <p class="lede">Hover for the second view. Pick a set, then colour and size above.</p>
+          <p class="eyebrow">Walk-out ready</p>
+          <h2 class="display">Eight looks. Two colours.</h2>
+          <p class="lede">Tap a look to open the product - or colour it here and add both pieces.</p>
         </div>
         <div class="coord-grid">
           ${COORD_SETS.map((s) => setCardHTML(s)).join('')}
@@ -282,4 +292,4 @@ function render() {
 }
 
 render()
-document.title = 'Co-ord Sets · Rivlet'
+document.title = 'Looks · Rivlet'

@@ -1,12 +1,16 @@
-﻿import {
+import {
   COLORS,
   SITUATIONS,
+  coordSetPrice,
   formatPrice,
+  getCoordImages,
+  getCoordSet,
   getProduct,
   getProductImage,
   getProductImages,
   products,
   type Colorway,
+  type CoordSet,
   type Product,
   type Size,
 } from '../data/products'
@@ -46,6 +50,16 @@ export function assetHref(path: string): string {
 
 export function productHref(id: string): string {
   return `${pathPrefix()}product/?id=${encodeURIComponent(id)}`
+}
+
+/** PDP entry from a styled look — keeps attribution for conversion tracking. */
+export function lookProductHref(productId: string, lookSlug: string): string {
+  const q = new URLSearchParams({
+    id: productId,
+    from: 'look',
+    look: lookSlug,
+  })
+  return `${pathPrefix()}product/?${q.toString()}`
 }
 
 export function shopHref(params: Record<string, string> = {}): string {
@@ -141,8 +155,8 @@ export function renderHeader(): string {
                       <span>Six engineered pieces · Midnight &amp; Cardamom</span>
                     </a>
                     <a class="mega__feature mega__feature--soft" href="${brand}sets/">
-                      <span class="mega__eyebrow">Sets</span>
-                      <strong>Co-ord edit</strong>
+                      <span class="mega__eyebrow">Looks</span>
+                      <strong>Walk-out ready</strong>
                       <span>Eight pairings. Midnight &amp; Cardamom.</span>
                     </a>
                   </div>
@@ -150,13 +164,13 @@ export function renderHeader(): string {
               </div>
             </div>
             <a class="site-nav__link" href="${shopHref()}" ${navCurrent('/shop')}>Collection</a>
-            <a class="site-nav__link" href="${brand}sets/" ${navCurrent('/sets')}>Sets</a>
+            <a class="site-nav__link" href="${brand}sets/" ${navCurrent('/sets')}>Looks</a>
             <a class="site-nav__link" href="${brand}stories/" ${navCurrent('/stories')}>Stories</a>
           </nav>
         </div>
 
         <div class="header-actions">
-          <button class="icon-btn" type="button" data-search-open aria-label="Search">${icon('search')}</button>
+          <button class="icon-btn header-actions__search" type="button" data-search-open aria-label="Search">${icon('search')}</button>
           <div class="account-menu account-menu--desktop" data-account-menu>
             <button
               class="icon-btn account-menu__trigger"
@@ -198,7 +212,11 @@ export function renderHeader(): string {
               }
             </div>
           </div>
-          <button class="icon-btn" type="button" data-wish-open aria-label="Saved pieces">
+          <a class="icon-btn header-actions__account-mobile" href="${accountHref()}" aria-label="${loggedIn ? 'Account' : 'Sign in'}">
+            ${icon('user')}
+            ${loggedIn ? `<span class="account-dot" title="${profile.name}"></span>` : ''}
+          </a>
+          <button class="icon-btn header-actions__wish" type="button" data-wish-open aria-label="Saved pieces">
             ${icon('heart')}
             <span class="cart-count wish-count" data-wish-count hidden>0</span>
           </button>
@@ -208,15 +226,31 @@ export function renderHeader(): string {
           </button>
         </div>
       </div>
+      <div class="site-header__search-row">
+        <button type="button" class="header-search-pill" data-search-open aria-label="Search collection">
+          <span class="header-search-pill__icon" aria-hidden="true">${icon('search')}</span>
+          <span class="header-search-pill__text">Search Rivlet</span>
+        </button>
+      </div>
     </div>
   </header>
   <div class="mobile-nav" data-mobile-nav aria-hidden="true">
     <p class="mobile-nav__motto">Move like water, feel like air.</p>
     <nav class="mobile-nav__links" aria-label="Mobile">
       <a href="${shopHref()}">Collection</a>
-      <a href="${brand}sets/">Sets</a>
+      <a href="${brand}sets/">Looks</a>
       <a href="${brand}stories/">Stories</a>
     </nav>
+    <div class="mobile-nav__wishlist">
+      <button type="button" class="mobile-nav__wish-btn" data-wish-open>
+        <span class="mobile-nav__wish-icon" aria-hidden="true">${icon('heart')}</span>
+        <span class="mobile-nav__wish-copy">
+          <strong>Wishlist</strong>
+          <em>Saved pieces</em>
+        </span>
+        <span class="cart-count wish-count" data-wish-count hidden>0</span>
+      </button>
+    </div>
     <div class="mobile-nav__account">
       <p class="eyebrow">Account</p>
       ${
@@ -224,13 +258,11 @@ export function renderHeader(): string {
           ? `
         <a href="${accountHref()}">Profile</a>
         <a href="${accountHref()}#details">Account details</a>
-        <button type="button" data-wish-open>Saved</button>
         <button type="button" data-logout>Sign out</button>
       `
           : `
         <a href="${accountHref()}">Sign in</a>
         <a href="${accountHref()}">Create account</a>
-        <button type="button" data-wish-open>Saved</button>
       `
       }
     </div>
@@ -244,7 +276,7 @@ export function renderHeader(): string {
 export function renderFooter(): string {
   const brand = pathPrefix()
   return `
-  <footer class="site-footer">
+  <footer class="site-footer ocean-band">
     <div class="container site-footer__top">
       <div class="site-footer__brand-block">
         <div class="site-footer__lockup">
@@ -258,7 +290,7 @@ export function renderFooter(): string {
           <h3>Shop</h3>
           <ul>
             <li><a href="${shopHref()}">Collection</a></li>
-            <li><a href="${brand}sets/">Co-ord sets</a></li>
+            <li><a href="${brand}sets/">Looks</a></li>
             <li><a href="${shopHref({ form: 'tops' })}">Tops</a></li>
             <li><a href="${shopHref({ form: 'bottoms' })}">Bottoms</a></li>
           </ul>
@@ -374,6 +406,13 @@ function cardActiveColor(product: Product): Colorway {
   return product.colors[0].id
 }
 
+function platformBadgeClass(platform: string): string {
+  if (platform.startsWith('AquaFlow')) return 'platform-badge--aquaflow'
+  if (platform.startsWith('SecondSkin')) return 'platform-badge--secondskin'
+  if (platform.startsWith('NeutralCore')) return 'platform-badge--neutralcore'
+  return 'platform-badge--neutralcore'
+}
+
 export function productCardHTML(product: Product): string {
   const primary = product.colors[0]
   const saved = isWishlisted(product.id, primary.id)
@@ -383,6 +422,7 @@ export function productCardHTML(product: Product): string {
       <a class="product-card__media" href="${productHref(product.id)}" aria-label="${product.name}">
         ${mediaPanelHTML(product, primary.id)}
       </a>
+      <span class="platform-badge ${platformBadgeClass(product.platform)}">${product.platform}</span>
       <button
         type="button"
         class="wish-btn ${saved ? 'is-on' : ''}"
@@ -393,9 +433,8 @@ export function productCardHTML(product: Product): string {
       >${saved ? icon('heart-fill') : icon('heart')}</button>
     </div>
     <div class="product-card__body">
-      <div class="product-card__meta">
+      <div class="product-card__meta product-card__meta--chips">
         <span class="benefit-chip">${product.benefitChip}</span>
-        <span>${product.platform}</span>
       </div>
       <a class="product-card__name" href="${productHref(product.id)}">${product.name}</a>
       <div class="product-card__meta">
@@ -412,6 +451,67 @@ export function productCardHTML(product: Product): string {
       <div class="product-card__actions">
         <button class="btn btn--primary" type="button" data-quick-add="${product.id}">Quick add</button>
         <a class="btn btn--ghost" href="${productHref(product.id)}">View</a>
+      </div>
+    </div>
+  </article>`
+}
+
+function lookMediaHTML(set: CoordSet, color: Colorway): string {
+  const [front, alt] = getCoordImages(set, color)
+  return `
+    <div class="swatch-panel swatch-panel--photo" data-look-swatch>
+      <img class="swatch-panel__img" src="${assetHref(front)}" alt="" width="600" height="800" loading="lazy" decoding="async" />
+    </div>
+    <div class="swatch-panel swatch-panel--photo swatch-panel--alt" data-alt-swatch aria-hidden="true">
+      <img class="swatch-panel__img" src="${assetHref(alt)}" alt="" width="600" height="800" loading="lazy" decoding="async" />
+    </div>`
+}
+
+/** Walk-out ready look card — same 2-up product card pattern with Quick add. */
+export function lookCardHTML(set: CoordSet): string {
+  const color: Colorway = 'midnight'
+  const top = getProduct(set.topId)
+  const bottom = getProduct(set.bottomId)
+  const total = coordSetPrice(set)
+  const pdp = lookProductHref(set.topId, set.slug)
+  const saved = isWishlisted(set.topId, color)
+  const chip = top?.benefitChip ?? bottom?.benefitChip ?? 'Look'
+  const platform = top?.platform ?? bottom?.platform ?? 'SecondSkin™'
+
+  return `
+  <article class="product-card look-product-card" data-look-card="${set.id}" data-look-top="${set.topId}">
+    <div class="product-card__media-wrap">
+      <a class="product-card__media" href="${pdp}" aria-label="Shop ${set.name}">
+        ${lookMediaHTML(set, color)}
+      </a>
+      <span class="platform-badge ${platformBadgeClass(platform)}">${platform}</span>
+      <button
+        type="button"
+        class="wish-btn ${saved ? 'is-on' : ''}"
+        data-wish-toggle="${set.topId}"
+        data-wish-color="${color}"
+        aria-label="${saved ? 'Remove from saved' : 'Save for later'}"
+        aria-pressed="${saved}"
+      >${saved ? icon('heart-fill') : icon('heart')}</button>
+    </div>
+    <div class="product-card__body">
+      <div class="product-card__meta product-card__meta--chips">
+        <span class="benefit-chip">${chip}</span>
+      </div>
+      <a class="product-card__name" href="${pdp}">${set.name}</a>
+      <div class="product-card__meta">
+        <span class="product-card__price">${formatPrice(total)}</span>
+        <div class="color-dots" aria-label="Colours">
+          ${(['midnight', 'cardamom'] as Colorway[])
+            .map(
+              (c) =>
+                `<button type="button" class="color-dot ${c === color ? 'is-active' : ''}" data-look-color="${c}" style="background:${COLORS[c].hex}" title="${COLORS[c].name}" aria-label="${COLORS[c].name}"></button>`,
+            )
+            .join('')}
+        </div>
+      </div>
+      <div class="product-card__actions">
+        <button class="btn btn--primary" type="button" data-quick-add="${set.topId}">Quick add</button>
       </div>
     </div>
   </article>`
@@ -462,10 +562,10 @@ function renderCartBody(): void {
   const hasShort = lines.some((l) => l.productId === 'RVL-SHT-004')
   const hint =
     hasCrop && !hasShort
-      ? `<div class="cart-hint">Complete the co-ord with the <a href="${productHref('RVL-SHT-004')}"><strong>Matching Short</strong></a>.</div>`
+      ? `<div class="cart-hint">Finish the look with the <a href="${productHref('RVL-SHT-004')}"><strong>Matching Short</strong></a>.</div>`
       : hasShort && !hasCrop
-        ? `<div class="cart-hint">Complete the co-ord with the <a href="${productHref('RVL-TNK-003-C')}"><strong>Built-in-Support Crop</strong></a>.</div>`
-        : `<div class="cart-hint">Complete a co-ord - eight pairings in Midnight &amp; Cardamom.</div>`
+        ? `<div class="cart-hint">Finish the look with the <a href="${productHref('RVL-TNK-003-C')}"><strong>Built-in-Support Crop</strong></a>.</div>`
+        : `<div class="cart-hint">Build a look - eight pairings in Midnight &amp; Cardamom.</div>`
 
   body.innerHTML += hint
 
@@ -529,11 +629,11 @@ function updateCartCount(): void {
 }
 
 function updateWishCount(): void {
-  const el = document.querySelector<HTMLElement>('[data-wish-count]')
-  if (!el) return
   const n = wishlistCount()
-  el.hidden = n === 0
-  el.textContent = String(n)
+  document.querySelectorAll<HTMLElement>('[data-wish-count]').forEach((el) => {
+    el.hidden = n === 0
+    el.textContent = String(n)
+  })
 }
 
 function syncWishButtons(): void {
@@ -693,10 +793,20 @@ export function mountShell(root: HTMLElement): void {
       ${renderCartChrome()}
     </div>`
 
+  const page = root.querySelector('.page')
   const header = root.querySelector('[data-header]')
-  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8)
-  onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
+  const hasHero = Boolean(root.querySelector('.hero'))
+  if (hasHero) {
+    page?.classList.add('page--hero')
+    header?.classList.add('site-header--over-hero')
+  }
+
+  const syncHeaderSolid = () => {
+    const solid = window.scrollY > 24 || document.body.classList.contains('nav-open')
+    header?.classList.toggle('is-scrolled', solid)
+  }
+  syncHeaderSolid()
+  window.addEventListener('scroll', syncHeaderSolid, { passive: true })
 
   const mobileNav = root.querySelector<HTMLElement>('[data-mobile-nav]')
   const menuToggle = root.querySelector<HTMLButtonElement>('[data-menu-toggle]')
@@ -707,6 +817,7 @@ export function mountShell(root: HTMLElement): void {
     menuToggle?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu')
     if (menuToggle) menuToggle.innerHTML = open ? icon('close') : icon('menu')
     document.body.classList.toggle('nav-open', open)
+    syncHeaderSolid()
   }
   menuToggle?.addEventListener('click', () => {
     setMobileNav(!mobileNav?.classList.contains('is-open'))
@@ -890,6 +1001,30 @@ export function mountShell(root: HTMLElement): void {
       return
     }
 
+    const lookColorDot = t.closest<HTMLElement>('[data-look-color]')
+    if (lookColorDot?.dataset.lookColor) {
+      e.preventDefault()
+      e.stopPropagation()
+      const card = lookColorDot.closest('[data-look-card]')
+      const lookId = card?.getAttribute('data-look-card')
+      const colorId = lookColorDot.dataset.lookColor as Colorway
+      const media = card?.querySelector<HTMLElement>('.product-card__media')
+      const set = lookId ? getCoordSet(lookId) : undefined
+      if (media && set) {
+        media.innerHTML = lookMediaHTML(set, colorId)
+      }
+      card?.querySelectorAll('[data-look-color]').forEach((d) => d.classList.remove('is-active'))
+      lookColorDot.classList.add('is-active')
+      const wishBtn = card?.querySelector<HTMLElement>('[data-wish-toggle]')
+      if (wishBtn) {
+        wishBtn.dataset.wishColor = colorId
+        const on = isWishlisted(wishBtn.dataset.wishToggle!, colorId)
+        wishBtn.classList.toggle('is-on', on)
+        wishBtn.innerHTML = on ? icon('heart-fill') : icon('heart')
+      }
+      return
+    }
+
     const colorDot = t.closest<HTMLElement>('[data-card-color]')
     if (colorDot?.dataset.cardColor) {
       e.preventDefault()
@@ -915,7 +1050,12 @@ export function mountShell(root: HTMLElement): void {
     }
     const quick = t.closest<HTMLElement>('[data-quick-add]')
     if (quick?.dataset.quickAdd) {
-      openSheet(quick.dataset.quickAdd)
+      const card = quick.closest<HTMLElement>('[data-look-card], [data-product-card]')
+      const activeDot = card?.querySelector<HTMLElement>('.color-dot.is-active')
+      const prefer =
+        (activeDot?.dataset.lookColor as Colorway | undefined) ||
+        (activeDot?.dataset.cardColorId as Colorway | undefined)
+      openSheet(quick.dataset.quickAdd, prefer)
       return
     }
     if (t.closest('[data-sheet-close]')) {

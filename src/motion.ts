@@ -3,10 +3,11 @@
 const REVEAL_SELECTORS = [
   '.section-head',
   '.promise-film',
-  '.situation-panel',
+  /* Situation panels stay transform-free so the mobile infinity ribbon can measure reliably. */
   '.split-shop__tile',
   '.product-card',
   '.platform-card',
+  '.platforms-foot',
   '.coord-band > *',
   '.coord-card',
   '.coords-hero__copy',
@@ -16,7 +17,7 @@ const REVEAL_SELECTORS = [
   '.trust-item',
   /* Review cards stay transform-free so the ribbon loop can measure positions reliably. */
   '.fabricology-cta',
-  '.final-cta > *',
+  '.final-cta__inner > *',
   '.fabric-card',
   '.plp-toolbar',
   '.plp-bar',
@@ -111,6 +112,7 @@ export function initPageMotion(root: ParentNode = document): void {
   })
 
   initReviewRails(scope)
+  initSituationRails(scope)
 }
 
 /** Autoplay promise films only while in view; pause when off-screen. */
@@ -331,9 +333,151 @@ function bindReviewRail(rail: HTMLElement): void {
   io.observe(rail)
 }
 
+/**
+ * Shop-by-situation ribbon: continuous circular auto-scroll on mobile only.
+ * Seamless infinity loop (Summer → Gym → … → Travel → Summer…); pauses on interact.
+ */
+export function initSituationRails(root: ParentNode = document): void {
+  const mobileMq = window.matchMedia('(max-width: 899px)')
+  const rails = [
+    ...((root as Document | Element).querySelectorAll?.('[data-situation-rail]') ?? []),
+  ] as HTMLElement[]
+  rails.forEach((rail) => bindSituationRail(rail, mobileMq))
+}
+
+function bindSituationRail(rail: HTMLElement, mobileMq: MediaQueryList): void {
+  if (rail.dataset.situationRailBound === '1') return
+  rail.dataset.situationRailBound = '1'
+
+  if (rail.dataset.situationLoop !== '1') {
+    const source = [...rail.querySelectorAll<HTMLElement>('.situation-panel')]
+    // Two full copies so fast flicks never hit a hard end
+    for (let pass = 0; pass < 2; pass++) {
+      source.forEach((node) => {
+        const clone = node.cloneNode(true) as HTMLElement
+        clone.setAttribute('aria-hidden', 'true')
+        clone.setAttribute('data-situation-clone', '')
+        clone.tabIndex = -1
+        clone.removeAttribute('data-reveal')
+        clone.classList.remove('reveal', 'is-in')
+        rail.appendChild(clone)
+      })
+    }
+    rail.dataset.situationLoop = '1'
+  }
+
+  let paused = false
+  let inView = false
+  let raf = 0
+  let resumeTimer: number | undefined
+  let cachedLoop = 0
+  const SPEED = 0.65 // px per frame — continuous marquee
+
+  const originals = () =>
+    [...rail.querySelectorAll<HTMLElement>('.situation-panel:not([data-situation-clone])')]
+
+  const measureLoop = () => {
+    const first = originals()[0]
+    const firstClone = rail.querySelector<HTMLElement>('[data-situation-clone]')
+    if (!first || !firstClone) {
+      cachedLoop = 0
+      return 0
+    }
+    cachedLoop = firstClone.offsetLeft - first.offsetLeft
+    return cachedLoop
+  }
+
+  const normalize = () => {
+    if (!mobileMq.matches) return
+    const width = cachedLoop || measureLoop()
+    if (width <= 1) return
+    // Keep scroll inside the first set so the track never ends
+    while (rail.scrollLeft >= width) rail.scrollLeft -= width
+    while (rail.scrollLeft < 0) rail.scrollLeft += width
+  }
+
+  const tick = () => {
+    if (
+      !reducedMotion() &&
+      mobileMq.matches &&
+      inView &&
+      !paused &&
+      rail.isConnected
+    ) {
+      rail.scrollLeft += SPEED
+      normalize()
+    }
+    raf = requestAnimationFrame(tick)
+  }
+
+  const pauseForUser = () => {
+    paused = true
+    if (resumeTimer !== undefined) window.clearTimeout(resumeTimer)
+  }
+
+  const resumeLater = () => {
+    if (resumeTimer !== undefined) window.clearTimeout(resumeTimer)
+    resumeTimer = window.setTimeout(() => {
+      paused = false
+    }, 1800)
+  }
+
+  rail.addEventListener('pointerdown', pauseForUser)
+  rail.addEventListener('touchstart', pauseForUser, { passive: true })
+  rail.addEventListener('wheel', pauseForUser, { passive: true })
+  rail.addEventListener('pointerup', resumeLater)
+  rail.addEventListener('touchend', resumeLater, { passive: true })
+  rail.addEventListener('scroll', normalize, { passive: true })
+
+  const ro = new ResizeObserver(() => {
+    measureLoop()
+    normalize()
+  })
+  ro.observe(rail)
+  originals().forEach((el) => ro.observe(el))
+
+  // Remeasure after images settle so loop width stays accurate
+  rail.querySelectorAll('img').forEach((img) => {
+    if (!img.complete) img.addEventListener('load', () => measureLoop(), { once: true })
+  })
+  measureLoop()
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        inView = entry.isIntersecting && entry.intersectionRatio >= 0.15
+        if (inView) measureLoop()
+      }
+    },
+    { threshold: [0, 0.15, 0.4] },
+  )
+  io.observe(rail)
+
+  mobileMq.addEventListener('change', () => {
+    if (!mobileMq.matches) {
+      rail.scrollLeft = 0
+      return
+    }
+    measureLoop()
+    normalize()
+  })
+
+  raf = requestAnimationFrame(tick)
+  window.addEventListener(
+    'pagehide',
+    () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+      io.disconnect()
+    },
+    { once: true },
+  )
+}
+
 export function bootMotion(root: HTMLElement): void {
   lockScrollToTop()
   initPageMotion(root)
   initPromiseFilms(root)
   initReviewRails(root)
+  initSituationRails(root)
 }
