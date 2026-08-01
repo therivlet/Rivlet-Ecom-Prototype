@@ -208,7 +208,7 @@ app.innerHTML = `<div data-page-content>
         <p class="lede">Every pairing is shoppable - straight to the product page.</p>
       </div>
       <div class="product-grid look-grid">
-        ${COORD_SETS.slice(0, 4).map((s) => lookCardHTML(s)).join('')}
+        ${COORD_SETS.slice(0, 3).map((s) => lookCardHTML(s)).join('')}
       </div>
       <p class="looks-more">
         <a class="btn btn--primary" href="./sets/">Explore all looks</a>
