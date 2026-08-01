@@ -55,18 +55,14 @@ app.innerHTML = `<div data-page-content>
         playsinline
         preload="auto"
         data-hero-video
-      >
-        <source src="${assetHref('media/hero.mp4')}" type="video/mp4" />
-      </video>
+      ></video>
       <video
         class="hero__video"
         muted
         playsinline
         preload="auto"
         data-hero-video
-      >
-        <source src="${assetHref('media/hero.mp4')}" type="video/mp4" />
-      </video>
+      ></video>
     </div>
     <div class="hero__content">
       <p class="eyebrow" style="color:rgba(255,252,247,0.7);margin-bottom:1rem">Women · Collection</p>
@@ -287,6 +283,10 @@ function bindSeamlessHeroLoop(): void {
   const videos = [...document.querySelectorAll<HTMLVideoElement>('[data-hero-video]')]
   if (videos.length < 2) return
 
+  const mobileMq = window.matchMedia('(max-width: 899px)')
+  const heroSrc = () =>
+    assetHref(mobileMq.matches ? 'media/hero-mobile.mp4' : 'media/hero-desktop.mp4')
+
   let active = videos[0]!
   let standby = videos[1]!
   let swapping = false
@@ -303,6 +303,24 @@ function bindSeamlessHeroLoop(): void {
   }
   prep(active)
   prep(standby)
+
+  const applySrc = (v: HTMLVideoElement, src: string) => {
+    if (v.dataset.heroSrc === src && v.currentSrc) return
+    v.dataset.heroSrc = src
+    v.pause()
+    v.querySelectorAll('source').forEach((s) => s.remove())
+    const source = document.createElement('source')
+    source.src = src
+    source.type = 'video/mp4'
+    v.appendChild(source)
+    v.load()
+  }
+
+  const syncSources = () => {
+    const src = heroSrc()
+    applySrc(active, src)
+    applySrc(standby, src)
+  }
 
   const playSafe = (v: HTMLVideoElement) => {
     void v.play().catch(() => {
@@ -344,15 +362,32 @@ function bindSeamlessHeroLoop(): void {
     raf = requestAnimationFrame(tick)
   }
 
+  syncSources()
   playSafe(active)
   if (active.readyState < 2) {
     active.addEventListener('loadeddata', () => playSafe(active), { once: true })
   }
   raf = requestAnimationFrame(tick)
+
+  const onViewportChange = () => {
+    syncSources()
+    swapping = false
+    active.classList.add('is-active')
+    standby.classList.remove('is-active')
+    try {
+      active.currentTime = 0.001
+    } catch {
+      /* ignore */
+    }
+    playSafe(active)
+  }
+  mobileMq.addEventListener('change', onViewportChange)
+
   window.addEventListener(
     'pagehide',
     () => {
       cancelAnimationFrame(raf)
+      mobileMq.removeEventListener('change', onViewportChange)
     },
     { once: true },
   )
