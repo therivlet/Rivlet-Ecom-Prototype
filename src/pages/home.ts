@@ -17,7 +17,8 @@ import {
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
 
-const [coordFront, coordAlt] = getCoordImages(COORD_SET, 'midnight')
+const [coordMidnightFront, coordMidnightAlt] = getCoordImages(COORD_SET, 'midnight')
+const [coordCardamomFront, coordCardamomAlt] = getCoordImages(COORD_SET, 'cardamom')
 
 const PROMISE_FILMS = [
   {
@@ -184,10 +185,16 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section coord-home">
     <div class="container coord-band">
-      <a class="coord-visual coord-visual--photo" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name}">
-        <img class="coord-visual__img" src="${assetHref(coordFront)}" alt="" width="900" height="1200" loading="lazy" />
-        <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordAlt)}" alt="" width="900" height="1200" loading="lazy" />
-      </a>
+      <div class="coord-visual">
+        <a class="coord-visual__panel" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name} in Midnight">
+          <img class="coord-visual__img" src="${assetHref(coordMidnightFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+          <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordMidnightAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+        </a>
+        <a class="coord-visual__panel" href="./sets/?set=${COORD_SET.slug}" aria-label="${COORD_SET.name} in Cardamom">
+          <img class="coord-visual__img" src="${assetHref(coordCardamomFront)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+          <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordCardamomAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+        </a>
+      </div>
       <div>
         <p class="eyebrow">The co-ord</p>
         <h2 class="display" style="margin:0.75rem 0 1rem">${COORD_SETS.length} pairings. One language.</h2>
