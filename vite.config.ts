@@ -7,6 +7,7 @@ export default defineConfig({
         main: 'index.html',
         shop: 'shop/index.html',
         product: 'product/index.html',
+        look: 'look/index.html',
         sets: 'sets/index.html',
         stories: 'stories/index.html',
         checkout: 'checkout/index.html',

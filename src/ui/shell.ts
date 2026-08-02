@@ -2,6 +2,7 @@ import {
   COLORS,
   SITUATIONS,
   coordSetPrice,
+  filterProducts,
   formatPrice,
   getCoordImages,
   getCoordSet,
@@ -12,6 +13,7 @@ import {
   type Colorway,
   type CoordSet,
   type Product,
+  type Situation,
   type Size,
 } from '../data/products'
 import {
@@ -52,7 +54,7 @@ export function productHref(id: string): string {
   return `${pathPrefix()}product/?id=${encodeURIComponent(id)}`
 }
 
-/** PDP entry from a styled look — keeps attribution for conversion tracking. */
+/** PDP entry from a styled look - keeps attribution for conversion tracking. */
 export function lookProductHref(productId: string, lookSlug: string): string {
   const q = new URLSearchParams({
     id: productId,
@@ -62,9 +64,9 @@ export function lookProductHref(productId: string, lookSlug: string): string {
   return `${pathPrefix()}product/?${q.toString()}`
 }
 
-/** Looks checkout page for a specific pairing. */
+/** Look PDP for a specific pairing. */
 export function lookHref(lookSlug: string): string {
-  return `${pathPrefix()}sets/?set=${encodeURIComponent(lookSlug)}`
+  return `${pathPrefix()}look/?set=${encodeURIComponent(lookSlug)}`
 }
 
 export function shopHref(params: Record<string, string> = {}): string {
@@ -76,7 +78,7 @@ export function accountHref(): string {
   return `${pathPrefix()}account/`
 }
 
-type IconName = 'bag' | 'menu' | 'close' | 'search' | 'heart' | 'heart-fill' | 'user'
+type IconName = 'bag' | 'menu' | 'close' | 'search' | 'heart' | 'heart-fill' | 'user' | 'chevron-left' | 'chevron-right'
 
 function icon(name: IconName): string {
   const common = 'width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"'
@@ -98,6 +100,12 @@ function icon(name: IconName): string {
   if (name === 'user') {
     return `<svg ${common}><circle cx="12" cy="8" r="3.25"/><path d="M5.5 19.5c1.6-3 4-4.5 6.5-4.5s4.9 1.5 6.5 4.5"/></svg>`
   }
+  if (name === 'chevron-left') {
+    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14.5 6L8.5 12l6 6"/></svg>`
+  }
+  if (name === 'chevron-right') {
+    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>`
+  }
   return `<svg ${common}><circle cx="11" cy="11" r="6"/><path d="M20 20l-3.5-3.5"/></svg>`
 }
 
@@ -109,26 +117,120 @@ function navCurrent(match: string): string {
   return currentPath().includes(match) ? 'aria-current="page"' : ''
 }
 
+function megaProductCard(product: Product): string {
+  const photo = getProductImage(product, 'midnight') ?? getProductImage(product, product.colors[0]?.id ?? 'midnight')
+  const href = `${pathPrefix()}product/?id=${encodeURIComponent(product.id)}`
+  return `
+    <a class="mega__product" href="${href}" role="menuitem">
+      <span class="mega__product-media" aria-hidden="true">
+        ${
+          photo
+            ? `<img src="${assetHref(photo)}" alt="" width="320" height="400" loading="lazy" decoding="async" />`
+            : ''
+        }
+      </span>
+      <span class="mega__product-meta">
+        <span class="mega__product-name">${product.shortName}</span>
+        <span class="mega__product-price">${formatPrice(product.mrp)}</span>
+      </span>
+    </a>`
+}
+
+function megaSituationPanel(situationId: Situation): string {
+  const s = SITUATIONS.find((x) => x.id === situationId)
+  if (!s) return ''
+  const pieces = filterProducts({ situation: situationId }).slice(0, 3)
+  return `
+    <div class="mega__panel mega__panel--situation" data-mega-panel="${s.id}" hidden>
+      <div class="mega__panel-head">
+        <p class="mega__eyebrow">${s.label}</p>
+        <p class="mega__panel-blurb">${s.blurb}</p>
+      </div>
+      <div class="mega__products">
+        ${pieces.map(megaProductCard).join('')}
+      </div>
+      <a class="mega__panel-cta" href="${shopHref({ situation: s.id })}">Shop ${s.label}</a>
+    </div>`
+}
+
 export function renderHeader(): string {
   const situationCards = SITUATIONS.map(
     (s) => `
-      <a class="mega__item" href="${shopHref({ situation: s.id })}" role="menuitem">
-        <span class="mega__item-label">${s.label}</span>
-        <span class="mega__item-blurb">${s.blurb}</span>
+      <a class="mega__item" href="${shopHref({ situation: s.id })}" role="menuitem" data-mega-situation="${s.id}">
+        <span class="mega__item-thumb" aria-hidden="true">
+          <img src="${assetHref(s.image)}" alt="" width="96" height="120" loading="lazy" decoding="async" />
+        </span>
+        <span class="mega__item-copy">
+          <span class="mega__item-label">${s.label}</span>
+          <span class="mega__item-blurb">${s.blurb}</span>
+        </span>
       </a>`,
   ).join('')
 
   const brand = pathPrefix()
   const loggedIn = isLoggedIn()
   const profile = getProfile()
+  const featuredCollectionImg = assetHref('media/products/midnight-tank-2.png')
+  const featuredLooksImg = assetHref('media/coords/crop-shorts-midnight-1.png')
+  const situationPanels = SITUATIONS.map((s) => megaSituationPanel(s.id)).join('')
+
+  const whatsappHref =
+    'https://wa.me/?text=' + encodeURIComponent('Hi Rivlet - I need help with an order.')
 
   return `
   <header class="site-header" data-header>
-    <div class="site-header__rail">
-      <p class="site-header__whisper">
-        <img class="site-header__whisper-mark" src="${brand}brand/rivlet-mark.png" alt="" width="16" height="16" />
-        Move like water, feel like air
-      </p>
+    <div class="site-header__rail" data-announce aria-roledescription="carousel" aria-label="Announcements">
+      <button class="announce-nav announce-nav--prev" type="button" data-announce-prev aria-label="Previous announcement">
+        ${icon('chevron-left')}
+      </button>
+      <div class="announce-viewport">
+        <div class="announce-track" data-announce-track>
+          <p class="announce-slide announce-slide--motto is-active" data-announce-slide aria-hidden="false">
+            <img class="announce-mark" src="${brand}brand/rivlet-mark.png" alt="" width="24" height="24" />
+            <span class="announce-copy">
+              <span class="announce-copy__full">Move like water, feel like air.</span>
+              <span class="announce-copy__short">Move like water, feel like air.</span>
+            </span>
+          </p>
+          <p class="announce-slide" data-announce-slide aria-hidden="true">
+            <span class="announce-copy">
+              <span class="announce-copy__full">
+                Free shipping on prepaid orders · Easy returns in India.
+                Shop <a href="${shopHref()}">Collection</a> and <a href="${brand}sets/">Looks</a>.
+              </span>
+              <span class="announce-copy__short">
+                Free shipping · Easy returns.
+                Shop <a href="${shopHref()}">Collection</a>
+              </span>
+            </span>
+          </p>
+          <p class="announce-slide" data-announce-slide aria-hidden="true">
+            <span class="announce-copy">
+              <span class="announce-copy__full">
+                Need help? Faster support on
+                <a href="${whatsappHref}" target="_blank" rel="noreferrer">WhatsApp</a>.
+              </span>
+              <span class="announce-copy__short">
+                Help on <a href="${whatsappHref}" target="_blank" rel="noreferrer">WhatsApp</a>
+              </span>
+            </span>
+          </p>
+          <p class="announce-slide" data-announce-slide aria-hidden="true">
+            <span class="announce-copy">
+              <span class="announce-copy__full">
+                Engineered for Indian heat.
+                Shop <a href="${brand}sets/">Walk-out ready looks</a>.
+              </span>
+              <span class="announce-copy__short">
+                For Indian heat. Shop <a href="${brand}sets/">Looks</a>
+              </span>
+            </span>
+          </p>
+        </div>
+      </div>
+      <button class="announce-nav announce-nav--next" type="button" data-announce-next aria-label="Next announcement">
+        ${icon('chevron-right')}
+      </button>
     </div>
     <div class="site-header__bar">
       <div class="site-header__inner">
@@ -145,25 +247,38 @@ export function renderHeader(): string {
                 Shop
                 <span class="site-nav__chevron" aria-hidden="true"></span>
               </a>
-              <div class="mega" role="menu" aria-label="Shop menu">
+              <div class="mega" role="menu" aria-label="Shop menu" data-mega>
                 <div class="mega__inner">
                   <div class="mega__col">
                     <p class="mega__eyebrow">What are you shopping for?</p>
-                    <div class="mega__grid">
+                    <div class="mega__grid" data-mega-situations>
                       ${situationCards}
                     </div>
                   </div>
-                  <div class="mega__aside">
-                    <a class="mega__feature" href="${shopHref()}">
-                      <span class="mega__eyebrow">Featured</span>
-                      <strong>Full collection</strong>
-                      <span>Six engineered pieces · Midnight &amp; Cardamom</span>
-                    </a>
-                    <a class="mega__feature mega__feature--soft" href="${brand}sets/">
-                      <span class="mega__eyebrow">Looks</span>
-                      <strong>Walk-out ready</strong>
-                      <span>Eight pairings. Midnight &amp; Cardamom.</span>
-                    </a>
+                  <div class="mega__aside" data-mega-aside>
+                    <div class="mega__panel mega__panel--featured is-active" data-mega-panel="default">
+                      <div class="mega__features">
+                        <a class="mega__feature" href="${shopHref()}">
+                          <img class="mega__feature-img" src="${featuredCollectionImg}" alt="" width="720" height="900" loading="lazy" decoding="async" />
+                          <span class="mega__feature-veil" aria-hidden="true"></span>
+                          <span class="mega__feature-copy">
+                            <span class="mega__eyebrow">Featured</span>
+                            <strong>Full collection</strong>
+                            <span>Six engineered pieces · Midnight &amp; Cardamom</span>
+                          </span>
+                        </a>
+                        <a class="mega__feature mega__feature--soft" href="${brand}sets/">
+                          <img class="mega__feature-img" src="${featuredLooksImg}" alt="" width="720" height="900" loading="lazy" decoding="async" />
+                          <span class="mega__feature-veil" aria-hidden="true"></span>
+                          <span class="mega__feature-copy">
+                            <span class="mega__eyebrow">Looks</span>
+                            <strong>Walk-out ready</strong>
+                            <span>Eight pairings. Midnight &amp; Cardamom.</span>
+                          </span>
+                        </a>
+                      </div>
+                    </div>
+                    ${situationPanels}
                   </div>
                 </div>
               </div>
@@ -240,41 +355,15 @@ export function renderHeader(): string {
     </div>
   </header>
   <div class="mobile-nav" data-mobile-nav aria-hidden="true">
-    <p class="mobile-nav__motto">Move like water, feel like air.</p>
     <nav class="mobile-nav__links" aria-label="Mobile">
       <a href="${shopHref()}">Collection</a>
       <a href="${brand}sets/">Looks</a>
       <a href="${brand}stories/">Stories</a>
-    </nav>
-    <div class="mobile-nav__wishlist">
-      <button type="button" class="mobile-nav__wish-btn" data-wish-open>
-        <span class="mobile-nav__wish-icon" aria-hidden="true">${icon('heart')}</span>
-        <span class="mobile-nav__wish-copy">
-          <strong>Wishlist</strong>
-          <em>Saved pieces</em>
-        </span>
+      <button type="button" data-wish-open>
+        Wishlist
         <span class="cart-count wish-count" data-wish-count hidden>0</span>
       </button>
-    </div>
-    <div class="mobile-nav__account">
-      <p class="eyebrow">Account</p>
-      ${
-        loggedIn
-          ? `
-        <a href="${accountHref()}">Profile</a>
-        <a href="${accountHref()}#details">Account details</a>
-        <button type="button" data-logout>Sign out</button>
-      `
-          : `
-        <a href="${accountHref()}">Sign in</a>
-        <a href="${accountHref()}">Create account</a>
-      `
-      }
-    </div>
-    <div class="mobile-nav__situations">
-      <p class="eyebrow">Shop by situation</p>
-      ${SITUATIONS.map((s) => `<a href="${shopHref({ situation: s.id })}"><span>${s.label}</span><em>${s.blurb}</em></a>`).join('')}
-    </div>
+    </nav>
   </div>`
 }
 
@@ -472,7 +561,7 @@ function lookMediaHTML(set: CoordSet, color: Colorway): string {
     </div>`
 }
 
-/** Walk-out ready look card — opens the look checkout page (sets), not a single PDP. */
+/** Walk-out ready look card - opens the Look PDP. */
 export function lookCardHTML(set: CoordSet): string {
   const color: Colorway = 'midnight'
   const top = getProduct(set.topId)
@@ -702,11 +791,17 @@ function renderSearchResults(query: string): void {
     .map((s) => {
       const typeLabel =
         s.type === 'product' ? 'Piece' : s.type === 'situation' ? 'Situation' : s.type === 'platform' ? 'Platform' : 'Collection'
+      const thumb = s.image
+        ? `<span class="search-hit__thumb" aria-hidden="true"><img src="${assetHref(s.image)}" alt="" width="64" height="80" loading="lazy" decoding="async" /></span>`
+        : `<span class="search-hit__thumb search-hit__thumb--empty" aria-hidden="true"></span>`
       return `
       <a class="search-hit" href="${s.href}">
-        <span class="search-hit__type">${typeLabel}</span>
-        <span class="search-hit__label">${s.label}</span>
-        ${s.blurb ? `<span class="search-hit__blurb">${s.blurb}</span>` : ''}
+        ${thumb}
+        <span class="search-hit__copy">
+          <span class="search-hit__type">${typeLabel}</span>
+          <span class="search-hit__label">${s.label}</span>
+          ${s.blurb ? `<span class="search-hit__blurb">${s.blurb}</span>` : ''}
+        </span>
       </a>`
     })
     .join('')
@@ -732,6 +827,7 @@ export function closeSearch(): void {
 }
 
 let sheetProductId: string | null = null
+let sheetLookId: string | null = null
 let sheetColor: Colorway = 'midnight'
 let sheetSize: Size | null = null
 
@@ -742,6 +838,7 @@ function openSheet(productId: string, preferColor?: Colorway): void {
   if (!product || !sheet || !overlay) return
 
   sheetProductId = productId
+  sheetLookId = null
   sheetColor = preferColor && product.colors.some((c) => c.id === preferColor) ? preferColor : product.colors[0].id
   sheetSize = null
 
@@ -775,16 +872,121 @@ function openSheet(productId: string, preferColor?: Colorway): void {
   sheet.setAttribute('aria-hidden', 'false')
 }
 
+function openLookSheet(lookId: string, preferColor?: Colorway): void {
+  const set = getCoordSet(lookId)
+  const top = set ? getProduct(set.topId) : undefined
+  const bottom = set ? getProduct(set.bottomId) : undefined
+  const sheet = document.querySelector('[data-sheet]')
+  const overlay = document.querySelector('[data-sheet-overlay]')
+  if (!set || !top || !bottom || !sheet || !overlay) return
+
+  sheetProductId = null
+  sheetLookId = set.id
+  sheetColor = preferColor === 'cardamom' ? 'cardamom' : 'midnight'
+  sheetSize = null
+  const total = coordSetPrice(set)
+
+  sheet.innerHTML = `
+    <div class="sheet__head">
+      <div>
+        <p class="eyebrow">Look</p>
+        <h3>${set.name}</h3>
+        <p class="product-card__price" style="margin-top:0.5rem">${formatPrice(total)}</p>
+        <p style="margin-top:0.35rem;font-size:0.85rem;color:var(--color-ink-muted)">${top.shortName} + ${bottom.shortName}</p>
+      </div>
+      <button type="button" class="icon-btn" data-sheet-close aria-label="Close">${icon('close')}</button>
+    </div>
+    <p class="eyebrow" style="margin-bottom:0.75rem">Colour · both pieces</p>
+    <div class="color-picker" data-sheet-colors>
+      ${(['midnight', 'cardamom'] as Colorway[])
+        .map(
+          (c) =>
+            `<button type="button" class="${c === sheetColor ? 'is-selected' : ''}" data-sheet-color="${c}" style="background:${COLORS[c].hex}" aria-label="${COLORS[c].name}"></button>`,
+        )
+        .join('')}
+    </div>
+    <p class="eyebrow" style="margin-bottom:0.75rem">Size · both pieces</p>
+    <div class="size-grid" data-sheet-sizes>
+      ${top.sizes.map((s) => `<button type="button" data-sheet-size="${s}">${s}</button>`).join('')}
+    </div>
+    <button class="btn btn--primary btn--block" type="button" data-sheet-confirm disabled>Add look to bag</button>
+  `
+
+  overlay.classList.add('is-open')
+  sheet.classList.add('is-open')
+  sheet.setAttribute('aria-hidden', 'false')
+}
+
 function closeSheet(): void {
   document.querySelector('[data-sheet-overlay]')?.classList.remove('is-open')
   document.querySelector('[data-sheet]')?.classList.remove('is-open')
   document.querySelector('[data-sheet]')?.setAttribute('aria-hidden', 'true')
   sheetProductId = null
+  sheetLookId = null
 }
 
 function syncSheetConfirm(): void {
   const btn = document.querySelector<HTMLButtonElement>('[data-sheet-confirm]')
   if (btn) btn.disabled = !sheetSize
+}
+
+function initAnnounceRail(root: ParentNode): void {
+  const rail = root.querySelector<HTMLElement>('[data-announce]')
+  const slides = [...(root.querySelectorAll<HTMLElement>('[data-announce-slide]') ?? [])]
+  if (!rail || slides.length < 2) return
+
+  let index = Math.max(
+    0,
+    slides.findIndex((s) => s.classList.contains('is-active')),
+  )
+  let timer: ReturnType<typeof setInterval> | null = null
+  const delay = 4500
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const show = (next: number) => {
+    index = (next + slides.length) % slides.length
+    slides.forEach((slide, i) => {
+      const on = i === index
+      slide.classList.toggle('is-active', on)
+      slide.setAttribute('aria-hidden', on ? 'false' : 'true')
+      slide.querySelectorAll('a').forEach((link) => {
+        if (on) link.removeAttribute('tabindex')
+        else link.setAttribute('tabindex', '-1')
+      })
+    })
+  }
+
+  const stop = () => {
+    if (timer) {
+      clearInterval(timer)
+      timer = null
+    }
+  }
+
+  const start = () => {
+    if (reduceMotion) return
+    stop()
+    timer = setInterval(() => show(index + 1), delay)
+  }
+
+  root.querySelector('[data-announce-prev]')?.addEventListener('click', () => {
+    show(index - 1)
+    start()
+  })
+  root.querySelector('[data-announce-next]')?.addEventListener('click', () => {
+    show(index + 1)
+    start()
+  })
+
+  rail.addEventListener('mouseenter', stop)
+  rail.addEventListener('mouseleave', start)
+  rail.addEventListener('focusin', stop)
+  rail.addEventListener('focusout', (e) => {
+    if (!rail.contains(e.relatedTarget as Node | null)) start()
+  })
+
+  show(index)
+  start()
 }
 
 export function mountShell(root: HTMLElement): void {
@@ -805,6 +1007,8 @@ export function mountShell(root: HTMLElement): void {
     page?.classList.add('page--hero')
     header?.classList.add('site-header--over-hero')
   }
+
+  initAnnounceRail(root)
 
   const syncHeaderSolid = () => {
     const solid = window.scrollY > 24 || document.body.classList.contains('nav-open')
@@ -855,12 +1059,47 @@ export function mountShell(root: HTMLElement): void {
   }
   if (shopNav && mega) {
     const megaTrigger = shopNav.querySelector<HTMLElement>('[data-mega-trigger]')
+    const setMegaPanel = (id: string) => {
+      mega.querySelectorAll<HTMLElement>('[data-mega-panel]').forEach((panel) => {
+        const active = panel.dataset.megaPanel === id
+        panel.classList.toggle('is-active', active)
+        panel.hidden = !active
+      })
+      mega.querySelectorAll<HTMLElement>('[data-mega-situation]').forEach((item) => {
+        item.classList.toggle('is-active', item.dataset.megaSituation === id)
+      })
+    }
+    const showDefaultMegaPanel = () => setMegaPanel('default')
+
     shopNav.querySelector('[data-mega-trigger]')?.addEventListener('mouseenter', openMega)
     mega.addEventListener('mouseenter', openMega)
-    shopNav.addEventListener('mouseleave', scheduleCloseMega)
+    shopNav.addEventListener('mouseleave', () => {
+      scheduleCloseMega()
+      showDefaultMegaPanel()
+    })
     shopNav.addEventListener('focusin', openMega)
     shopNav.addEventListener('focusout', (e) => {
-      if (!shopNav.contains(e.relatedTarget as Node)) closeMega()
+      if (!shopNav.contains(e.relatedTarget as Node)) {
+        closeMega()
+        showDefaultMegaPanel()
+      }
+    })
+    mega.querySelectorAll<HTMLElement>('[data-mega-situation]').forEach((item) => {
+      const id = item.dataset.megaSituation
+      if (!id) return
+      item.addEventListener('mouseenter', () => setMegaPanel(id))
+      item.addEventListener('focus', () => setMegaPanel(id))
+    })
+    mega.querySelector('[data-mega-aside]')?.addEventListener('mouseenter', (e) => {
+      const target = e.target as HTMLElement
+      if (target.closest('[data-mega-panel="default"]') || target.closest('.mega__feature')) {
+        showDefaultMegaPanel()
+      }
+    })
+    mega.querySelector('.mega__col')?.addEventListener('mouseleave', (e) => {
+      const related = (e as MouseEvent).relatedTarget as Node | null
+      if (related && mega.querySelector('[data-mega-aside]')?.contains(related)) return
+      showDefaultMegaPanel()
     })
     megaTrigger?.addEventListener('click', (e) => {
       // Keep link usable; open mega on intentional click without leaving yet on desktop hover devices
@@ -873,10 +1112,16 @@ export function mountShell(root: HTMLElement): void {
       else openMega()
     })
     document.addEventListener('click', (e) => {
-      if (!shopNav.contains(e.target as Node)) closeMega()
+      if (!shopNav.contains(e.target as Node)) {
+        closeMega()
+        showDefaultMegaPanel()
+      }
     })
     root.querySelectorAll<HTMLElement>('.site-nav > .site-nav__link').forEach((link) => {
-      link.addEventListener('mouseenter', closeMega)
+      link.addEventListener('mouseenter', () => {
+        closeMega()
+        showDefaultMegaPanel()
+      })
     })
   }
 
@@ -1013,10 +1258,15 @@ export function mountShell(root: HTMLElement): void {
       const card = lookColorDot.closest('[data-look-card]')
       const lookId = card?.getAttribute('data-look-card')
       const colorId = lookColorDot.dataset.lookColor as Colorway
-      const media = card?.querySelector<HTMLElement>('.product-card__media')
+      const media = card?.querySelector<HTMLElement>('.product-card__media, .pdp-get-look__media')
       const set = lookId ? getCoordSet(lookId) : undefined
       if (media && set) {
-        media.innerHTML = lookMediaHTML(set, colorId)
+        if (media.classList.contains('pdp-get-look__media')) {
+          const [front] = getCoordImages(set, colorId)
+          media.innerHTML = `<img src="${assetHref(front)}" alt="" width="480" height="720" loading="lazy" decoding="async" />`
+        } else {
+          media.innerHTML = lookMediaHTML(set, colorId)
+        }
       }
       card?.querySelectorAll('[data-look-color]').forEach((d) => d.classList.remove('is-active'))
       lookColorDot.classList.add('is-active')
@@ -1031,16 +1281,23 @@ export function mountShell(root: HTMLElement): void {
     }
 
     const colorDot = t.closest<HTMLElement>('[data-card-color]')
-    if (colorDot?.dataset.cardColor) {
+    if (colorDot?.dataset.cardColorId || colorDot?.hasAttribute('data-card-color')) {
       e.preventDefault()
       e.stopPropagation()
       const card = colorDot.closest('[data-product-card]')
-      const media = card?.querySelector<HTMLElement>('.product-card__media')
+      const media = card?.querySelector<HTMLElement>('.product-card__media, .pdp-get-look__media')
       const productId = card?.getAttribute('data-product-card')
       const product = productId ? getProduct(productId) : undefined
       const colorId = (colorDot.dataset.cardColorId as Colorway) || undefined
       if (media && product && colorId) {
-        media.innerHTML = mediaPanelHTML(product, colorId)
+        if (media.classList.contains('pdp-get-look__media')) {
+          const photo = getProductImage(product, colorId)
+          media.innerHTML = photo
+            ? `<img src="${assetHref(photo)}" alt="" width="480" height="720" loading="lazy" decoding="async" />`
+            : ''
+        } else {
+          media.innerHTML = mediaPanelHTML(product, colorId)
+        }
       }
       card?.querySelectorAll('[data-card-color]').forEach((d) => d.classList.remove('is-active'))
       colorDot.classList.add('is-active')
@@ -1051,6 +1308,14 @@ export function mountShell(root: HTMLElement): void {
         wishBtn.classList.toggle('is-on', on)
         wishBtn.innerHTML = on ? icon('heart-fill') : icon('heart')
       }
+      return
+    }
+    const quickLook = t.closest<HTMLElement>('[data-quick-add-look]')
+    if (quickLook?.dataset.quickAddLook) {
+      const card = quickLook.closest<HTMLElement>('[data-look-card]')
+      const activeDot = card?.querySelector<HTMLElement>('.color-dot.is-active')
+      const prefer = activeDot?.dataset.lookColor as Colorway | undefined
+      openLookSheet(quickLook.dataset.quickAddLook, prefer)
       return
     }
     const quick = t.closest<HTMLElement>('[data-quick-add]')
@@ -1086,8 +1351,15 @@ export function mountShell(root: HTMLElement): void {
       syncSheetConfirm()
       return
     }
-    if (t.closest('[data-sheet-confirm]') && sheetProductId && sheetSize) {
-      addToCart(sheetProductId, sheetColor, sheetSize, 1)
+    if (t.closest('[data-sheet-confirm]') && sheetSize) {
+      if (sheetLookId) {
+        const set = getCoordSet(sheetLookId)
+        if (set) addCoordSet(sheetColor, sheetSize, set.topId, set.bottomId)
+      } else if (sheetProductId) {
+        addToCart(sheetProductId, sheetColor, sheetSize, 1)
+      } else {
+        return
+      }
       closeSheet()
       openCart()
       return

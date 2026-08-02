@@ -1,6 +1,8 @@
 import {
+  COLORS,
   FABRIC_PLATFORMS,
   SITUATIONS,
+  getProductImage,
   products,
   type Product,
 } from './data/products'
@@ -10,8 +12,11 @@ export interface SearchSuggestion {
   label: string
   blurb?: string
   href: string
+  image?: string
   productId?: string
 }
+
+const COLLECTION_IMAGE = 'media/products/midnight-tank-2.png'
 
 function normalize(s: string): string {
   return s.toLowerCase().replace(/™/g, '').trim()
@@ -36,6 +41,10 @@ function productHaystack(p: Product): string {
       ...p.tech,
     ].join(' '),
   )
+}
+
+function productThumb(p: Product): string | undefined {
+  return getProductImage(p, COLORS.midnight.id) ?? getProductImage(p, p.colors[0]?.id ?? 'midnight')
 }
 
 export function searchProducts(query: string, limit = 8): Product[] {
@@ -67,6 +76,7 @@ export function defaultSuggestions(shopHref: (p?: Record<string, string>) => str
     blurb: `${p.platform} · ${p.role}`,
     href: `${brand}product/?id=${encodeURIComponent(p.id)}`,
     productId: p.id,
+    image: productThumb(p),
   }))
 
   const situations = SITUATIONS.slice(0, 3).map((s) => ({
@@ -74,6 +84,7 @@ export function defaultSuggestions(shopHref: (p?: Record<string, string>) => str
     label: s.label,
     blurb: s.blurb,
     href: shopHref({ situation: s.id }),
+    image: s.image,
   }))
 
   const platforms = FABRIC_PLATFORMS.map((f) => ({
@@ -81,6 +92,7 @@ export function defaultSuggestions(shopHref: (p?: Record<string, string>) => str
     label: f.label,
     blurb: f.outcome,
     href: shopHref({ platform: f.id }),
+    image: f.image,
   }))
 
   return [
@@ -89,6 +101,7 @@ export function defaultSuggestions(shopHref: (p?: Record<string, string>) => str
       label: 'Collection',
       blurb: 'Six engineered pieces · Midnight & Cardamom',
       href: shopHref(),
+      image: COLLECTION_IMAGE,
     },
     ...situations,
     ...platforms.slice(0, 2),
@@ -114,6 +127,7 @@ export function liveSuggestions(
         label: s.label,
         blurb: s.blurb,
         href: shopHref({ situation: s.id }),
+        image: s.image,
       })
     }
   }
@@ -126,6 +140,7 @@ export function liveSuggestions(
         label: f.label,
         blurb: f.outcome,
         href: shopHref({ platform: f.id }),
+        image: f.image,
       })
     }
   }
@@ -136,6 +151,7 @@ export function liveSuggestions(
       label: 'Collection',
       blurb: 'View the full collection',
       href: shopHref({ q }),
+      image: COLLECTION_IMAGE,
     })
   }
 
@@ -146,6 +162,7 @@ export function liveSuggestions(
       blurb: `${p.platform} · ${formatBlurbPrice(p.mrp)}`,
       href: `${brand}product/?id=${encodeURIComponent(p.id)}`,
       productId: p.id,
+      image: productThumb(p),
     })
   }
 
@@ -155,6 +172,7 @@ export function liveSuggestions(
       label: `Search “${q}” in Collection`,
       blurb: 'Browse all pieces',
       href: shopHref({ q }),
+      image: COLLECTION_IMAGE,
     })
   }
 

@@ -5,55 +5,148 @@ import '../styles/pages.css'
 import {
   COLORS,
   COORD_SETS,
+  SITUATIONS,
   coordSetPrice,
   formatPrice,
   getCoordImages,
   getProduct,
   type Colorway,
   type CoordSet,
-  type Size,
+  type Situation,
 } from '../data/products'
-import { addCoordSet, assetHref, lookProductHref, mountShell, openCart, initPageMotion } from '../ui/shell'
-import { bindImageZoom } from '../ui/imageZoom'
+import { assetHref, initPageMotion, lookHref, mountShell } from '../ui/shell'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
 
 const params = new URLSearchParams(window.location.search)
-const initialSlug = params.get('set')
-let activeId =
-  COORD_SETS.find((s) => s.slug === initialSlug || s.id === initialSlug)?.id ?? COORD_SETS[0]!.id
-const colorBySet = new Map<string, Colorway>(COORD_SETS.map((s) => [s.id, 'midnight']))
-let size: Size | null = null
-let heroView = 0
-let motionReady = false
-let unbindZoom: (() => void) | null = null
+const deepLink = params.get('set') || params.get('id')
+if (deepLink) {
+  window.location.replace(`../look/?set=${encodeURIComponent(deepLink)}`)
+} else {
+  app.innerHTML = `<div data-page-content></div>`
+  mountShell(app)
 
-app.innerHTML = `<div data-page-content></div>`
-mountShell(app)
+  type LookTop = 'bra' | 'tank' | 'crop' | 'tee'
+  type LookBottom = 'shorts' | 'leggings'
+  type LookSort = 'featured' | 'price-asc' | 'price-desc' | 'name'
 
-function activeSet(): CoordSet {
-  return COORD_SETS.find((s) => s.id === activeId) ?? COORD_SETS[0]!
-}
+  let situation = (params.get('situation') as Situation | null) || null
+  let color = (params.get('color') as Colorway | null) || null
+  let topFilter = (params.get('top') as LookTop | null) || null
+  let bottomFilter = (params.get('bottom') as LookBottom | null) || null
+  let sort = (params.get('sort') as LookSort) || 'featured'
 
-function setCardHTML(set: CoordSet): string {
-  const color = colorBySet.get(set.id) ?? 'midnight'
-  const [front, alt] = getCoordImages(set, color)
-  const top = getProduct(set.topId)
-  const bottom = getProduct(set.bottomId)
-  const total = coordSetPrice(set)
-  const selected = set.id === activeId
+  const colorBySet = new Map<string, Colorway>(
+    COORD_SETS.map((s) => [s.id, color ?? 'midnight']),
+  )
 
-  return `
-  <article class="coord-card look-card ${selected ? 'is-active' : ''}" data-coord-card="${set.id}">
-    <button type="button" class="coord-card__media" data-select-set="${set.id}" aria-label="Select ${set.name} look">
+  const TOP_FILTERS: { id: LookTop | null; label: string }[] = [
+    { id: null, label: 'All' },
+    { id: 'bra', label: 'Bra' },
+    { id: 'tank', label: 'Tank' },
+    { id: 'crop', label: 'Crop' },
+    { id: 'tee', label: 'Tee' },
+  ]
+
+  const BOTTOM_FILTERS: { id: LookBottom | null; label: string }[] = [
+    { id: null, label: 'All' },
+    { id: 'shorts', label: 'Shorts' },
+    { id: 'leggings', label: 'Leggings' },
+  ]
+
+  function lookTopKind(set: CoordSet): LookTop | null {
+    const top = getProduct(set.topId)
+    if (!top) return null
+    if (top.category === 'bra') return 'bra'
+    if (top.category === 'tee') return 'tee'
+    if (top.id.includes('-C') || /crop/i.test(top.name) || /crop/i.test(top.shortName)) return 'crop'
+    if (top.category === 'tops') return 'tank'
+    return null
+  }
+
+  function lookBottomKind(set: CoordSet): LookBottom | null {
+    const bottom = getProduct(set.bottomId)
+    if (!bottom) return null
+    if (bottom.category === 'shorts') return 'shorts'
+    if (bottom.category === 'leggings') return 'leggings'
+    return null
+  }
+
+  function lookMatchesSituation(set: CoordSet, s: Situation): boolean {
+    const top = getProduct(set.topId)
+    const bottom = getProduct(set.bottomId)
+    return Boolean(top?.situations.includes(s) || bottom?.situations.includes(s))
+  }
+
+  function filterLooks(): CoordSet[] {
+    let list = [...COORD_SETS]
+    if (topFilter) list = list.filter((s) => lookTopKind(s) === topFilter)
+    if (bottomFilter) list = list.filter((s) => lookBottomKind(s) === bottomFilter)
+    if (situation) list = list.filter((s) => lookMatchesSituation(s, situation!))
+    if (color) {
+      // All looks offer both colours; colour filter sets the preferred preview.
+      list.forEach((s) => colorBySet.set(s.id, color!))
+    }
+
+    if (sort === 'price-asc') {
+      list.sort((a, b) => coordSetPrice(a) - coordSetPrice(b))
+    } else if (sort === 'price-desc') {
+      list.sort((a, b) => coordSetPrice(b) - coordSetPrice(a))
+    } else if (sort === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name))
+    }
+    return list
+  }
+
+  function activeFilterCount(): number {
+    let n = 0
+    if (situation) n++
+    if (topFilter) n++
+    if (bottomFilter) n++
+    if (color) n++
+    return n
+  }
+
+  function clearAll() {
+    situation = null
+    topFilter = null
+    bottomFilter = null
+    color = null
+    sort = 'featured'
+    COORD_SETS.forEach((s) => colorBySet.set(s.id, 'midnight'))
+    syncUrl()
+    render()
+  }
+
+  function syncUrl() {
+    const next = new URLSearchParams()
+    if (situation) next.set('situation', situation)
+    if (topFilter) next.set('top', topFilter)
+    if (bottomFilter) next.set('bottom', bottomFilter)
+    if (color) next.set('color', color)
+    if (sort !== 'featured') next.set('sort', sort)
+    history.replaceState(null, '', `${window.location.pathname}${next.toString() ? `?${next}` : ''}`)
+  }
+
+  function setCardHTML(set: CoordSet): string {
+    const preview = colorBySet.get(set.id) ?? 'midnight'
+    const [front, alt] = getCoordImages(set, preview)
+    const top = getProduct(set.topId)
+    const bottom = getProduct(set.bottomId)
+    const total = coordSetPrice(set)
+    const href = lookHref(set.slug)
+
+    return `
+  <article class="coord-card look-card" data-coord-card="${set.id}">
+    <a class="coord-card__media" href="${href}" aria-label="Shop ${set.name} look">
       <img class="coord-card__img" src="${assetHref(front)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
       <img class="coord-card__img coord-card__img--alt" src="${assetHref(alt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
-    </button>
+    </a>
     <div class="coord-card__body">
       <div class="coord-card__top">
         <h3 class="coord-card__name">
-          <button type="button" class="coord-card__name-btn" data-select-set="${set.id}">${set.name}</button>
+          <a class="coord-card__name-btn" href="${href}">${set.name}</a>
         </h3>
         <p class="coord-card__price">${formatPrice(total)}</p>
       </div>
@@ -65,7 +158,7 @@ function setCardHTML(set: CoordSet): string {
             (c) => `
           <button
             type="button"
-            class="color-dot ${c === color ? 'is-active' : ''}"
+            class="color-dot ${c === preview ? 'is-active' : ''}"
             data-coord-color="${set.id}"
             data-color="${c}"
             style="background:${COLORS[c].hex}"
@@ -76,181 +169,178 @@ function setCardHTML(set: CoordSet): string {
           .join('')}
       </div>
       <div class="look-card__actions">
-        <button type="button" class="btn btn--primary btn--block look-card__cta" data-select-set="${set.id}">
+        <a class="btn btn--primary btn--block look-card__cta" href="${href}">
           Shop this look
-        </button>
+        </a>
       </div>
     </div>
   </article>`
-}
+  }
 
-function render() {
-  const content = document.querySelector('[data-page-content]')
-  if (!content) return
+  function render() {
+    const content = document.querySelector('[data-page-content]')
+    if (!content) return
 
-  unbindZoom?.()
-  unbindZoom = null
+    const list = filterLooks()
+    const filtersOn = activeFilterCount()
 
-  const set = activeSet()
-  const color = colorBySet.get(set.id) ?? 'midnight'
-  const [heroFront, heroAlt] = getCoordImages(set, color)
-  const top = getProduct(set.topId)!
-  const bottom = getProduct(set.bottomId)!
-  const total = coordSetPrice(set)
-
-  content.innerHTML = `
-    <section class="section coords-hero">
-      <div class="container coords-hero__grid">
-        <div class="coords-hero__main">
-          <div class="coords-hero__stage">
-            <div class="coords-hero__media is-zoomable" data-zoom-stage>
-              <img
-                class="coords-hero__img"
-                data-hero-img
-                src="${assetHref(heroView === 0 ? heroFront : heroAlt)}"
-                alt="${set.name} in ${COLORS[color].name}"
-                width="1200"
-                height="1600"
-                draggable="false"
-              />
-              <div class="pdp-zoom-lens" data-zoom-lens hidden></div>
-              <div class="coords-hero__nav">
-                <button type="button" class="pdp-gallery__arrow" data-hero-prev aria-label="Previous view">‹</button>
-                <button type="button" class="pdp-gallery__arrow" data-hero-next aria-label="Next view">›</button>
-              </div>
-              <div class="pdp-gallery__dots" role="tablist" aria-label="Set views">
-                <button type="button" class="pdp-gallery__dot ${heroView === 0 ? 'is-active' : ''}" data-hero-view="0" aria-label="Front view"></button>
-                <button type="button" class="pdp-gallery__dot ${heroView === 1 ? 'is-active' : ''}" data-hero-view="1" aria-label="Second view"></button>
-              </div>
-            </div>
-            <div class="coords-zoom-pane" data-zoom-pane hidden aria-hidden="true"></div>
-            <p class="pdp-gallery__hint">Hover to zoom · Use arrows for the second view</p>
-          </div>
-          <div class="coords-hero__details">
-            <p class="eyebrow">In this set</p>
-            <h2 class="coords-hero__pieces-title">${top.name} + ${bottom.name}</h2>
-            <p class="coords-hero__details-copy">${set.blurb} One size applies to both pieces. Graded together in ${COLORS[color].name}.</p>
-            <ul class="coords-hero__list">
-              <li><strong>${top.shortName}</strong><span>${formatPrice(top.mrp)} · ${top.platform}</span></li>
-              <li><strong>${bottom.shortName}</strong><span>${formatPrice(bottom.mrp)} · ${bottom.platform}</span></li>
-            </ul>
-          </div>
-        </div>
-        <aside class="coords-hero__copy">
-          <p class="eyebrow">Looks</p>
-          <h1 class="display">${set.name}</h1>
-          <p class="lede">${set.blurb}</p>
-          <p class="coords-hero__meta">${top.name} + ${bottom.name}</p>
-          <p class="coords-hero__price">${formatPrice(total)} · look</p>
-          <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Colour · ${COLORS[color].name}</p>
-            <div class="color-picker">
-              ${(['midnight', 'cardamom'] as Colorway[])
-                .map(
-                  (c) =>
-                    `<button type="button" class="${c === color ? 'is-selected' : ''}" data-hero-color="${c}" style="background:${COLORS[c].hex}" aria-label="${COLORS[c].name}"></button>`,
-                )
-                .join('')}
-            </div>
-          </div>
-          <div>
-            <p class="eyebrow" style="margin:1.25rem 0 0.75rem">Size · both pieces</p>
-            <div class="size-grid">
-              ${top.sizes
-                .map(
-                  (s) =>
-                    `<button type="button" class="${size === s ? 'is-selected' : ''}" data-size="${s}">${s}</button>`,
-                )
-                .join('')}
-            </div>
-          </div>
-          <button class="btn btn--primary btn--block" type="button" data-add-set ${size ? '' : 'disabled'} style="margin-top:1.25rem">
-            Add look to bag
-          </button>
-          <a class="btn btn--ghost btn--block look-card__cta" href="${lookProductHref(set.topId, set.slug)}" style="margin-top:0.75rem">
-            Shop this look
-          </a>
-        </aside>
-      </div>
-    </section>
-
-    <section class="section coords-gallery" id="coord-suggestions">
+    content.innerHTML = `
+    <section class="section coords-gallery plp">
       <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Walk-out ready</p>
-          <h2 class="display">Eight looks. Two colours.</h2>
-          <p class="lede">Tap a look to style both pieces - colour, size, and add the look to bag.</p>
+        <div class="section-head plp-head">
+          <p class="eyebrow">Looks</p>
+          <h1 class="display">Walk-out ready</h1>
+          <p class="lede">${list.length} look${list.length === 1 ? '' : 's'} · Midnight &amp; Cardamom · graded as pairs</p>
         </div>
+
+        <div class="plp-bar">
+          <div class="plp-mobile-tools">
+            <button type="button" class="plp-filter-toggle" data-filter-toggle aria-expanded="false">
+              Filter${filtersOn ? ` · ${filtersOn}` : ''}
+            </button>
+            <label class="sort-label">
+              <span class="eyebrow">Sort</span>
+              <select data-sort>
+                <option value="featured" ${sort === 'featured' ? 'selected' : ''}>Featured</option>
+                <option value="price-asc" ${sort === 'price-asc' ? 'selected' : ''}>Price · Low to high</option>
+                <option value="price-desc" ${sort === 'price-desc' ? 'selected' : ''}>Price · High to low</option>
+                <option value="name" ${sort === 'name' ? 'selected' : ''}>Name</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="plp-bar__filters" data-filter-panel>
+            <div class="filter-group">
+              <span class="filter-group__label">Situation</span>
+              <div class="filters">
+                <button type="button" class="filter-chip ${!situation ? 'is-active' : ''}" data-situation="">All</button>
+                ${SITUATIONS.map(
+                  (s) =>
+                    `<button type="button" class="filter-chip ${situation === s.id ? 'is-active' : ''}" data-situation="${s.id}">${s.label}</button>`,
+                ).join('')}
+              </div>
+            </div>
+            <div class="filter-group">
+              <span class="filter-group__label">Top</span>
+              <div class="filters">
+                ${TOP_FILTERS.map(
+                  (t) =>
+                    `<button type="button" class="filter-chip ${topFilter === t.id || (!topFilter && !t.id) ? 'is-active' : ''}" data-top="${t.id ?? ''}">${t.label}</button>`,
+                ).join('')}
+              </div>
+            </div>
+            <div class="filter-group">
+              <span class="filter-group__label">Bottom</span>
+              <div class="filters">
+                ${BOTTOM_FILTERS.map(
+                  (b) =>
+                    `<button type="button" class="filter-chip ${bottomFilter === b.id || (!bottomFilter && !b.id) ? 'is-active' : ''}" data-bottom="${b.id ?? ''}">${b.label}</button>`,
+                ).join('')}
+              </div>
+            </div>
+            <div class="filter-group">
+              <span class="filter-group__label">Colour</span>
+              <div class="filters">
+                <button type="button" class="filter-chip ${!color ? 'is-active' : ''}" data-color="">Both</button>
+                <button type="button" class="filter-chip filter-chip--swatch ${color === 'midnight' ? 'is-active' : ''}" data-color="midnight"><span class="swatch-mini" style="background:#1A1208"></span>Midnight</button>
+                <button type="button" class="filter-chip filter-chip--swatch ${color === 'cardamom' ? 'is-active' : ''}" data-color="cardamom"><span class="swatch-mini" style="background:#7A5C3A"></span>Cardamom</button>
+              </div>
+            </div>
+            ${
+              filtersOn
+                ? `<button type="button" class="text-link plp-clear-mobile" data-clear-all>Clear all filters</button>`
+                : ''
+            }
+          </div>
+
+          <div class="plp-bar__sort plp-bar__sort--desktop">
+            ${filtersOn ? `<button type="button" class="text-link" data-clear-all>Clear (${filtersOn})</button>` : ''}
+            <label class="sort-label">
+              <span class="eyebrow">Sort</span>
+              <select data-sort-desktop>
+                <option value="featured" ${sort === 'featured' ? 'selected' : ''}>Featured</option>
+                <option value="price-asc" ${sort === 'price-asc' ? 'selected' : ''}>Price · Low to high</option>
+                <option value="price-desc" ${sort === 'price-desc' ? 'selected' : ''}>Price · High to low</option>
+                <option value="name" ${sort === 'name' ? 'selected' : ''}>Name</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
         <div class="coord-grid">
-          ${COORD_SETS.map((s) => setCardHTML(s)).join('')}
+          ${
+            list.length
+              ? list.map((s) => setCardHTML(s)).join('')
+              : `<div class="plp-empty">
+                  <p class="eyebrow">No matches</p>
+                  <p>Try another top, bottom, or situation - or clear filters to see all eight looks.</p>
+                  <button type="button" class="btn btn--primary" data-clear-all>Reset filters</button>
+                </div>`
+          }
         </div>
       </div>
     </section>`
 
-  const stage = content.querySelector<HTMLElement>('[data-zoom-stage]')
-  const heroImg = content.querySelector<HTMLImageElement>('[data-hero-img]')
-  const lens = content.querySelector<HTMLElement>('[data-zoom-lens]')
-  const pane = content.querySelector<HTMLElement>('[data-zoom-pane]')
-  const cover = content.querySelector<HTMLElement>('.coords-hero__copy')
-  if (stage && heroImg && lens && pane && cover) {
-    unbindZoom = bindImageZoom({ stage, img: heroImg, lens, pane, cover })
-  }
-
-  const setHeroView = (view: number) => {
-    heroView = view === 0 ? 0 : 1
-    if (!heroImg) return
-    heroImg.src = assetHref(heroView === 0 ? heroFront : heroAlt)
-    content.querySelectorAll<HTMLElement>('[data-hero-view]').forEach((d) => {
-      d.classList.toggle('is-active', Number(d.dataset.heroView) === heroView)
+    content.querySelectorAll<HTMLElement>('[data-situation]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        situation = (btn.dataset.situation as Situation) || null
+        syncUrl()
+        render()
+      })
     })
-  }
-
-  content.querySelector('[data-hero-prev]')?.addEventListener('click', () => setHeroView(heroView === 0 ? 1 : 0))
-  content.querySelector('[data-hero-next]')?.addEventListener('click', () => setHeroView(heroView === 0 ? 1 : 0))
-  content.querySelectorAll<HTMLElement>('[data-hero-view]').forEach((btn) => {
-    btn.addEventListener('click', () => setHeroView(Number(btn.dataset.heroView)))
-  })
-
-  /* Swipe hero between front / second view */
-  if (stage && heroImg) {
-    let startX = 0
-    let dragging = false
-    stage.addEventListener('pointerdown', (e) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return
-      startX = e.clientX
-      dragging = true
-      stage.setPointerCapture?.(e.pointerId)
+    content.querySelectorAll<HTMLElement>('[data-top]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        topFilter = (btn.dataset.top as LookTop) || null
+        syncUrl()
+        render()
+      })
     })
-    stage.addEventListener('pointerup', (e) => {
-      if (!dragging) return
-      dragging = false
-      const dx = e.clientX - startX
-      if (Math.abs(dx) > 48) setHeroView(dx < 0 ? 1 : 0)
+    content.querySelectorAll<HTMLElement>('[data-bottom]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        bottomFilter = (btn.dataset.bottom as LookBottom) || null
+        syncUrl()
+        render()
+      })
     })
-  }
+    content.querySelectorAll<HTMLElement>('[data-color]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        // Ignore per-card colour dots (they use data-coord-color + data-color)
+        if (btn.hasAttribute('data-coord-color')) return
+        color = (btn.dataset.color as Colorway) || null
+        if (color) COORD_SETS.forEach((s) => colorBySet.set(s.id, color!))
+        else COORD_SETS.forEach((s) => colorBySet.set(s.id, 'midnight'))
+        syncUrl()
+        render()
+      })
+    })
+    content.querySelectorAll('[data-clear-all]').forEach((btn) => {
+      btn.addEventListener('click', () => clearAll())
+    })
 
-  content.querySelectorAll<HTMLElement>('[data-select-set]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      activeId = btn.dataset.selectSet!
-      heroView = 0
-      const url = new URL(window.location.href)
-      const slug = COORD_SETS.find((s) => s.id === activeId)?.slug
-      if (slug) url.searchParams.set('set', slug)
-      history.replaceState(null, '', url)
+    const onSort = (e: Event) => {
+      sort = (e.target as HTMLSelectElement).value as LookSort
+      syncUrl()
       render()
-      const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
+    }
+    content.querySelectorAll<HTMLSelectElement>('[data-sort], [data-sort-desktop]').forEach((el) => {
+      el.addEventListener('change', onSort)
     })
-  })
 
-  content.querySelectorAll<HTMLElement>('[data-coord-color]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation()
-      const id = btn.dataset.coordColor!
-      const c = btn.dataset.color as Colorway
-      colorBySet.set(id, c)
-      if (id === activeId) render()
-      else {
+    content.querySelector('[data-filter-toggle]')?.addEventListener('click', () => {
+      const panel = content.querySelector('[data-filter-panel]')
+      const btn = content.querySelector<HTMLButtonElement>('[data-filter-toggle]')
+      const open = panel?.classList.toggle('is-open')
+      btn?.setAttribute('aria-expanded', String(!!open))
+      if (btn) btn.textContent = open ? 'Hide filters' : `Filter${filtersOn ? ` · ${filtersOn}` : ''}`
+    })
+
+    content.querySelectorAll<HTMLElement>('[data-coord-color]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const id = btn.dataset.coordColor!
+        const c = btn.dataset.color as Colorway
+        colorBySet.set(id, c)
         const card = content.querySelector(`[data-coord-card="${id}"]`)
         if (!card) return
         const set = COORD_SETS.find((s) => s.id === id)!
@@ -260,36 +350,12 @@ function render() {
         if (imgs[1]) imgs[1].src = assetHref(alt)
         card.querySelectorAll('[data-coord-color]').forEach((d) => d.classList.remove('is-active'))
         btn.classList.add('is-active')
-      }
+      })
     })
-  })
 
-  content.querySelectorAll<HTMLElement>('[data-hero-color]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      colorBySet.set(activeId, btn.dataset.heroColor as Colorway)
-      render()
-    })
-  })
-
-  content.querySelectorAll<HTMLElement>('[data-size]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      size = btn.dataset.size as Size
-      render()
-    })
-  })
-
-  content.querySelector('[data-add-set]')?.addEventListener('click', () => {
-    if (!size) return
-    const current = activeSet()
-    addCoordSet(colorBySet.get(current.id) ?? 'midnight', size, current.topId, current.bottomId)
-    openCart()
-  })
-
-  if (!motionReady) {
     initPageMotion(content)
-    motionReady = true
+    document.title = 'Looks · Rivlet'
   }
-}
 
-render()
-document.title = 'Looks · Rivlet'
+  render()
+}

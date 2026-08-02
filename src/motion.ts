@@ -371,7 +371,7 @@ function bindSituationRail(rail: HTMLElement, mobileMq: MediaQueryList): void {
   let raf = 0
   let resumeTimer: number | undefined
   let cachedLoop = 0
-  const SPEED = 0.65 // px per frame — continuous marquee
+  const SPEED = 0.65 // px per frame - continuous marquee
 
   const originals = () =>
     [...rail.querySelectorAll<HTMLElement>('.situation-panel:not([data-situation-clone])')]

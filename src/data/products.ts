@@ -45,11 +45,11 @@ export const COLORS: Record<Colorway, ColorInfo> = {
 export const SIZES: Size[] = ['XS', 'S', 'M', 'L', 'XL', '2XL']
 
 export const SITUATIONS: { id: Situation; label: string; blurb: string; image: string }[] = [
-  { id: 'summer', label: 'Summer', blurb: 'Built for heat and humidity.', image: 'media/situations/summer.png' },
-  { id: 'gym', label: 'Gym', blurb: 'Dry under load. Secure through every set.', image: 'media/situations/gym.png' },
-  { id: 'yoga', label: 'Yoga', blurb: 'Second-skin hold. No ride-up. No dig.', image: 'media/situations/yoga.png' },
-  { id: 'office', label: 'Office', blurb: 'Composed lines that still perform.', image: 'media/situations/office.png' },
-  { id: 'travel', label: 'Travel', blurb: 'Light on the body. Fresh for longer.', image: 'media/situations/travel.png' },
+  { id: 'summer', label: 'Summer', blurb: 'Built for heat and humidity.', image: 'media/products/midnight-tank-1.png' },
+  { id: 'gym', label: 'Gym', blurb: 'Dry under load. Secure through every set.', image: 'media/coords/bra-shorts-midnight-1.png' },
+  { id: 'yoga', label: 'Yoga', blurb: 'Second-skin hold. No ride-up. No dig.', image: 'media/coords/bra-leggings-midnight-1.png' },
+  { id: 'office', label: 'Office', blurb: 'Composed lines that still perform.', image: 'media/products/midnight-tee-1.png' },
+  { id: 'travel', label: 'Travel', blurb: 'Light on the body. Fresh for longer.', image: 'media/coords/tee-shorts-midnight-1.png' },
 ]
 
 export const products: Product[] = [

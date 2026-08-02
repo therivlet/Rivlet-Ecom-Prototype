@@ -4,7 +4,6 @@ import '../styles/components.css'
 import '../styles/pages.css'
 import { COLORS, REVIEWS, formatPrice, getProduct, getProductImages, type Colorway, type Size } from '../data/products'
 import {
-  addCoordSet,
   addToCart,
   mountShell,
   openCart,
@@ -17,6 +16,19 @@ import {
   assetHref,
 } from '../ui/shell'
 import { bindImageZoom } from '../ui/imageZoom'
+import {
+  atcLabel,
+  benefitBulletsHTML,
+  bindSizeGuideTriggers,
+  bindStickyAtc,
+  colourThumbsHTML,
+  getTheLookHTML,
+  reviewSummaryHTML,
+  sizeBlockHTML,
+  sizeGuideTabForCategory,
+  stickyAtcHTML,
+  trustRowHTML,
+} from '../ui/pdpBuy'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
@@ -43,6 +55,7 @@ if (!product) {
   let galleryTone = 0
   let motionReady = false
   let unbindZoom: (() => void) | null = null
+  let unbindSticky: (() => void) | null = null
 
   const related = products
     .filter((p) => product.setWith?.includes(p.id) || (p.category === product.category && p.id !== product.id))
@@ -154,9 +167,17 @@ if (!product) {
     })
   }
 
+  function addProduct(): void {
+    if (!size) return
+    addToCart(product!.id, color, size, 1)
+    openCart()
+  }
+
   function paint() {
     unbindZoom?.()
     unbindZoom = null
+    unbindSticky?.()
+    unbindSticky = null
 
     const hex = COLORS[color].hex
     const gallery = getProductImages(product!, color)
@@ -165,6 +186,8 @@ if (!product) {
     else galleryTone = galleryTone % 3
     const activeSrc = hasPhotos ? assetHref(gallery[galleryTone]) : ''
     const thumbCount = hasPhotos ? gallery.length : 3
+    const cta = atcLabel(Boolean(size), 'Add to bag')
+    const priceLabel = formatPrice(product!.mrp)
 
     content!.innerHTML = `
       <div class="container pdp">
@@ -245,50 +268,37 @@ if (!product) {
           </div>
         </div>
 
-        <aside class="pdp-buy">
+        <aside class="pdp-buy" data-pdp-buy>
           <p class="eyebrow">${product!.platform} · ${product!.role}</p>
           <h1>${product!.name}</h1>
-          <p class="product-card__price">${formatPrice(product!.mrp)}</p>
-          <p style="color:var(--color-ink-soft)">${product!.feeling}</p>
-          <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Colour · ${COLORS[color].name}</p>
-            <div class="color-picker">
-              ${product!.colors
-                .map(
-                  (c) =>
-                    `<button type="button" class="${c.id === color ? 'is-selected' : ''}" data-color="${c.id}" style="background:${c.hex}" aria-label="${c.name}"></button>`,
-                )
-                .join('')}
-            </div>
+          ${reviewSummaryHTML()}
+          <div class="pdp-buy__price-block">
+            <p class="product-card__price">${priceLabel}</p>
+            <p class="pdp-buy__tax">Inclusive of taxes</p>
           </div>
-          <div>
-            <p class="eyebrow" style="margin-bottom:0.75rem">Size ${product!.cupInclusive ? '· cup-inclusive' : ''}</p>
-            <div class="size-grid">
-              ${product!.sizes
-                .map(
-                  (s) =>
-                    `<button type="button" class="${size === s ? 'is-selected' : ''}" data-size="${s}" aria-pressed="${size === s}">${s}</button>`,
-                )
-                .join('')}
-            </div>
-            <p class="fit-note">Fits true to size · South-Asian block · XS-2XL</p>
-          </div>
-          <button class="btn btn--primary btn--block" type="button" data-atc ${size ? '' : 'disabled'}>Add to bag</button>
+          ${benefitBulletsHTML(product!)}
+          ${colourThumbsHTML(product!, color)}
+          ${sizeBlockHTML({
+            sizes: product!.sizes,
+            selected: size,
+            cupInclusive: product!.cupInclusive,
+            fitNote: 'Fits true to size · South-Asian block · XS–2XL',
+            guideTab: sizeGuideTabForCategory(product!.category),
+          })}
+          <button class="btn btn--primary btn--block" type="button" data-atc ${size ? '' : 'disabled'}>${cta}</button>
           <button class="btn btn--ghost btn--block wish-pdp ${isWishlisted(product!.id, color) ? 'is-on' : ''}" type="button" data-pdp-wish>
             ${isWishlisted(product!.id, color) ? 'Saved' : 'Save for later'}
           </button>
-          ${
-            product!.id === 'RVL-TNK-003-C' || product!.id === 'RVL-SHT-004'
-              ? `<button class="btn btn--ghost btn--block" type="button" data-add-set ${size ? '' : 'disabled'}>Add co-ord set</button>`
-              : ''
-          }
-          <ul class="trust-strip">
-            <li>Easy exchanges · prototype preview</li>
-            <li>${product!.platform} engineered</li>
-            <li>${product!.heroFeature}</li>
-          </ul>
+          ${trustRowHTML([
+            ['Easy exchanges', 'Prototype preview · size help before you commit'],
+            ['Delivery', 'Fulfilment timing confirmed at checkout'],
+            [product!.platform, 'Engineered for heat, humidity, and long days'],
+          ])}
+          ${getTheLookHTML(product!)}
         </aside>
       </div>
+
+      ${stickyAtcHTML({ price: priceLabel, label: cta, disabled: !size })}
 
       <div class="container pdp-story pdp-story--full">
         <div class="story-block" id="reviews">
@@ -320,21 +330,14 @@ if (!product) {
         paint()
       })
     })
-    content!.querySelector('[data-atc]')?.addEventListener('click', () => {
-      if (!size) return
-      addToCart(product!.id, color, size, 1)
-      openCart()
-    })
-    content!.querySelector('[data-add-set]')?.addEventListener('click', () => {
-      if (!size) return
-      addCoordSet(color, size)
-      openCart()
-    })
+    content!.querySelector('[data-atc]')?.addEventListener('click', addProduct)
     content!.querySelector('[data-pdp-wish]')?.addEventListener('click', () => {
       toggleWishlist(product!.id, color)
       paint()
     })
 
+    bindSizeGuideTriggers(content!)
+    unbindSticky = bindStickyAtc({ root: content!, onAdd: addProduct })
     bindGalleryInteractions(gallery)
     initReviewRails(content!)
 
