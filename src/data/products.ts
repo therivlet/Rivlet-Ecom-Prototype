@@ -242,7 +242,7 @@ export const products: Product[] = [
     id: 'RVL-SHT-004',
     name: 'Seamless Matching Short',
     shortName: 'Matching Short',
-    role: 'AOV lever · co-ord bottom',
+    role: 'Co-ord bottom',
     category: 'shorts',
     platform: 'SecondSkin™',
     material: '92% Nylon / 8% Elastane (seamless)',

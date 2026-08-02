@@ -74,7 +74,7 @@ app.innerHTML = `<div data-page-content>
       ></video>
     </div>
     <div class="hero__content">
-      <p class="eyebrow" style="color:rgba(255,252,247,0.7);margin-bottom:1rem">Women · Collection</p>
+      <p class="eyebrow hero__eyebrow" style="color:rgba(255,252,247,0.7);margin-bottom:1rem">Women · Collection</p>
       <h1 class="hero__brand">
         <img
           class="hero__brand-mark"
@@ -92,7 +92,7 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--friction">
         <p class="eyebrow">The friction</p>
         <h2 class="display">Western activewear wasn’t built for this climate.</h2>
         <p class="lede">In humidity, sweat doesn’t leave - it spreads. Waistbands stay damp. Underarms yellow. Anxiety stays on the body all day.</p>
@@ -191,24 +191,27 @@ app.innerHTML = `<div data-page-content>
             <img class="coord-visual__img coord-visual__img--alt" src="${assetHref(coordCardamomAlt)}" alt="" width="900" height="1200" loading="lazy" decoding="async" />
           </a>
         </div>
-        <div>
+        <div class="coord-band__copy">
           <p class="eyebrow">Looks</p>
-          <h2 class="display" style="margin:0.75rem 0 1rem">One decision. Fully dressed.</h2>
-          <p class="lede" style="margin-bottom:1.5rem">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom. Tap a look to open the look checkout.</p>
-          <p style="margin-bottom:1.5rem;color:var(--color-ink-soft)">
+          <h2 class="display coord-band__title">One decision. Fully dressed.</h2>
+          <p class="lede coord-band__lede">
+            <span class="coord-band__lede-full">Bra, crop, tank, tee - matched to shorts or leggings in Midnight and Cardamom. Tap a look to open the look checkout.</span>
+            <span class="coord-band__lede-short">Matched sets in Midnight &amp; Cardamom. Tap a look to shop.</span>
+          </p>
+          <p class="coord-band__price">
             From ${formatPrice(Math.min(...COORD_SETS.map((s) => coordSetPrice(s))))} · featured ${COORD_SET.name} ${formatPrice(coordSetPrice(COORD_SET))}
           </p>
           <a class="btn btn--primary" href="${lookHref(COORD_SET.slug)}">Shop this look</a>
         </div>
       </div>
 
-      <div class="section-head" style="margin-top:var(--space-8);margin-bottom:var(--space-5)">
+      <div class="section-head coord-home__gallery-head">
         <p class="eyebrow">Walk-out ready</p>
         <h2 class="display">Pick the look. Skip the guesswork.</h2>
         <p class="lede">Every pairing is shoppable - straight to the product page.</p>
       </div>
-      <div class="product-grid look-grid">
-        ${COORD_SETS.slice(0, 3).map((s) => lookCardHTML(s)).join('')}
+      <div class="product-grid look-grid look-grid--home" aria-label="Walk-out ready looks">
+        ${COORD_SETS.map((s) => lookCardHTML(s)).join('')}
       </div>
       <p class="looks-more">
         <a class="btn btn--primary" href="./sets/">Explore all looks</a>

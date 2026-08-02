@@ -73,8 +73,8 @@
 
 @media (max-width: 899px) {
   :root {
-    --header-bar-h: 3.5rem;
-    --header-search-h: 3.15rem;
+    --header-bar-h: 3.35rem;
+    --header-search-h: 2.75rem;
     --header-h: calc(var(--header-bar-h) + var(--header-search-h));
     --header-rail-h: 2.15rem;
     --text-sm: 0.8125rem;
@@ -82,9 +82,9 @@
     --text-md: 0.975rem;
     --text-lg: 1.125rem;
     --text-xl: 1.4rem;
-    --text-2xl: clamp(1.5rem, 5.2vw, 2rem);
-    --text-3xl: clamp(1.6rem, 6.8vw, 2.25rem);
-    --text-hero: clamp(2.15rem, 11vw, 3.25rem);
-    --pad-section: clamp(2.5rem, 9vw, 4rem);
+    --text-2xl: clamp(1.35rem, 4.5vw, 1.75rem);
+    --text-3xl: clamp(1.5rem, 5.5vw, 2rem);
+    --text-hero: clamp(1.85rem, 9vw, 2.75rem);
+    --pad-section: clamp(2rem, 7vw, 3.25rem);
   }
 }

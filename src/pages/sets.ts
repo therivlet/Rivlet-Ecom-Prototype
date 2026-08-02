@@ -190,7 +190,10 @@ if (deepLink) {
         <div class="section-head plp-head">
           <p class="eyebrow">Looks</p>
           <h1 class="display">Walk-out ready</h1>
-          <p class="lede">${list.length} look${list.length === 1 ? '' : 's'} · Midnight &amp; Cardamom · graded as pairs</p>
+          <p class="lede plp-head__meta">
+            <span class="plp-head__meta-full">${list.length} look${list.length === 1 ? '' : 's'} · Midnight &amp; Cardamom · graded as pairs</span>
+            <span class="plp-head__meta-short">${list.length} look${list.length === 1 ? '' : 's'}</span>
+          </p>
         </div>
 
         <div class="plp-bar">

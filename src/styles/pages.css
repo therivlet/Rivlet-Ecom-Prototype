@@ -659,6 +659,20 @@
     gap: var(--space-7) var(--space-5);
   }
 
+  .product-grid.look-grid--home {
+    display: grid;
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  /* Home desktop: featured three looks only; rest live on /sets/ */
+  .product-grid.look-grid--home .look-product-card:nth-child(n + 4),
+  .product-grid.look-grid--home .product-card:nth-child(n + 4) {
+    display: none;
+  }
+
   .looks-more {
     margin-top: var(--space-7);
   }
@@ -675,9 +689,39 @@
   align-items: center;
 }
 
+.coord-band__title {
+  margin: 0.75rem 0 1rem;
+}
+
+.coord-band__lede {
+  margin: 0 0 1.5rem;
+}
+
+.coord-band__lede-short {
+  display: none;
+}
+
+.coord-band__price {
+  margin: 0 0 1.5rem;
+  color: var(--color-ink-soft);
+}
+
+.coord-home__gallery-head {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-5);
+}
+
 @media (min-width: 900px) {
   .coord-band {
     grid-template-columns: 1.1fr 1fr;
+  }
+
+  .coord-band__lede-full {
+    display: inline;
+  }
+
+  .coord-band__lede-short {
+    display: none;
   }
 }
 
@@ -1504,6 +1548,12 @@ html.is-image-zooming .coords-hero__stage {
   letter-spacing: 0.04em;
 }
 
+@media (hover: none) {
+  .pdp-gallery__hint {
+    display: none;
+  }
+}
+
 .pdp-gallery__thumbs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1858,7 +1908,6 @@ html.is-image-zooming .coords-hero__stage {
   display: block;
   width: 100%;
   aspect-ratio: 2 / 3;
-  min-height: 17.5rem;
   overflow: hidden;
   background: var(--color-canvas-deep);
 }
@@ -1910,7 +1959,6 @@ html.is-image-zooming .coords-hero__stage {
 
 @media (min-width: 600px) {
   .pdp-get-look__media {
-    min-height: 20rem;
     aspect-ratio: 3 / 4;
   }
 }
@@ -2705,12 +2753,6 @@ html.is-image-zooming .coords-hero__stage {
   letter-spacing: 0;
 }
 
-@media (max-width: 640px) {
-  .account-stats {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* Mobile page layouts */
 @media (max-width: 899px) {
   .hero {
@@ -2748,11 +2790,11 @@ html.is-image-zooming .coords-hero__stage {
   }
 
   .display {
-    font-size: clamp(1.55rem, 6.8vw, 2.15rem);
+    font-size: var(--text-3xl);
   }
 
   .lede {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .reviews {
@@ -2767,24 +2809,24 @@ html.is-image-zooming .coords-hero__stage {
   }
 
   .review-card p {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     margin-bottom: var(--space-3);
   }
 
   .trust-item h3 {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
 
   .situation-panel__title {
-    font-size: clamp(1.65rem, 6vw, 2.15rem);
+    font-size: clamp(1.35rem, 5.5vw, 1.75rem);
   }
 
   .platform-card__title {
-    font-size: clamp(1.25rem, 4.5vw, 1.55rem);
+    font-size: clamp(1.1rem, 4vw, 1.3rem);
   }
 
   .promise-film__title {
-    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    font-size: clamp(1.05rem, 3.8vw, 1.3rem);
   }
 
   .promise-runway {
@@ -2792,7 +2834,7 @@ html.is-image-zooming .coords-hero__stage {
   }
 
   .promise-film {
-    min-height: clamp(15rem, 46vw, 20rem);
+    min-height: clamp(13rem, 40vw, 17rem);
   }
 
   .split-shop {
@@ -2800,11 +2842,20 @@ html.is-image-zooming .coords-hero__stage {
   }
 
   .split-shop__tile {
-    min-height: clamp(20rem, 68vw, 26rem);
+    min-height: clamp(14rem, 48vw, 18rem);
+  }
+
+  .split-shop__tile strong {
+    font-size: clamp(1.6rem, 7vw, 2rem);
   }
 
   .split-shop__copy {
-    padding: var(--space-5) var(--space-5) var(--space-6);
+    padding: var(--space-4) var(--space-4) var(--space-5);
+  }
+
+  .split-shop__copy > span:last-child {
+    font-size: 0.78rem;
+    opacity: 0.9;
   }
 
   .platform-runway {
@@ -2812,7 +2863,7 @@ html.is-image-zooming .coords-hero__stage {
   }
 
   .platform-card {
-    min-height: clamp(18rem, 54vw, 24rem);
+    min-height: clamp(14rem, 42vw, 18rem);
   }
 
   .coord-visual {
@@ -2840,7 +2891,49 @@ html.is-image-zooming .coords-hero__stage {
     position: static;
     max-height: none;
     overflow: visible;
+    gap: 1.1rem;
     padding-bottom: calc(var(--space-3) + var(--safe-bottom));
+  }
+
+  .pdp-buy h1 {
+    font-size: clamp(1.85rem, 7vw, 2.05rem);
+  }
+
+  .pdp-benefits li:nth-child(n + 3) {
+    display: none;
+  }
+
+  .pdp-trust span {
+    font-size: 0.78rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pdp-trust li {
+    padding: 0.7rem 0;
+  }
+
+  .pdp-buy .fit-note {
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pdp-get-look__media {
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+  }
+
+  .look-pdp__meta {
+    font-size: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .pdp-story--rail {
@@ -2860,7 +2953,39 @@ html.is-image-zooming .coords-hero__stage {
   }
 
   .story-block h2 {
-    font-size: clamp(1.5rem, 6vw, 2rem);
+    font-size: clamp(1.35rem, 5.5vw, 1.75rem);
+  }
+
+  .story-platform__title {
+    font-size: clamp(1.5rem, 5.5vw, 1.75rem);
+  }
+
+  .story-platform__outcome {
+    font-size: 1.05rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .story-platform__media {
+    aspect-ratio: 5 / 4;
+    max-height: 42vh;
+  }
+
+  .section-head--stories .lede {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .story-platforms {
+    gap: var(--space-6);
+  }
+
+  .pdp-story--rail .story-block .lede + .lede {
+    display: none;
   }
 
   .checkout,
@@ -2885,5 +3010,236 @@ html.is-image-zooming .coords-hero__stage {
 
   .final-cta__title {
     max-width: 11ch;
+    font-size: clamp(1.75rem, 7vw, 2.25rem);
+  }
+
+  /* Home density: hide only true redundancy; keep meaning */
+  .hero__eyebrow {
+    display: none;
+  }
+
+  .hero__support {
+    font-size: 0.85rem;
+    max-width: 34ch;
+    margin-bottom: var(--space-5);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hero__brand-mark {
+    width: min(100%, 17rem);
+  }
+
+  .hero__motto {
+    font-size: clamp(1rem, 4.2vw, 1.25rem);
+  }
+
+  /* Situations/platforms heads: panel labels already carry the categories */
+  .section-head--situations .lede,
+  .section-head--platforms .lede {
+    display: none;
+  }
+
+  .section-head--friction .lede {
+    font-size: 0.88rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .promise-film__blurb {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Situation ribbon: title alone is enough; card is the tap target */
+  .situation-panel__blurb,
+  .situation-panel__cta {
+    display: none !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+  }
+
+  /* Looks band: restore copy, keep it compact on mobile */
+  .coord-band__title {
+    margin: 0.45rem 0 0.65rem;
+    font-size: clamp(1.45rem, 6vw, 1.85rem);
+  }
+
+  .coord-band__lede {
+    margin: 0 0 0.75rem;
+    font-size: 0.88rem;
+    max-width: 34ch;
+  }
+
+  .coord-band__lede-full {
+    display: none;
+  }
+
+  .coord-band__lede-short {
+    display: inline;
+  }
+
+  .coord-band__price {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+  }
+
+  .coord-band__copy .btn {
+    min-height: 2.55rem;
+    width: 100%;
+  }
+
+  .coord-home__gallery-head {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-4);
+  }
+
+  .coord-home__gallery-head .display {
+    font-size: clamp(1.35rem, 5.5vw, 1.7rem);
+  }
+
+  .coord-home__gallery-head .lede {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .coord-home .look-grid--home {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    margin-inline: calc(-1 * var(--pad-page));
+    padding-inline: var(--pad-page);
+    padding-bottom: 0.35rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .coord-home .look-grid--home::-webkit-scrollbar {
+    display: none;
+  }
+
+  .coord-home .look-grid--home .look-product-card,
+  .coord-home .look-grid--home .product-card {
+    display: grid;
+    flex: 0 0 min(70vw, 15.5rem);
+    width: min(70vw, 15.5rem);
+    max-width: min(70vw, 15.5rem);
+    height: auto;
+    margin-bottom: 0;
+    scroll-snap-align: start;
+    grid-template-rows: auto 1fr;
+    grid-row: auto;
+    gap: var(--space-3);
+  }
+
+  .coord-home .look-grid--home .product-card__body {
+    display: grid;
+    grid-template-rows: auto auto auto auto;
+    grid-row: auto;
+    height: auto;
+    gap: 0.45rem;
+  }
+
+  /* Looks PLP: blurb helps choose; pieces duplicate the name */
+  .coord-card__pieces {
+    display: none;
+  }
+
+  .coord-card__blurb {
+    font-size: 0.78rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .coord-card__name {
+    font-size: 0.95rem;
+  }
+
+  .coord-card__body {
+    gap: 0.25rem;
+  }
+
+  .look-card__cta {
+    min-height: 2.35rem;
+    font-size: 0.65rem;
+    padding: 0.45rem 0.75rem;
+  }
+
+  /* Foot CTA is enough; line repeats platform names already on cards */
+  .platforms-foot__line {
+    display: none;
+  }
+
+  .platform-card__go {
+    display: none;
+  }
+
+  .final-cta {
+    padding-block: var(--space-7);
+  }
+
+  .final-cta__lede {
+    font-size: 0.9rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .community-join__hint {
+    font-size: 0.72rem;
+  }
+
+  .community-join__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-item p {
+    font-size: 0.85rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Motto is brand; long footer lede repeats home story */
+  .site-footer__lede {
+    display: none;
+  }
+
+  .site-footer__motto {
+    font-size: 1.05rem;
   }
 }

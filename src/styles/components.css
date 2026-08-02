@@ -1006,7 +1006,7 @@
   gap: 0.75rem;
   width: 100%;
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 8vw, 2.35rem);
+  font-size: clamp(1.45rem, 6.5vw, 1.7rem);
   letter-spacing: -0.02em;
   padding: 0.55rem 0;
   border: none;
@@ -1759,6 +1759,10 @@ button.color-dot:hover {
   color: var(--color-ink-muted);
 }
 
+.plp-head__meta-short {
+  display: none;
+}
+
 .plp-bar__sort {
   display: flex;
   flex-wrap: wrap;
@@ -2199,22 +2203,22 @@ button.color-dot:hover {
 
   .site-header__search-row {
     display: block;
-    padding: 0 0.75rem 0.7rem;
+    padding: 0 0.75rem 0.55rem;
   }
 
   .header-search-pill {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.45rem;
     width: 100%;
-    min-height: 2.45rem;
-    padding: 0.55rem 1rem;
+    min-height: 2.15rem;
+    padding: 0.4rem 0.85rem;
     border: 1px solid var(--color-ink);
     border-radius: 999px;
     background: var(--color-surface);
     color: var(--color-ink-muted);
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     text-align: left;
     cursor: pointer;
     transition:
@@ -2344,32 +2348,40 @@ button.color-dot:hover {
   }
 
   .product-card__meta--chips {
+    display: flex;
+    flex-wrap: wrap;
     min-height: 0;
     gap: 0.35rem;
-    margin-bottom: 0.1rem;
+    margin-bottom: 0.15rem;
   }
 
   .benefit-chip {
-    padding: 0.12rem 0.35rem;
-    font-size: 0.52rem;
-    letter-spacing: 0.04em;
+    padding: 0.18rem 0.4rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
     max-width: 100%;
+    white-space: nowrap;
   }
 
   .platform-badge {
-    top: 0.45rem;
-    left: 0.45rem;
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    padding: 0.18rem 0.35rem;
+    top: 0.35rem;
+    left: 0.35rem;
+    max-width: calc(100% - 2.75rem);
+    font-size: 0.42rem;
+    letter-spacing: 0.06em;
+    padding: 0.12rem 0.28rem;
+    line-height: 1.15;
   }
 
   .product-card__name {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     line-height: 1.25;
-    /* Two-line title slot keeps price/button rows aligned */
-    min-height: calc(1.25em * 2);
+    min-height: 0;
     padding-block: 0.1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .product-card__meta:not(.product-card__meta--chips) {
@@ -2379,12 +2391,14 @@ button.color-dot:hover {
   .product-card__actions {
     flex-direction: column;
     margin-top: auto;
-    padding-top: 0.55rem;
+    padding-top: 0.4rem;
   }
 
   .product-card__actions .btn {
     width: 100%;
-    min-height: 2.55rem;
+    min-height: 2.35rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.65rem;
   }
 
   .product-card__actions .btn--ghost {
@@ -2429,10 +2443,15 @@ button.color-dot:hover {
   }
 
   .wish-btn {
-    width: 2.65rem;
-    height: 2.65rem;
-    top: 0.55rem;
-    right: 0.55rem;
+    width: 1.85rem;
+    height: 1.85rem;
+    top: 0.35rem;
+    right: 0.35rem;
+  }
+
+  .wish-btn svg {
+    width: 0.9rem;
+    height: 0.9rem;
   }
 
   .plp-bar {
@@ -2481,7 +2500,15 @@ button.color-dot:hover {
   }
 
   .filter-group__label {
-    padding-inline: 0.1rem;
+    display: none;
+  }
+
+  .plp-head__meta-full {
+    display: none;
+  }
+
+  .plp-head__meta-short {
+    display: inline;
   }
 
   .filters {
@@ -2546,7 +2573,18 @@ button.color-dot:hover {
   }
 
   .platform-badge {
-    font-size: 0.48rem;
+    font-size: 0.4rem;
+    padding: 0.1rem 0.24rem;
+  }
+
+  .wish-btn {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+
+  .wish-btn svg {
+    width: 0.85rem;
+    height: 0.85rem;
   }
 }
 

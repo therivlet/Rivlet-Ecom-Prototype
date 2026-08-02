@@ -85,7 +85,10 @@ function render() {
         <div class="section-head plp-head">
           <p class="eyebrow">Women · Collection</p>
           <h1 class="display">${title()}</h1>
-          <p class="lede">${list.length} piece${list.length === 1 ? '' : 's'} · Midnight & Cardamom · XS-2XL</p>
+          <p class="lede plp-head__meta">
+            <span class="plp-head__meta-full">${list.length} piece${list.length === 1 ? '' : 's'} · Midnight &amp; Cardamom · XS-2XL</span>
+            <span class="plp-head__meta-short">${list.length} piece${list.length === 1 ? '' : 's'}</span>
+          </p>
         </div>
 
         <div class="plp-bar">
