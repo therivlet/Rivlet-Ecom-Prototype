@@ -1144,7 +1144,7 @@ export function mountShell(root: HTMLElement): void {
 
   const page = root.querySelector('.page')
   const header = root.querySelector('[data-header]')
-  const hasHero = Boolean(root.querySelector('.hero'))
+  const hasHero = Boolean(root.querySelector('.hero, .about-hero, .contact-hero'))
   if (hasHero) {
     page?.classList.add('page--hero')
     header?.classList.add('site-header--over-hero')

@@ -28,6 +28,19 @@ const REVEAL_SELECTORS = [
   '.checkout .section-head',
   '.checkout-summary',
   '.confirm > *',
+  '.about-hero__inner > *',
+  '.about-principle__inner > *',
+  '.about-split__copy > *',
+  '.about-split__media',
+  '.about-studio__inner > *',
+  '.about-role',
+  '.about-fabric__copy > *',
+  '.about-fabric__media',
+  '.about-standards__list > li',
+  '.contact-hero__inner > *',
+  '.contact-page__intro > *',
+  '.contact-form',
+  '.contact-channel',
 ].join(', ')
 
 let observer: IntersectionObserver | null = null
