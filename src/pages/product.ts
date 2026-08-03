@@ -17,6 +17,11 @@ import {
 } from '../ui/shell'
 import { bindImageZoom } from '../ui/imageZoom'
 import {
+  bindGalleryLightbox,
+  parseMaterialHotspots,
+  shortFitLabel,
+} from '../ui/imageLightbox'
+import {
   atcLabel,
   benefitBulletsHTML,
   bindSizeGuideTriggers,
@@ -55,6 +60,7 @@ if (!product) {
   let galleryTone = 0
   let motionReady = false
   let unbindZoom: (() => void) | null = null
+  let unbindLightbox: (() => void) | null = null
   let unbindSticky: (() => void) | null = null
 
   const related = products
@@ -110,6 +116,18 @@ if (!product) {
 
     if (lens && pane && cover && gallery.length) {
       unbindZoom = bindImageZoom({ stage, img, lens, pane, cover, enabled: canZoom })
+    }
+
+    if (gallery.length) {
+      unbindLightbox = bindGalleryLightbox({
+        stage,
+        getImages: () => gallery.map((src) => assetHref(src)),
+        getIndex: () => galleryTone,
+        setIndex: (i) => setTone(i),
+        alt: `${product!.name} in ${COLORS[color].name}`,
+        fitLabel: shortFitLabel(product!.fit),
+        hotspots: parseMaterialHotspots(product!.material),
+      })
     }
 
     /* Swipe / drag to next image */
@@ -176,6 +194,8 @@ if (!product) {
   function paint() {
     unbindZoom?.()
     unbindZoom = null
+    unbindLightbox?.()
+    unbindLightbox = null
     unbindSticky?.()
     unbindSticky = null
 
@@ -235,7 +255,12 @@ if (!product) {
                 return `<button type="button" class="${galleryTone === i ? 'is-active' : ''}" data-tone="${i}" style="background:${swatch(hex, i)}" aria-label="View angle ${i + 1}"></button>`
               }).join('')}
             </div>
-            ${hasPhotos && gallery.length > 1 ? `<p class="pdp-gallery__hint">Hover to zoom · Swipe or drag for next view</p>` : ''}
+            ${
+              hasPhotos
+                ? `<p class="pdp-gallery__hint pdp-gallery__hint--desktop">${gallery.length > 1 ? 'Click to expand · Hover to zoom · Swipe for next view' : 'Click to expand · Hover to zoom'}</p>
+            <p class="pdp-gallery__hint pdp-gallery__hint--mobile">${gallery.length > 1 ? 'Tap to expand · Swipe for next view' : 'Tap to expand'}</p>`
+                : ''
+            }
           </div>
 
           <div class="pdp-story pdp-story--rail">

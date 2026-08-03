@@ -1409,6 +1409,10 @@
   cursor: crosshair;
 }
 
+.pdp-gallery__hero--photo.pdp-gallery__hero--expandable {
+  cursor: zoom-in;
+}
+
 .pdp-gallery__hero--photo.is-zooming {
   cursor: none;
 }
@@ -1512,6 +1516,10 @@ html.is-image-zooming .coords-hero__stage {
   .pdp-gallery__hero--photo {
     cursor: grab;
   }
+
+  .pdp-gallery__hero--photo.pdp-gallery__hero--expandable {
+    cursor: zoom-in;
+  }
 }
 
 .pdp-gallery__dots {
@@ -1548,8 +1556,16 @@ html.is-image-zooming .coords-hero__stage {
   letter-spacing: 0.04em;
 }
 
-@media (hover: none) {
-  .pdp-gallery__hint {
+.pdp-gallery__hint--desktop {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pdp-gallery__hint--desktop {
+    display: block;
+  }
+
+  .pdp-gallery__hint--mobile {
     display: none;
   }
 }

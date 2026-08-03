@@ -27,6 +27,11 @@ import {
 } from '../ui/shell'
 import { bindImageZoom } from '../ui/imageZoom'
 import {
+  bindGalleryLightbox,
+  parseMaterialHotspots,
+  shortFitLabel,
+} from '../ui/imageLightbox'
+import {
   atcLabel,
   bindSizeGuideTriggers,
   bindStickyAtc,
@@ -76,9 +81,11 @@ if (!look) {
     let galleryTone = 0
     let motionReady = false
     let unbindZoom: (() => void) | null = null
+    let unbindLightbox: (() => void) | null = null
     let unbindSticky: (() => void) | null = null
 
     const related = COORD_SETS.filter((s) => s.id !== look.id).slice(0, 3)
+    const topPiece = getProduct(look.topId)
 
     function canZoom(): boolean {
       return window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)').matches
@@ -121,6 +128,18 @@ if (!look) {
 
       if (lens && pane && cover && gallery.length) {
         unbindZoom = bindImageZoom({ stage, img, lens, pane, cover, enabled: canZoom })
+      }
+
+      if (gallery.length) {
+        unbindLightbox = bindGalleryLightbox({
+          stage,
+          getImages: () => gallery.map((src) => assetHref(src)),
+          getIndex: () => galleryTone,
+          setIndex: (i) => setTone(i),
+          alt: `${look!.name} in ${COLORS[color].name}`,
+          fitLabel: topPiece ? shortFitLabel(topPiece.fit) : undefined,
+          hotspots: topPiece ? parseMaterialHotspots(topPiece.material) : undefined,
+        })
       }
 
       if (gallery.length > 1) {
@@ -179,6 +198,8 @@ if (!look) {
     function paint() {
       unbindZoom?.()
       unbindZoom = null
+      unbindLightbox?.()
+      unbindLightbox = null
       unbindSticky?.()
       unbindSticky = null
 
@@ -227,7 +248,12 @@ if (!look) {
                 )
                 .join('')}
             </div>
-            ${gallery.length > 1 ? `<p class="pdp-gallery__hint">Hover to zoom · Swipe or drag for next view</p>` : ''}
+            ${
+              gallery.length
+                ? `<p class="pdp-gallery__hint pdp-gallery__hint--desktop">${gallery.length > 1 ? 'Click to expand · Hover to zoom · Swipe for next view' : 'Click to expand · Hover to zoom'}</p>
+            <p class="pdp-gallery__hint pdp-gallery__hint--mobile">${gallery.length > 1 ? 'Tap to expand · Swipe for next view' : 'Tap to expand'}</p>`
+                : ''
+            }
           </div>
 
           <div class="pdp-story pdp-story--rail">
