@@ -29,6 +29,7 @@ const REVEAL_SELECTORS = [
   '.checkout-summary',
   '.confirm > *',
   '.about-hero__inner > *',
+  '.about-hero__mark',
   '.about-principle__inner > *',
   '.about-split__copy > *',
   '.about-split__media',
@@ -41,6 +42,8 @@ const REVEAL_SELECTORS = [
   '.contact-page__intro > *',
   '.contact-form',
   '.contact-channel',
+  '.content-page .section-head > *',
+  '.content-block',
 ].join(', ')
 
 let observer: IntersectionObserver | null = null

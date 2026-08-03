@@ -18,17 +18,24 @@ app.innerHTML = `<div data-page-content>
       <img src="${heroImg}" alt="" width="1200" height="1500" decoding="async" />
     </div>
     <div class="about-hero__veil" aria-hidden="true"></div>
-    <div class="about-hero__inner">
-      <p class="eyebrow about-hero__eyebrow">Our story</p>
-      <img
-        class="about-hero__lockup"
-        src="${assetHref('brand/rivlet-lockup.png')}"
-        alt="Rivlet"
-        width="800"
-        height="165"
-      />
-      <p class="about-hero__motto">Move like water, feel like air.</p>
-      <p class="about-hero__lede">Every ocean was first fed by a rivlet. We begin at the source - Madurai, Tamil Nadu - with a wardrobe built for heat, humidity, and real days in motion.</p>
+    <div class="about-hero__row">
+      <div class="about-hero__inner">
+        <p class="eyebrow about-hero__eyebrow">Our story</p>
+        <p class="about-hero__motto">Move like water, feel like air.</p>
+        <p class="about-hero__lede">
+          <span class="about-hero__lede-full">Every ocean was first fed by a rivlet. We begin at the source - Madurai, Tamil Nadu - with a wardrobe built for heat, humidity, and real days in motion.</span>
+          <span class="about-hero__lede-short">Every ocean was first fed by a rivlet. We begin in Madurai.</span>
+        </p>
+      </div>
+      <div class="about-hero__brand" aria-hidden="true">
+        <img
+          class="about-hero__mark"
+          src="${assetHref('brand/rivlet-mark-light.png')}"
+          alt=""
+          width="512"
+          height="512"
+        />
+      </div>
     </div>
   </section>
 
@@ -40,8 +47,8 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section about-split">
-    <div class="container about-split__grid">
+  <section class="section about-split about-split--scene">
+    <div class="about-split__frame">
       <div class="about-split__media" aria-hidden="true">
         <img src="${promiseImg}" alt="" width="900" height="1125" loading="lazy" decoding="async" />
       </div>
@@ -53,12 +60,13 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section about-split about-split--flip">
-    <div class="container about-split__grid">
+  <section class="section about-split about-split--scene about-split--flip">
+    <div class="about-split__frame">
       <div class="about-split__copy">
         <p class="eyebrow">Climate &amp; physiology</p>
         <h2 class="display">Engineered for the heat you actually live in.</h2>
-        <p class="lede">Western sportswear is optimised for temperate climates. Rivlet is built from the fibre up for extreme heat, tropical humidity, mineral-heavy hard water, and South Asian proportions - held to global export standards, without apology for where we come from.</p>
+        <p class="lede about-split__lede-full">Western sportswear is optimised for temperate climates. Rivlet is built from the fibre up for extreme heat, tropical humidity, mineral-heavy hard water, and South Asian proportions - held to global export standards, without apology for where we come from.</p>
+        <p class="lede about-split__lede-short">Built from the fibre up for heat, humidity, hard water, and South Asian proportions.</p>
         <ul class="about-points">
           <li><strong>South-Asian block</strong> Cup-inclusive grading. Real proportions.</li>
           <li><strong>Hard-water ready</strong> Colourfast yarns that hold shape through mineral cycles.</li>
@@ -75,7 +83,7 @@ app.innerHTML = `<div data-page-content>
     <div class="container about-studio__inner">
       <p class="eyebrow about-studio__eyebrow">Origin</p>
       <h2 class="display about-studio__title">Studio Madurai</h2>
-      <p class="lede about-studio__lede">Fit sessions, fabric trials, and colour work happen close to the climate we serve. The supply chain is ours. The label is a promise we keep in the fitting room, on the factory floor, and after fifty washes - cut and sewn in India by partners we know.</p>
+      <p class="lede about-studio__lede">Fit sessions, fabric trials, and colour work happen close to the climate we serve. The supply chain is ours. The label is a promise we keep in the fitting room, on the factory floor, and after fifty washes.</p>
       <p class="about-studio__route">India → UK → UAE</p>
     </div>
   </section>
@@ -85,7 +93,7 @@ app.innerHTML = `<div data-page-content>
       <div class="section-head about-roles__head">
         <p class="eyebrow">One wardrobe</p>
         <h2 class="display">Four roles. No costume change.</h2>
-        <p class="lede">A single engineered wardrobe for training, daily life, and the hours between that hold most of a week.</p>
+        <p class="lede">A single engineered wardrobe for training, daily life, and the hours between.</p>
       </div>
     </div>
     <div class="about-roles__runway" role="list">
@@ -95,7 +103,7 @@ app.innerHTML = `<div data-page-content>
         <span class="about-role__meta">
           <span class="about-role__num">01</span>
           <strong class="about-role__title">Sports</strong>
-          <span class="about-role__blurb">High-impact, low-friction pieces for kinetic resilience and full range of movement.</span>
+          <span class="about-role__blurb">High-impact, low-friction pieces for kinetic resilience.</span>
           <span class="about-role__cta">Shop gym</span>
         </span>
       </a>
@@ -105,7 +113,7 @@ app.innerHTML = `<div data-page-content>
         <span class="about-role__meta">
           <span class="about-role__num">02</span>
           <strong class="about-role__title">Performance</strong>
-          <span class="about-role__blurb">Thermal control, active cooling and targeted compression for high-heat zones.</span>
+          <span class="about-role__blurb">Thermal control and compression for high-heat zones.</span>
           <span class="about-role__cta">Shop yoga</span>
         </span>
       </a>
@@ -115,7 +123,7 @@ app.innerHTML = `<div data-page-content>
         <span class="about-role__meta">
           <span class="about-role__num">03</span>
           <strong class="about-role__title">Athleisure</strong>
-          <span class="about-role__blurb">Gym to street to dinner - tailored cuts with hidden athletic performance.</span>
+          <span class="about-role__blurb">Gym to street to dinner - no costume change.</span>
           <span class="about-role__cta">Shop office</span>
         </span>
       </a>
@@ -125,7 +133,7 @@ app.innerHTML = `<div data-page-content>
         <span class="about-role__meta">
           <span class="about-role__num">04</span>
           <strong class="about-role__title">Easy wear</strong>
-          <span class="about-role__blurb">Air-like comfort for travel, rest, walk, and recovery when the day softens.</span>
+          <span class="about-role__blurb">Air-like comfort for travel, rest, and recovery.</span>
           <span class="about-role__cta">Shop travel</span>
         </span>
       </a>
@@ -134,17 +142,17 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section about-fabric">
     <div class="container about-fabric__grid">
+      <div class="about-fabric__media" aria-hidden="true">
+        <img src="${fabricImg}" alt="" width="900" height="1125" loading="lazy" decoding="async" />
+      </div>
       <div class="about-fabric__copy">
         <p class="eyebrow">Fabric systems</p>
         <h2 class="display">Fabric is not a detail. It is the entire point.</h2>
-        <p class="lede">AquaFlow™, SecondSkin™, NeutralCore™ and more - engineered so the garment disappears on the body and only registers as quiet confidence.</p>
+        <p class="lede">AquaFlow™, SecondSkin™, NeutralCore™ - engineered so the garment disappears on the body.</p>
         <div class="about-fabric__actions">
           <a class="btn btn--primary" href="${shopHref()}">Explore Collection</a>
           <a class="btn btn--ghost" href="../stories/">Learn the platforms</a>
         </div>
-      </div>
-      <div class="about-fabric__media" aria-hidden="true">
-        <img src="${fabricImg}" alt="" width="900" height="1125" loading="lazy" decoding="async" />
       </div>
     </div>
   </section>
@@ -154,10 +162,10 @@ app.innerHTML = `<div data-page-content>
       <p class="eyebrow about-standards__eyebrow">Non-negotiables</p>
       <h2 class="display about-standards__title">Five things we never compromise on.</h2>
       <ol class="about-standards__list">
-        <li><span>01</span><div><strong>Premium, without the price theatre.</strong> Fabric we’d wear ourselves. Cuts that hold after fifty washes.</div></li>
-        <li><span>02</span><div><strong>One wardrobe, every hour.</strong> Activewear through easy wear - one bar for quality.</div></li>
-        <li><span>03</span><div><strong>Indian-crafted, globally worn.</strong> Rooted in Tamil Nadu. Built for export routes.</div></li>
-        <li><span>04</span><div><strong>Move like water, feel like air.</strong> Soft hands. Quiet seams. Breath that recovers.</div></li>
+        <li><span>01</span><div><strong>Move like water, feel like air.</strong> Soft hands. Quiet seams. Breath that recovers.</div></li>
+        <li><span>02</span><div><strong>Premium, without the price theatre.</strong> Fabric we’d wear ourselves. Cuts that hold after fifty washes.</div></li>
+        <li><span>03</span><div><strong>One wardrobe, every hour.</strong> Activewear through easy wear - one bar for quality.</div></li>
+        <li><span>04</span><div><strong>Indian-crafted, globally worn.</strong> Rooted in Tamil Nadu. Built for export routes.</div></li>
         <li><span>05</span><div><strong>Zero compromise. Always.</strong> If a corner has to be cut, we don’t ship it.</div></li>
       </ol>
     </div>

@@ -2,7 +2,7 @@ import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
-import { mountShell, shopHref } from '../ui/shell'
+import { mountShell, shopHref, initPageMotion } from '../ui/shell'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('#app missing')
@@ -33,6 +33,7 @@ app.innerHTML = `<div data-page-content>
 </div>`
 
 mountShell(app)
+initPageMotion(app)
 document.title = 'Track order · Rivlet'
 
 document.querySelector('[data-track-form]')?.addEventListener('submit', (e) => {

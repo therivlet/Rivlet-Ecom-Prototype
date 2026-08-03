@@ -1,4 +1,4 @@
-import { mountShell, shopHref } from './shell'
+import { mountShell, shopHref, initPageMotion } from './shell'
 
 /** Shared thin content pages used by footer trust links. */
 export interface ContentPageSpec {
@@ -45,6 +45,7 @@ export function renderContentPage(spec: ContentPageSpec): void {
   </div>`
 
   mountShell(app)
+  initPageMotion(app)
   document.title = `${spec.title} · Rivlet`
 }
 
