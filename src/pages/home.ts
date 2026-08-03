@@ -285,7 +285,7 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="voices">
     <div class="container">
       <div class="section-head">
         <p class="eyebrow">Early voices</p>

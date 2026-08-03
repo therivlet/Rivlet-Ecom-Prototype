@@ -58,7 +58,16 @@ src/
   ui/shell.ts     # header, footer, drawers, search
   styles/         # tokens, base, components, pages
 public/brand/     # mark + wordmark
+docs/             # plans, reports, design notes (see docs/README.md)
 ```
+
+## Documentation
+
+All plans, CRO reports, and design notes are under [`docs/`](./docs/README.md):
+
+- [`docs/design/`](./docs/design/) — brand / experience notes
+- [`docs/plans/`](./docs/plans/) — build and feature plans
+- [`docs/reports/`](./docs/reports/) — ATC CRO decision report
 
 ## Notes
 

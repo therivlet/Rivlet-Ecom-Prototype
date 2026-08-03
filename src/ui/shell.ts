@@ -37,6 +37,8 @@ import {
 } from '../wishlist'
 import { liveSuggestions } from '../search'
 import { bootMotion, initPageMotion, initReviewRails } from '../motion'
+import { openSizeGuide } from './sizeGuide'
+import type { SizeGuideTab } from '../data/sizeGuide'
 
 function pathPrefix(): string {
   const parts = window.location.pathname
@@ -78,7 +80,38 @@ export function accountHref(): string {
   return `${pathPrefix()}account/`
 }
 
-type IconName = 'bag' | 'menu' | 'close' | 'search' | 'heart' | 'heart-fill' | 'user' | 'chevron-left' | 'chevron-right'
+type IconName =
+  | 'bag'
+  | 'menu'
+  | 'close'
+  | 'search'
+  | 'heart'
+  | 'heart-fill'
+  | 'user'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'instagram'
+  | 'youtube'
+  | 'linkedin'
+  | 'whatsapp'
+  | 'pinterest'
+  | 'x'
+  | 'facebook'
+  | 'email'
+
+const WHATSAPP_HREF =
+  'https://wa.me/916383491536?text=' + encodeURIComponent('Hi Rivlet - I need help with an order.')
+
+const SOCIAL_LINKS = [
+  { name: 'instagram' as const, href: 'https://www.instagram.com/rivletindia/', label: 'Instagram' },
+  { name: 'pinterest' as const, href: 'https://pin.it/34JQaaAqP', label: 'Pinterest' },
+  { name: 'linkedin' as const, href: 'https://www.linkedin.com/company/rivlet/', label: 'LinkedIn' },
+  { name: 'youtube' as const, href: 'https://youtube.com/@rivletindia', label: 'YouTube' },
+  { name: 'x' as const, href: 'https://x.com/RivletIndia', label: 'X' },
+  { name: 'facebook' as const, href: 'https://www.facebook.com/profile.php?id=61590352977288', label: 'Facebook' },
+  { name: 'whatsapp' as const, href: WHATSAPP_HREF, label: 'WhatsApp' },
+  { name: 'email' as const, href: 'mailto:hello@therivlet.com', label: 'Email' },
+]
 
 function icon(name: IconName): string {
   const common = 'width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"'
@@ -106,7 +139,67 @@ function icon(name: IconName): string {
   if (name === 'chevron-right') {
     return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>`
   }
+  // Solid brand marks for footer social (filled, no stroke outlines)
+  const solid = 'width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"'
+  if (name === 'instagram') {
+    return `<svg ${solid}><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8zm9.65 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>`
+  }
+  if (name === 'youtube') {
+    return `<svg ${solid}><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.6A3 3 0 0 0 .5 7.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-4.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>`
+  }
+  if (name === 'linkedin') {
+    return `<svg ${solid}><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8.2 18.5H5.4V9.2h2.8v9.3zM6.8 8A1.6 1.6 0 1 1 6.8 4.8 1.6 1.6 0 0 1 6.8 8zM18.6 18.5h-2.8v-4.5c0-1.1 0-2.5-1.5-2.5s-1.8 1.2-1.8 2.4v4.6H9.7V9.2h2.7v1.3h.04c.4-.7 1.3-1.5 2.7-1.5 2.9 0 3.4 1.9 3.4 4.4v5.1z"/></svg>`
+  }
+  if (name === 'whatsapp') {
+    return `<svg ${solid}><path d="M12.04 2a9.94 9.94 0 0 0-8.6 15.05L2 22l5.1-1.34A9.94 9.94 0 1 0 12.04 2zm5.8 14.2c-.24.68-1.4 1.24-1.93 1.32-.5.07-1.13.1-1.82-.11a13.3 13.3 0 0 1-5.9-4.1 6.1 6.1 0 0 1-1.27-2.3c-.14-.5-.02-1.05.33-1.41l.9-.98c.23-.25.56-.32.87-.2l1.25.5c.3.12.5.4.48.72l-.12 1.05c-.03.24.05.48.22.65l.4.4a8.2 8.2 0 0 0 2.45 1.8c.2.1.45.08.62-.08l.85-.95c.2-.23.52-.3.8-.18l1.3.55c.3.13.48.44.4.75l-.33 1.2z"/></svg>`
+  }
+  if (name === 'pinterest') {
+    return `<svg ${solid}><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.3-.1-.8-.2-2 0-2.9.2-.8 1.3-5.4 1.3-5.4s-.3-.7-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.5 0 .9-.6 2.3-.9 3.5-.3 1.1.5 1.9 1.5 1.9 1.8 0 3.2-1.9 3.2-4.7 0-2.4-1.8-4.2-4.3-4.2-2.9 0-4.7 2.2-4.7 4.5 0 .9.3 1.8.8 2.3.1.1.1.2.1.3l-.3 1.2c0 .2-.1.2-.3.1-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.8-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2-.5-2.4-1.2l-.7 2.5c-.2.9-.9 2.1-1.3 2.8A10 10 0 0 0 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>`
+  }
+  if (name === 'x') {
+    return `<svg ${solid}><path d="M18.9 2H22l-6.8 7.8L23 22h-6.5l-5.1-6.7L5.7 22H2.6l7.3-8.3L1 2h6.7l4.6 6.1L18.9 2zm-1.1 18h1.8L6.3 3.9H4.4L17.8 20z"/></svg>`
+  }
+  if (name === 'facebook') {
+    return `<svg ${solid}><path d="M22 12.1C22 6.5 17.5 2 11.9 2S2 6.5 2 12.1c0 5 3.7 9.2 8.5 9.9v-7H8.1v-2.9h2.4V9.9c0-2.4 1.4-3.7 3.6-3.7 1 0 2.1.2 2.1.2v2.3h-1.2c-1.2 0-1.5.7-1.5 1.5v1.8h2.6l-.4 2.9h-2.2v7c4.8-.7 8.5-4.9 8.5-9.9z"/></svg>`
+  }
+  if (name === 'email') {
+    return `<svg ${solid}><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 3.2-8 5.1L4 7.2V6l8 5.1L20 6v1.2z"/></svg>`
+  }
   return `<svg ${common}><circle cx="11" cy="11" r="6"/><path d="M20 20l-3.5-3.5"/></svg>`
+}
+
+function homeHashHref(hash: string): string {
+  const clean = hash.replace(/^#/, '')
+  return `${pathPrefix()}#${clean}`
+}
+
+/** Card-style payment marks (visual trust only). */
+function payMarksHTML(variant: 'footer' | 'checkout' = 'footer'): string {
+  const cls = variant === 'checkout' ? 'pay-marks pay-marks--light' : 'pay-marks'
+  return `
+    <ul class="${cls}" aria-label="Accepted payment methods">
+      <li class="pay-card pay-card--upi" title="UPI">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#fff"/><path d="M10 22L18 8h4l-8 14H10zm8 0l8-14h4l-8 14h-4z" fill="#097939"/><path d="M26 22l8-14h4L30 22h-4z" fill="#ED752E"/><text x="38" y="21" text-anchor="middle" font-size="6" font-family="Arial,sans-serif" font-weight="700" fill="#0C1E34">UPI</text></svg>
+      </li>
+      <li class="pay-card pay-card--visa" title="Visa">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="24" y="20" text-anchor="middle" font-size="11" font-family="Arial,sans-serif" font-weight="700" font-style="italic" fill="#fff" letter-spacing="1">VISA</text></svg>
+      </li>
+      <li class="pay-card pay-card--mc" title="Mastercard">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#1A1A1A"/><circle cx="19.5" cy="16" r="7" fill="#EB001B"/><circle cx="28.5" cy="16" r="7" fill="#F79E1B"/><path d="M24 10.8a7 7 0 0 1 0 10.4 7 7 0 0 1 0-10.4z" fill="#FF5F00"/></svg>
+      </li>
+      <li class="pay-card pay-card--rupay" title="RuPay">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#fff"/><text x="24" y="15" text-anchor="middle" font-size="8" font-family="Arial,sans-serif" font-weight="700" fill="#097939">RuPay</text><rect x="10" y="19" width="28" height="2.5" rx="1" fill="#097939"/><rect x="10" y="19" width="9" height="2.5" rx="1" fill="#ED752E" opacity=".9"/><rect x="29" y="19" width="9" height="2.5" rx="1" fill="#1B4F9C" opacity=".9"/></svg>
+      </li>
+      <li class="pay-card pay-card--gpay" title="Google Pay">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#fff"/><text x="16" y="20" text-anchor="middle" font-size="12" font-family="Arial,sans-serif" font-weight="700" fill="#4285F4">G</text><text x="30" y="20" text-anchor="middle" font-size="9" font-family="Arial,sans-serif" font-weight="500" fill="#5F6368">Pay</text></svg>
+      </li>
+      <li class="pay-card pay-card--amex" title="American Express">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#2E77BC"/><text x="24" y="20" text-anchor="middle" font-size="8" font-family="Arial,sans-serif" font-weight="700" fill="#fff" letter-spacing="0.5">AMEX</text></svg>
+      </li>
+      <li class="pay-card pay-card--net" title="Netbanking">
+        <svg viewBox="0 0 48 32" width="48" height="32" aria-hidden="true"><rect width="48" height="32" rx="4" fill="#0C1E34"/><path d="M24 7l12 7v3H12v-3l12-7zm-9 12h4v4h-4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" fill="#F7F3EC"/></svg>
+      </li>
+    </ul>`
 }
 
 function currentPath(): string {
@@ -174,8 +267,7 @@ export function renderHeader(): string {
   const featuredLooksImg = assetHref('media/coords/crop-shorts-midnight-1.png')
   const situationPanels = SITUATIONS.map((s) => megaSituationPanel(s.id)).join('')
 
-  const whatsappHref =
-    'https://wa.me/?text=' + encodeURIComponent('Hi Rivlet - I need help with an order.')
+  const whatsappHref = WHATSAPP_HREF
 
   return `
   <header class="site-header" data-header>
@@ -369,6 +461,13 @@ export function renderHeader(): string {
 
 export function renderFooter(): string {
   const brand = pathPrefix()
+  const whatsappHref = WHATSAPP_HREF
+  const inCircle = typeof localStorage !== 'undefined' && Boolean(localStorage.getItem('rivlet-community-email'))
+  const socialLinks = SOCIAL_LINKS.map(
+    (s) =>
+      `<a class="site-footer__social-link" href="${s.href}" ${s.name === 'email' ? '' : 'target="_blank" rel="noreferrer"'} aria-label="${s.label}">${icon(s.name)}</a>`,
+  ).join('')
+
   return `
   <footer class="site-footer ocean-band">
     <div class="container site-footer__top">
@@ -378,41 +477,84 @@ export function renderFooter(): string {
         </div>
         <p class="site-footer__motto">Move like water, feel like air.</p>
         <p class="site-footer__lede">Premium Indian-crafted activewear engineered for heat, humidity, and real days - without compromise.</p>
+        <p class="site-footer__circle-note">
+          ${
+            inCircle
+              ? `You're in <a href="${homeHashHref('community')}">The Circle</a>.`
+              : `<a href="${homeHashHref('community')}">Join The Circle</a> on the home ocean - early drops, fabric notes, quiet first.`
+          }
+        </p>
+        <div class="site-footer__social" aria-label="Social">
+          ${socialLinks}
+        </div>
       </div>
+
       <div class="site-footer__columns">
-        <div>
-          <h3>Shop</h3>
+        <details class="site-footer__col" open>
+          <summary class="site-footer__col-title">Shop</summary>
           <ul>
             <li><a href="${shopHref()}">Collection</a></li>
             <li><a href="${brand}sets/">Looks</a></li>
             <li><a href="${shopHref({ form: 'tops' })}">Tops</a></li>
             <li><a href="${shopHref({ form: 'bottoms' })}">Bottoms</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3>Situations</h3>
-          <ul>
             <li><a href="${shopHref({ situation: 'gym' })}">Gym</a></li>
             <li><a href="${shopHref({ situation: 'yoga' })}">Yoga</a></li>
             <li><a href="${shopHref({ situation: 'office' })}">Office</a></li>
             <li><a href="${shopHref({ situation: 'travel' })}">Travel</a></li>
+            <li><a href="${shopHref({ situation: 'summer' })}">Summer</a></li>
           </ul>
-        </div>
-        <div>
-          <h3>Brand</h3>
+        </details>
+        <details class="site-footer__col">
+          <summary class="site-footer__col-title">Help &amp; tools</summary>
           <ul>
-            <li><a href="${brand}stories/">Stories</a></li>
+            <li><button type="button" class="site-footer__text-btn" data-size-guide-open data-sg-initial="tops">Size guide</button></li>
+            <li><a href="${brand}faq/">FAQs</a></li>
+            <li><a href="${brand}shipping/">Shipping</a></li>
+            <li><a href="${brand}returns/">Returns &amp; exchanges</a></li>
+            <li><a href="${brand}track/">Track order</a></li>
+            <li><a href="${brand}contact/">Contact</a></li>
+            <li><a href="${whatsappHref}" target="_blank" rel="noreferrer">WhatsApp</a></li>
             <li><a href="${brand}account/">Account</a></li>
-            <li><a href="https://therivlet.com" target="_blank" rel="noreferrer">therivlet.com</a></li>
-            <li><a href="mailto:hello@therivlet.com">hello@therivlet.com</a></li>
           </ul>
-        </div>
+        </details>
+        <details class="site-footer__col">
+          <summary class="site-footer__col-title">About Rivlet</summary>
+          <ul>
+            <li><a href="${brand}about/">Our story</a></li>
+            <li><a href="${brand}stories/">Fabric platforms</a></li>
+            <li><a href="${homeHashHref('community')}">The Circle</a></li>
+            <li><a href="${homeHashHref('voices')}">Customer voices</a></li>
+            <li><a href="${brand}blog/">Blog</a></li>
+            <li><a href="${brand}about/#studio">Studio Madurai</a></li>
+          </ul>
+        </details>
+        <details class="site-footer__col">
+          <summary class="site-footer__col-title">Policies</summary>
+          <ul>
+            <li><a href="${brand}privacy/">Privacy</a></li>
+            <li><a href="${brand}terms/">Terms</a></li>
+            <li><a href="${brand}shipping/">Shipping policy</a></li>
+            <li><a href="${brand}returns/">Returns policy</a></li>
+          </ul>
+        </details>
       </div>
     </div>
+
+    <div class="container site-footer__trust">
+      <p class="site-footer__trust-label">We accept</p>
+      <div class="site-footer__trust-scroller" tabindex="0" aria-label="Accepted payment methods">
+        ${payMarksHTML()}
+      </div>
+    </div>
+
     <div class="container site-footer__bottom">
-      <span>© ${new Date().getFullYear()} Rivlet</span>
+      <span class="site-footer__copy">© ${new Date().getFullYear()} Rivlet</span>
+      <span class="site-footer__bottom-links">
+        <a href="${brand}privacy/">Privacy</a>
+        <a href="${brand}terms/">Terms</a>
+      </span>
       <span class="site-footer__route">India → UK → UAE</span>
-      <span>Prototype experience</span>
+      <a class="site-footer__domain" href="https://therivlet.com" target="_blank" rel="noreferrer">therivlet.com</a>
     </div>
   </footer>`
 }
@@ -666,7 +808,7 @@ function renderCartBody(): void {
   foot.innerHTML = `
     <div class="cart-subtotal"><span>Subtotal</span><strong>${formatPrice(cartSubtotal())}</strong></div>
     <a class="btn btn--primary btn--block" href="${pathPrefix()}checkout/">Checkout</a>
-    <p class="eyebrow" style="text-align:center">Prototype - no payment charged</p>`
+    <p class="eyebrow" style="text-align:center">Secure checkout · UPI, cards &amp; more</p>`
 }
 
 function renderWishBody(): void {
@@ -1009,6 +1151,29 @@ export function mountShell(root: HTMLElement): void {
   }
 
   initAnnounceRail(root)
+
+  root.querySelectorAll<HTMLElement>('[data-size-guide-open]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const initial = (btn.dataset.sgInitial as SizeGuideTab | undefined) || 'tops'
+      openSizeGuide(initial)
+    })
+  })
+
+  const footerCols = root.querySelectorAll<HTMLDetailsElement>('.site-footer__col')
+  const syncFooterAccordion = () => {
+    const desktop = window.matchMedia('(min-width: 900px)').matches
+    footerCols.forEach((col, i) => {
+      if (desktop) col.open = true
+      else col.open = i === 0
+    })
+  }
+  syncFooterAccordion()
+  window.matchMedia('(min-width: 900px)').addEventListener('change', syncFooterAccordion)
+  footerCols.forEach((col) => {
+    col.querySelector('summary')?.addEventListener('click', (e) => {
+      if (window.matchMedia('(min-width: 900px)').matches) e.preventDefault()
+    })
+  })
 
   const syncHeaderSolid = () => {
     const solid = window.scrollY > 24 || document.body.classList.contains('nav-open')
