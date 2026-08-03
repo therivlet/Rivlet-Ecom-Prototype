@@ -1,4 +1,4 @@
-/** Fullscreen PDP photo viewer - black stage, white frame, zoom / fullscreen / close. */
+/** Fullscreen PDP photo viewer — gesture zoom, close via X or browser Back. */
 
 export type LightboxHotspot = {
   /** Horizontal position inside the frame, 0–100. */
@@ -19,6 +19,11 @@ export type OpenImageLightboxOptions = {
   onIndexChange?: (index: number) => void
   onClose?: (index: number) => void
 }
+
+const HISTORY_FLAG = 'rivletLightbox'
+const MIN_SCALE = 1
+const MAX_SCALE = 4
+const WHEEL_FACTOR = 0.0018
 
 let activeClose: (() => void) | null = null
 
@@ -49,14 +54,6 @@ export function shortFitLabel(fit: string): string {
   return first.length > 28 ? `${first.slice(0, 26).trim()}…` : first
 }
 
-function iconZoom(): string {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25" stroke="currentColor" stroke-width="1.4"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`
-}
-
-function iconExpand(): string {
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-}
-
 function iconClose(): string {
   return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`
 }
@@ -76,14 +73,28 @@ function hotspotHTML(h: LightboxHotspot): string {
     </div>`
 }
 
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, n))
+}
+
+function touchDistance(a: { x: number; y: number }, b: { x: number; y: number }): number {
+  return Math.hypot(a.x - b.x, a.y - b.y)
+}
+
+function touchMid(a: { x: number; y: number }, b: { x: number; y: number }): { x: number; y: number } {
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+}
+
 export function openImageLightbox(opts: OpenImageLightboxOptions): () => void {
   if (!opts.images.length) return () => undefined
   activeClose?.()
 
   let index = ((opts.index ?? 0) % opts.images.length + opts.images.length) % opts.images.length
-  let zoomed = false
+  let scale = 1
   let panX = 0
   let panY = 0
+  let open = true
+  let pushedHistory = false
   const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
   const previousOverflow = document.body.style.overflow
 
@@ -94,8 +105,6 @@ export function openImageLightbox(opts: OpenImageLightboxOptions): () => void {
   root.setAttribute('aria-label', 'Product photos')
   root.innerHTML = `
     <div class="img-lightbox__tools">
-      <button type="button" class="img-lightbox__tool" data-lb-zoom aria-label="Zoom image" aria-pressed="false">${iconZoom()}</button>
-      <button type="button" class="img-lightbox__tool" data-lb-fs aria-label="Enter full screen">${iconExpand()}</button>
       <button type="button" class="img-lightbox__tool" data-lb-close aria-label="Close">${iconClose()}</button>
     </div>
     ${
@@ -123,40 +132,80 @@ export function openImageLightbox(opts: OpenImageLightboxOptions): () => void {
 
   requestAnimationFrame(() => root.classList.add('is-open'))
 
+  try {
+    history.pushState({ [HISTORY_FLAG]: true }, '')
+    pushedHistory = true
+  } catch {
+    pushedHistory = false
+  }
+
   const img = root.querySelector<HTMLImageElement>('[data-lb-img]')!
   const frame = root.querySelector<HTMLElement>('[data-lb-frame]')!
-  const zoomBtn = root.querySelector<HTMLButtonElement>('[data-lb-zoom]')!
-  const fsBtn = root.querySelector<HTMLButtonElement>('[data-lb-fs]')!
   const notes = root.querySelector<HTMLElement>('[data-lb-notes]')
+  const fit = root.querySelector<HTMLElement>('.img-lightbox__fit')
+  const stage = root.querySelector<HTMLElement>('.img-lightbox__stage')!
+
+  const applyTransform = () => {
+    const zoomed = scale > 1.02
+    root.classList.toggle('is-zoomed', zoomed)
+    if (notes) notes.hidden = zoomed
+    if (fit) fit.hidden = zoomed
+    if (!zoomed) {
+      panX = 0
+      panY = 0
+      scale = 1
+    }
+    img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`
+  }
+
+  /** Zoom keeping the point under (clientX, clientY) stable. */
+  const zoomAt = (clientX: number, clientY: number, nextScale: number) => {
+    const rect = frame.getBoundingClientRect()
+    const cx = clientX - rect.left - rect.width / 2
+    const cy = clientY - rect.top - rect.height / 2
+    const prev = scale
+    const next = clamp(nextScale, MIN_SCALE, MAX_SCALE)
+    if (prev < 1.01 && next <= 1.01) {
+      scale = 1
+      panX = 0
+      panY = 0
+      applyTransform()
+      return
+    }
+    const ox = (cx - panX) / prev
+    const oy = (cy - panY) / prev
+    scale = next
+    panX = cx - ox * scale
+    panY = cy - oy * scale
+    applyTransform()
+  }
+
+  const resetZoom = () => {
+    scale = 1
+    panX = 0
+    panY = 0
+    applyTransform()
+  }
 
   const setIndex = (next: number) => {
     if (opts.images.length < 2) return
     index = ((next % opts.images.length) + opts.images.length) % opts.images.length
     img.src = opts.images[index]
     opts.onIndexChange?.(index)
-    if (zoomed) setZoomed(false)
+    resetZoom()
   }
 
-  const setZoomed = (on: boolean) => {
-    zoomed = on
-    panX = 0
-    panY = 0
-    root.classList.toggle('is-zoomed', on)
-    zoomBtn.setAttribute('aria-pressed', String(on))
-    zoomBtn.setAttribute('aria-label', on ? 'Exit zoom' : 'Zoom image')
-    if (notes) notes.hidden = on
-    img.style.transform = on ? `translate(${panX}px, ${panY}px) scale(2)` : ''
-  }
+  const close = (fromPopState = false) => {
+    if (!open) return
+    open = false
+    if (activeClose === close) activeClose = null
 
-  const close = () => {
-    if (activeClose !== close) return
-    activeClose = null
     root.classList.remove('is-open')
     document.body.style.overflow = previousOverflow
     document.documentElement.classList.remove('is-img-lightbox-open')
-    if (document.fullscreenElement === root) {
-      void document.exitFullscreen?.()
-    }
+    window.removeEventListener('keydown', onKey)
+    window.removeEventListener('popstate', onPopState)
+
     const finish = () => {
       root.remove()
       opts.onClose?.(index)
@@ -164,110 +213,181 @@ export function openImageLightbox(opts: OpenImageLightboxOptions): () => void {
     }
     root.addEventListener('transitionend', finish, { once: true })
     window.setTimeout(finish, 280)
-    window.removeEventListener('keydown', onKey)
+
+    /* X / Escape: pop the history entry we pushed so Back stays on the PDP. */
+    if (pushedHistory && !fromPopState) {
+      pushedHistory = false
+      history.back()
+    } else {
+      pushedHistory = false
+    }
   }
 
-  activeClose = close
+  activeClose = () => close(false)
+
+  const onPopState = () => {
+    /* Hardware / browser Back — close preview only, stay on PDP. */
+    pushedHistory = false
+    close(true)
+  }
+  window.addEventListener('popstate', onPopState)
 
   const onKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault()
-      close()
-    } else if (e.key === 'ArrowLeft') {
+      close(false)
+    } else if (e.key === 'ArrowLeft' && scale <= 1.02) {
       e.preventDefault()
       setIndex(index - 1)
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight' && scale <= 1.02) {
       e.preventDefault()
       setIndex(index + 1)
     }
   }
   window.addEventListener('keydown', onKey)
 
-  root.querySelector('[data-lb-close]')?.addEventListener('click', close)
+  root.querySelector('[data-lb-close]')?.addEventListener('click', () => close(false))
   root.querySelector('[data-lb-prev]')?.addEventListener('click', () => setIndex(index - 1))
   root.querySelector('[data-lb-next]')?.addEventListener('click', () => setIndex(index + 1))
 
-  zoomBtn.addEventListener('click', () => setZoomed(!zoomed))
+  /* Desktop: mouse wheel zoom toward cursor */
+  stage.addEventListener(
+    'wheel',
+    (e) => {
+      e.preventDefault()
+      const factor = Math.exp(-e.deltaY * WHEEL_FACTOR)
+      zoomAt(e.clientX, e.clientY, scale * factor)
+    },
+    { passive: false },
+  )
 
-  fsBtn.addEventListener('click', async () => {
-    try {
-      if (document.fullscreenElement === root) {
-        await document.exitFullscreen()
-        fsBtn.setAttribute('aria-label', 'Enter full screen')
-      } else if (root.requestFullscreen) {
-        await root.requestFullscreen()
-        fsBtn.setAttribute('aria-label', 'Exit full screen')
-      }
-    } catch {
-      /* Fullscreen can be blocked by the browser; ignore. */
-    }
-  })
-
-  document.addEventListener('fullscreenchange', () => {
-    if (!root.isConnected) return
-    fsBtn.setAttribute(
-      'aria-label',
-      document.fullscreenElement === root ? 'Exit full screen' : 'Enter full screen',
-    )
-  })
-
-  /* Stage swipe / pan */
+  /* Pointer pan / swipe / pinch */
+  const pointers = new Map<number, { x: number; y: number }>()
   let startX = 0
   let startY = 0
   let startPanX = 0
   let startPanY = 0
   let dragging = false
   let locked: 'h' | 'v' | null = null
+  let pinching = false
+  let pinchStartDist = 0
+  let pinchStartScale = 1
 
-  const stage = root.querySelector<HTMLElement>('.img-lightbox__stage')!
+  const syncPointers = (e: PointerEvent) => {
+    if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+  }
+
+  const beginPinch = () => {
+    const pts = [...pointers.values()]
+    if (pts.length < 2) return
+    pinching = true
+    dragging = false
+    locked = null
+    pinchStartDist = touchDistance(pts[0], pts[1]) || 1
+    pinchStartScale = scale
+  }
 
   stage.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return
     if ((e.target as HTMLElement).closest('button')) return
-    startX = e.clientX
-    startY = e.clientY
-    startPanX = panX
-    startPanY = panY
-    dragging = true
-    locked = null
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
     stage.setPointerCapture?.(e.pointerId)
+
+    if (pointers.size === 2) {
+      beginPinch()
+      return
+    }
+
+    if (pointers.size === 1) {
+      startX = e.clientX
+      startY = e.clientY
+      startPanX = panX
+      startPanY = panY
+      dragging = true
+      locked = null
+      pinching = false
+    }
   })
 
   stage.addEventListener('pointermove', (e) => {
+    if (!pointers.has(e.pointerId)) return
+    syncPointers(e)
+
+    if (pointers.size >= 2 || pinching) {
+      const pts = [...pointers.values()]
+      if (pts.length >= 2) {
+        if (!pinching) beginPinch()
+        const dist = touchDistance(pts[0], pts[1]) || 1
+        const mid = touchMid(pts[0], pts[1])
+        const next = pinchStartScale * (dist / pinchStartDist)
+        zoomAt(mid.x, mid.y, next)
+      }
+      return
+    }
+
     if (!dragging) return
     const dx = e.clientX - startX
     const dy = e.clientY - startY
-    if (zoomed) {
+
+    if (scale > 1.02) {
       panX = startPanX + dx
       panY = startPanY + dy
-      img.style.transform = `translate(${panX}px, ${panY}px) scale(2)`
+      applyTransform()
       return
     }
+
     if (!locked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
       locked = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v'
     }
   })
 
-  const endDrag = (e: PointerEvent) => {
+  const endPointer = (e: PointerEvent) => {
+    const wasPinching = pinching
+    pointers.delete(e.pointerId)
+
+    if (pointers.size < 2) {
+      pinching = false
+      pinchStartDist = 0
+    }
+
+    if (pointers.size === 1) {
+      /* Resume one-finger pan from remaining touch */
+      const remaining = [...pointers.values()][0]
+      startX = remaining.x
+      startY = remaining.y
+      startPanX = panX
+      startPanY = panY
+      dragging = true
+      locked = null
+      return
+    }
+
     if (!dragging) return
     dragging = false
-    if (zoomed) return
+
+    if (wasPinching || scale > 1.02) {
+      locked = null
+      return
+    }
+
     const dx = e.clientX - startX
     if (locked === 'h' && Math.abs(dx) > 48) setIndex(index + (dx < 0 ? 1 : -1))
     locked = null
   }
 
-  stage.addEventListener('pointerup', endDrag)
-  stage.addEventListener('pointercancel', endDrag)
+  stage.addEventListener('pointerup', endPointer)
+  stage.addEventListener('pointercancel', endPointer)
 
-  /* Double-click frame toggles zoom */
+  /* Double-click / double-tap toggles a comfort zoom */
   frame.addEventListener('dblclick', (e) => {
     e.preventDefault()
-    setZoomed(!zoomed)
+    if (scale > 1.05) resetZoom()
+    else zoomAt(e.clientX, e.clientY, 2.4)
   })
 
-  zoomBtn.focus()
-  return close
+  root.querySelector<HTMLButtonElement>('[data-lb-close]')?.focus()
+  applyTransform()
+  return () => close(false)
 }
 
 /** Open lightbox on a clean tap of the gallery stage (not a swipe / control click). */

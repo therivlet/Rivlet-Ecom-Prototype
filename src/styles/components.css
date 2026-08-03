@@ -3347,10 +3347,6 @@ html.is-img-lightbox-open {
   opacity: 1;
 }
 
-.img-lightbox__tool[aria-pressed='true'] {
-  opacity: 1;
-}
-
 .img-lightbox__nav {
   position: absolute;
   top: 50%;
@@ -3418,8 +3414,13 @@ html.is-img-lightbox-open {
   cursor: grab;
 }
 
+.img-lightbox.is-zoomed .img-lightbox__frame:active {
+  cursor: grabbing;
+}
+
 .img-lightbox.is-zoomed .img-lightbox__img {
   transition: none;
+  will-change: transform;
 }
 
 .img-lightbox__annotations {
