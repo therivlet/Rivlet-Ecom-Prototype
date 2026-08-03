@@ -80,6 +80,15 @@ if (!product) {
     return window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)').matches
   }
 
+  function revealProductImage(): void {
+    const target = content!.querySelector<HTMLElement>('.pdp-gallery') ?? content!.querySelector<HTMLElement>('[data-hero]')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   function bindGalleryInteractions(gallery: string[]): void {
     const stage = content!.querySelector<HTMLElement>('[data-zoom-stage]')
     const img = content!.querySelector<HTMLImageElement>('[data-hero-img]')
@@ -108,7 +117,11 @@ if (!product) {
 
     content!.querySelectorAll<HTMLElement>('[data-tone]').forEach((btn) => {
       const i = Number(btn.dataset.tone)
-      btn.addEventListener('click', () => setTone(i))
+      btn.addEventListener('click', () => {
+        const fromThumbs = Boolean(btn.closest('.pdp-gallery__thumbs'))
+        setTone(i)
+        if (fromThumbs) revealProductImage()
+      })
       btn.addEventListener('mouseenter', () => {
         if (canZoom() || window.matchMedia('(hover: hover)').matches) setTone(i)
       })
@@ -347,6 +360,7 @@ if (!product) {
         color = btn.dataset.color as Colorway
         galleryTone = 0
         paint()
+        revealProductImage()
       })
     })
     content!.querySelectorAll<HTMLElement>('[data-size]').forEach((btn) => {

@@ -1390,6 +1390,7 @@
 .pdp-gallery {
   display: grid;
   gap: var(--space-3);
+  scroll-margin-top: calc(var(--header-h) + var(--header-rail-h) + var(--safe-top) + 0.75rem);
 }
 
 .pdp-gallery__stage {
