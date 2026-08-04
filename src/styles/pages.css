@@ -1141,7 +1141,7 @@
   color: var(--color-ink-muted);
 }
 
-/* Begin / community - luxury fabric visual as Circle backdrop */
+/* Begin / community - fabric visual as Circle backdrop */
 .final-cta {
   position: relative;
   isolation: isolate;
@@ -3645,7 +3645,7 @@ html.is-image-zooming .coords-hero__stage {
   margin: var(--space-2) 0;
 }
 
-/* Fanka-inspired adaptations (premium, quieter) */
+/* Fanka-inspired adaptations (quieter editorial) */
 /* Tight join under Shop by situation on large screens */
 .split-shop-home {
   padding-top: var(--space-5);

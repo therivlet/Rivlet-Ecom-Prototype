@@ -3,7 +3,7 @@
 **Purpose:** Compare the provided reference PDPs, apply conversion-rate and trust research, and document what Rivlet’s Add-to-Bag (ATC) session should include, what it should leave out, and why - so the approach can be verified before build.
 
 **Scope:** Product PDP buy panel (primary) and Look PDP buy panel (same pattern, set-specific deltas).  
-**Brand context:** Rivlet - premium Indian-crafted activewear (Midnight / Cardamom), feeling-first, climate-engineered platforms (AquaFlow™, SecondSkin™, NeutralCore™). Prototype ecommerce experience.
+**Brand context:** Rivlet - lifestyle activewear that clears everyday friction (Midnight / Cardamom), feeling-first, climate-engineered platforms (AquaFlow™, SecondSkin™, NeutralCore™). Prototype ecommerce experience.
 
 **Date:** 2 August 2026
 
@@ -38,7 +38,7 @@ This matches what high-converting apparel PDPs share, while staying true to Rivl
 
 ### Pattern that differs by brand maturity
 
-| Pattern | Mass / promo DTC | Premium / Nike-like | Rivlet fit |
+| Pattern | Mass / promo DTC | Editorial / Nike-like | Rivlet fit |
 |---|---|---|---|
 | Installments (Shop Pay / Afterpay) | Common | Sometimes | **Defer** - no live BNPL partner in prototype |
 | Length / pocket / band-cup matrices | Category-specific | Rare for basics | **Only if SKU needs it** (e.g. bra later) |
@@ -63,7 +63,7 @@ Sources informing this plan (placement > decoration): - **Baymard / PDP UX:** Ma
 
 **Strengths** - Star rating + review count above fold - Benefit highlight strip (“Fit, Compression, Support”) - Size measurements under selected size (waist/hips) - Dominant ATC - Free shipping / free returns under CTA  
 
-**Weaknesses for Rivlet** - Variant overload (length × pocket × many colour tiers) increases cognitive load - Promo floater (“20% OFF”) fights premium positioning - BNPL line requires a real partner  
+**Weaknesses for Rivlet** - Variant overload (length × pocket × many colour tiers) increases cognitive load - Promo floater (“20% OFF”) fights a calm lifestyle position - BNPL line requires a real partner  
 
 **Take for Rivlet:** Review row, benefit chips, size-adjacent guidance, post-CTA logistics.  
 **Leave:** Multi-axis variant matrix, floating discount badge, Shop Pay.
@@ -92,7 +92,7 @@ Sources informing this plan (placement > decoration): - **Baymard / PDP UX:** Ma
 
 ---
 
-### D. Premium street / athletic (NEW tag, square colour thumbs, rewards box)
+### D. Editorial street / athletic (NEW tag, square colour thumbs, rewards box)
 
 **Strengths** - Colour as product thumbnails (better than dots when imagery differs) - Size guide with icon next to “Select a size” - Huge black ATC - Post-CTA box: rewards + delivery + express  
 
@@ -123,11 +123,11 @@ Sources informing this plan (placement > decoration): - **Baymard / PDP UX:** Ma
 
 ---
 
-### G. Premium legging (Alo-like)
+### G. Editorial legging (Alo-like)
 
 **Strengths** - Fit sentence + size guide above grid - Dual CTAs: Add to bag / Add to wishlist - Complimentary shipping & free returns under buttons - Shop the Look section below  
 
-**Take:** Closest premium pattern to Rivlet. Mirror hierarchy and calm density.  
+**Take:** Closest editorial pattern to Rivlet. Mirror hierarchy and calm density.  
 **Leave:** Very high price framing that doesn’t match INR reality; tax-excluded language if we sell India-first (prefer inclusive).
 
 ---
@@ -199,7 +199,7 @@ Same skeleton, with: - Title = look name; meta = Top + Bottom - Price = combined
 | Element | Why leave out | When to reconsider |
 |---|---|---|
 | Shop Pay / Afterpay / EMI lines | No integrated BNPL; fake trust is anti-trust | When a real partner ships |
-| Floating “20% OFF” badge | Trains discount behaviour; fights premium | Flash sale campaigns only |
+| Floating “20% OFF” badge | Trains discount behaviour; fights calm lifestyle tone | Flash sale campaigns only |
 | Length × pocket × print/sale colour groups | Drop 1 SKUs are simple 2-colour / one silhouette | New SKU architecture |
 | Band / cup dual dropdowns | Not needed for current bra UX in prototype | True multi-dim bra sizing |
 | Coral/red loud CTA | Breaks Rivlet navy system | Never for brand UI; sale landing pages only |
@@ -300,7 +300,7 @@ Test packages, not single badges: e.g. “ATC package v1” vs current buy colum
 | Follow BNPL lines without partner | **No** |
 | Follow Get the look under CTA | **Yes** |
 | Sticky mobile ATC | **Yes** |
-| Premium calm UI (Rivlet tokens) | **Yes** |
+| Calm editorial UI (Rivlet tokens) | **Yes** |
 
 **One-line strategy:**  
 *Make the Rivlet ATC session answer identity, proof, price, fit, commit, and risk - in that order - and refuse every reference pattern that adds friction, fake trust, or discount theatre.*

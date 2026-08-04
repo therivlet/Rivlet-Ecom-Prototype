@@ -1,4 +1,4 @@
-/** Premium motion - scroll restore + quiet scroll reveals. */
+/** Quiet motion - scroll restore + scroll reveals. */
 
 const REVEAL_SELECTORS = [
   '.section-head',

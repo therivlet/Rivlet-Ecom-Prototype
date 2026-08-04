@@ -163,7 +163,7 @@ app.innerHTML = `<div data-page-content>
       <h2 class="display about-standards__title">Five things we never compromise on.</h2>
       <ol class="about-standards__list">
         <li><span>01</span><div><strong>Move like water, feel like air.</strong> Soft hands. Quiet seams. Breath that recovers.</div></li>
-        <li><span>02</span><div><strong>Premium, without the price theatre.</strong> Fabric we’d wear ourselves. Cuts that hold after fifty washes.</div></li>
+        <li><span>02</span><div><strong>Honest quality, without the price theatre.</strong> Fabric we’d wear ourselves. Cuts that hold after fifty washes.</div></li>
         <li><span>03</span><div><strong>One wardrobe, every hour.</strong> Activewear through easy wear - one bar for quality.</div></li>
         <li><span>04</span><div><strong>Indian-crafted, globally worn.</strong> Rooted in Tamil Nadu. Built for export routes.</div></li>
         <li><span>05</span><div><strong>Zero compromise. Always.</strong> If a corner has to be cut, we don’t ship it.</div></li>

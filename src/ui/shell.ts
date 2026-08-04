@@ -476,7 +476,7 @@ export function renderFooter(): string {
           <img class="site-footer__lockup-img" src="${brand}brand/rivlet-lockup.png" alt="Rivlet" width="800" height="165" />
         </div>
         <p class="site-footer__motto">Move like water, feel like air.</p>
-        <p class="site-footer__lede">Premium Indian-crafted activewear engineered for heat, humidity, and real days - without compromise.</p>
+        <p class="site-footer__lede">Indian-crafted activewear that clears everyday friction - engineered for heat, humidity, and real days.</p>
         <p class="site-footer__circle-note">
           ${
             inCircle

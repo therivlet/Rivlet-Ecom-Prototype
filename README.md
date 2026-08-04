@@ -1,6 +1,6 @@
 # Rivlet Ecom Prototype
 
-Premium ecommerce prototype for **Rivlet** - warm editorial shopping experience extending [therivlet.com](https://therivlet.com). Catalog-complete with bag, wishlist, account, live search, and mock checkout.
+Ecommerce prototype for **Rivlet** - a lifestyle brand that clears everyday friction. Warm editorial shopping experience extending [therivlet.com](https://therivlet.com). Catalog-complete with bag, wishlist, account, live search, and mock checkout.
 
 **Brand line:** *Move like water, feel like air.*
 

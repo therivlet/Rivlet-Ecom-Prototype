@@ -1,6 +1,6 @@
 ---
 name: Rivlet Ecom Prototype
-overview: Build a catalog-complete, checkout-light Drop 1 ecommerce prototype that extends therivlet.com’s warm editorial identity into a luxury shopping experience—HTML/CSS/TypeScript on Vite, custom design tokens (no Bootstrap/Kendo), situation-first IA, and feeling-led PDPs for all six SKUs.
+overview: Build a catalog-complete, checkout-light Drop 1 ecommerce prototype that extends therivlet.com’s warm editorial identity into a lifestyle shopping experience—HTML/CSS/TypeScript on Vite, custom design tokens (no Bootstrap/Kendo), situation-first IA, and feeling-led PDPs for all six SKUs.
 todos:
   - id: scaffold
     content: Scaffold Vite+TS project with therivlet-matched design tokens (Cormorant/Inter/DM Mono, navy, Midnight/Cardamom)
@@ -29,13 +29,13 @@ todos:
 isProject: false
 ---
 
-# Rivlet Drop 1 Luxury Ecommerce Prototype
+# Rivlet Drop 1 Ecommerce Prototype
 
 ## Locked decisions
 
 - **Scope (1C):** All 6 Drop 1 products shoppable; working cart (localStorage); polished **mock** checkout + confirmation (no real payments).
 - **Visual (2A):** Extend [therivlet.com](https://therivlet.com) — warm editorial continuity, not a dark athletic reboot.
-- **Stack:** Vite + TypeScript + custom CSS design tokens. **No Bootstrap / Kendo.** Light utility layer only if it speeds layout; premium look comes from tokens + composition, not a component kit.
+- **Stack:** Vite + TypeScript + custom CSS design tokens. **No Bootstrap / Kendo.** Light utility layer only if it speeds layout; the editorial look comes from tokens + composition, not a component kit.
 - **Audience for Drop 1:** Women-first (matches SKUs: bra, cup-inclusive tanks, co-ord). Lifestyle brand frame remains (“one wardrobe, four roles”), but catalog is Drop 1 women’s launch.
 
 ## Competitive synthesis (patterns to steal, not copy)
@@ -43,7 +43,7 @@ isProject: false
 
 | Borrow from   | Pattern for Rivlet                                                            |
 | ------------- | ----------------------------------------------------------------------------- |
-| Alo           | Editorial whitespace, full-bleed imagery, quiet luxury pacing                 |
+| Alo           | Editorial whitespace, full-bleed imagery, quiet pacing                        |
 | Gymshark      | Clean shallow nav, creator/community energy without clutter, fast cart drawer |
 | Fanka         | Tech → benefit storytelling on PDP (not promo wheels / popups)                |
 | Knix          | Trust + education; confidence without medical heaviness                       |

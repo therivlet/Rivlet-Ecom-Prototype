@@ -1379,7 +1379,6 @@
 
   .site-footer__brand-block {
     padding-bottom: var(--space-5);
-    border-bottom: 1px solid rgba(255, 252, 247, 0.1);
   }
 
   .site-footer__lockup-img {
@@ -1432,11 +1431,10 @@
   .site-footer__columns {
     grid-template-columns: 1fr;
     gap: 0;
-    border-top: 1px solid rgba(255, 252, 247, 0.1);
   }
 
   .site-footer__col {
-    border-bottom: 1px solid rgba(255, 252, 247, 0.1);
+    border: none;
   }
 
   .site-footer__col-title {
@@ -1493,6 +1491,7 @@
     gap: var(--space-3);
     margin-top: var(--space-5);
     padding-top: var(--space-5);
+    border-top: none;
   }
 
   .site-footer__trust-label {
@@ -1528,6 +1527,7 @@
   .site-footer__bottom {
     margin-top: var(--space-5);
     padding-top: var(--space-4);
+    border-top: none;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.7rem 1rem;
@@ -2110,7 +2110,7 @@ button.color-dot:hover {
   color: var(--color-ink-soft);
 }
 
-/* Filters - premium minimal */
+/* Filters - quiet minimal */
 .filters {
   display: flex;
   flex-wrap: wrap;
