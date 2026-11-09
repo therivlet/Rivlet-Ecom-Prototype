@@ -116,12 +116,15 @@ ol {
 }
 
 .container {
-  width: min(100% - (var(--pad-page) * 2), var(--max-width));
+  width: 100%;
+  max-width: 100%;
+  padding-inline: var(--pad-page);
   margin-inline: auto;
 }
 
 .container--narrow {
-  width: min(100% - (var(--pad-page) * 2), var(--max-narrow));
+  width: min(100%, var(--max-narrow));
+  padding-inline: var(--pad-page);
   margin-inline: auto;
 }
 

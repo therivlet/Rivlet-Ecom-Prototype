@@ -346,9 +346,9 @@ app.innerHTML = `<div data-page-content>
       <div class="promises-pill" role="region" aria-label="The 4 Rivlet Promises">
         <a class="promises-pill__item" href="#promise-no-patch" data-scroll-to="#promise-no-patch" aria-label="No patch - Zoned sweat barriers">
           <span class="promises-pill__icon-wrap" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2.8 C12 2.8 5.5 10 5.5 15 A6.5 6.5 0 0 0 18.5 15 C18.5 10 12 2.8 12 2.8 Z" />
-              <line x1="3.5" y1="3.5" x2="20.5" y2="20.5" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.8 L4.5 6 V11.8 C4.5 16.4 7.7 20.4 12 21.6 C16.3 20.4 19.5 16.4 19.5 11.8 V6 L12 2.8 Z" />
+              <path d="M12 7.8 C12 7.8 9.5 11 9.5 12.8 A2.5 2.5 0 0 0 14.5 12.8 C14.5 11 12 7.8 12 7.8 Z" />
             </svg>
           </span>
           <div class="promises-pill__text">
@@ -361,11 +361,10 @@ app.innerHTML = `<div data-page-content>
 
         <a class="promises-pill__item" href="#promise-no-smell" data-scroll-to="#promise-no-smell" aria-label="No smell - Silver-ion freshness">
           <span class="promises-pill__icon-wrap" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6.5 6 C7.5 7.8 7.5 10.2 6.5 12 C5.5 13.8 5.5 16.2 6.5 18" />
-              <path d="M12 4 C13.2 6.5 13.2 9.5 12 12 C10.8 14.5 10.8 17.5 12 20" />
-              <path d="M17.5 6 C18.5 7.8 18.5 10.2 17.5 12 C16.5 13.8 16.5 16.2 17.5 18" />
-              <line x1="3.5" y1="3.5" x2="20.5" y2="20.5" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.5 L13.8 8.8 L20 10.5 L13.8 12.2 L12 18.5 L10.2 12.2 L4 10.5 L10.2 8.8 Z" />
+              <path d="M19 3.5 L19.6 5.5 L21.5 6.1 L19.6 6.7 L19 8.7 L18.4 6.7 L16.5 6.1 L18.4 5.5 Z" stroke-width="1.6" />
+              <circle cx="5.5" cy="18.5" r="1.3" fill="currentColor" />
             </svg>
           </span>
           <div class="promises-pill__text">
@@ -378,9 +377,11 @@ app.innerHTML = `<div data-page-content>
 
         <a class="promises-pill__item" href="#promise-no-rub" data-scroll-to="#promise-no-rub" aria-label="No rub - Zero chafing">
           <span class="promises-pill__icon-wrap" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20.2 3.8 C13.5 3.8 8.5 7.8 6.5 12.8 L5.5 18.5 L11.2 17.5 C16.2 15.5 20.2 10.5 20.2 3.8 Z" />
-              <path d="M6 18 L13.5 10.5" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.5 3.5 C13.5 9.5 8.5 15 3.5 20.5" />
+              <path d="M20.5 3.5 C12 4.2 6.8 9.5 6.8 16.2 C10.8 15.5 16.2 11.8 20.5 3.5 Z" />
+              <path d="M10.8 13.2 L14.8 11.5" stroke-width="1.8" />
+              <path d="M8.2 16.5 L12.2 14.8" stroke-width="1.8" />
             </svg>
           </span>
           <div class="promises-pill__text">
@@ -393,10 +394,13 @@ app.innerHTML = `<div data-page-content>
 
         <a class="promises-pill__item" href="#promise-no-ride-up" data-scroll-to="#promise-no-ride-up" aria-label="No ride-up - No-slip bands">
           <span class="promises-pill__icon-wrap" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 18 V6 M6.5 11.5 L12 5.5 L17.5 11.5" />
-              <line x1="4" y1="19.5" x2="20" y2="19.5" />
-              <line x1="3.5" y1="3.5" x2="20.5" y2="20.5" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="5" r="2.2" />
+              <line x1="12" y1="7.2" x2="12" y2="19.5" />
+              <line x1="7.5" y1="10.5" x2="16.5" y2="10.5" />
+              <path d="M5.5 14 C5.5 17.8 8.4 20 12 20 C15.6 20 18.5 17.8 18.5 14" />
+              <polyline points="4 15, 5.5 13.5, 7 15" />
+              <polyline points="17 15, 18.5 13.5, 20 15" />
             </svg>
           </span>
           <div class="promises-pill__text">
@@ -563,7 +567,7 @@ app.innerHTML = `<div data-page-content>
         </div>
       </div>
 
-      <div class="section-head coord-home__gallery-head">
+      <div class="section-head coord-home__gallery-head section-head--center">
         <p class="eyebrow">Walk-out ready</p>
         <h2 class="display">Pick the look. Skip the guesswork.</h2>
         <p class="lede">Every pairing is shoppable - straight to the product page.</p>
@@ -579,7 +583,7 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section collection-home">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--center">
         <p class="eyebrow">Collection</p>
         <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
         <p class="lede">Midnight and Cardamom. XS-2XL. Engineered for South Asian bodies and hard-water realities.</p>
@@ -622,7 +626,7 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section why-holds" id="why-it-holds">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--center">
         <p class="eyebrow">Why it holds</p>
         <h2 class="display">Built for the climate you live in.</h2>
       </div>
@@ -700,7 +704,7 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section" id="voices">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--center">
         <p class="eyebrow">Early voices</p>
         <h2 class="display">Why women stay in it.</h2>
       </div>
