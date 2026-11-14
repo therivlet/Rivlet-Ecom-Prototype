@@ -366,6 +366,7 @@
   isolation: isolate;
   overflow: visible;
   color: #1A130D;
+  width: min(calc(100% - 2.5rem), 86rem);
   width: calc(100% - (var(--pad-page) * 2));
   max-width: 100%;
   margin: 0.5rem auto 0;
@@ -401,6 +402,7 @@
 
 @media (max-width: 899px) {
   .site-header__bar {
+    width: calc(100% - 1rem);
     width: calc(100% - (var(--pad-page) * 2));
     margin: 0.35rem auto 0;
     border-radius: 10px;
@@ -1840,13 +1842,16 @@
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5) var(--space-4);
   gap: var(--space-4) var(--space-3);
   width: 100%;
 }
 
+@media (min-width: 900px) {
 @media (min-width: 850px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-7) var(--space-5);
     gap: var(--space-5) var(--space-4);
   }
 }
