@@ -273,7 +273,9 @@ export function renderHeader(): string {
   <header class="site-header" data-header>
     <div class="site-header__rail" data-announce aria-label="Announcements">
       <div class="announce-bar-reference">
-        <span class="announce-bar-reference__text">Free shipping across India on orders over ₹2,499</span>
+        <span class="announce-bar-reference__text">Free Express Shipping across India on orders over ₹2,499</span>
+        <span class="announce-bar-reference__dot">•</span>
+        <span class="announce-bar-reference__text">30-Day Wear-and-Wash Guarantee</span>
         <span class="announce-bar-reference__dot">•</span>
         <span class="announce-bar-reference__text"><a href="${whatsappHref}" target="_blank" rel="noreferrer" class="announce-bar-reference__link">Support via WhatsApp ↗</a></span>
       </div>
@@ -407,6 +409,7 @@ export function renderHeader(): string {
       <a href="${shopHref()}">Collection</a>
       <a href="${brand}sets/">Looks</a>
       <a href="${brand}stories/">Stories</a>
+      <a href="${brand}blog/">Journal</a>
       <button type="button" data-wish-open>
         Wishlist
         <span class="cart-count wish-count" data-wish-count hidden>0</span>
@@ -725,7 +728,26 @@ function renderCartBody(): void {
     return
   }
 
-  body.innerHTML = lines
+  const subtotal = cartSubtotal()
+  const FREE_SHIPPING_THRESHOLD = 2499
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal)
+  const shippingPercent = Math.min(100, Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100))
+
+  const shippingBarHTML = `
+    <div class="cart-free-shipping ${remaining === 0 ? 'is-unlocked' : ''}">
+      <div class="cart-free-shipping__msg">
+        ${
+          remaining === 0
+            ? `<span class="cart-free-shipping__badge" aria-hidden="true">✓</span> <span><strong>FREE Express Shipping unlocked!</strong></span>`
+            : `<span>Add <strong>${formatPrice(remaining)}</strong> more for <strong>FREE Express Shipping</strong></span>`
+        }
+      </div>
+      <div class="cart-free-shipping__track" aria-hidden="true">
+        <div class="cart-free-shipping__fill" style="width: ${shippingPercent}%"></div>
+      </div>
+    </div>`
+
+  const linesHTML = lines
     .map((line) => {
       const p = getProduct(line.productId)
       if (!p) return ''
@@ -759,12 +781,18 @@ function renderCartBody(): void {
         ? `<div class="cart-hint">Finish the look with the <a href="${productHref('RVL-TNK-003-C')}"><strong>Built-in-Support Crop</strong></a>.</div>`
         : `<div class="cart-hint">Build a look - eight pairings in Midnight &amp; Cardamom.</div>`
 
-  body.innerHTML += hint
+  body.innerHTML = `${shippingBarHTML}${linesHTML}${hint}`
 
   foot.innerHTML = `
-    <div class="cart-subtotal"><span>Subtotal</span><strong>${formatPrice(cartSubtotal())}</strong></div>
-    <a class="btn btn--primary btn--block" href="${pathPrefix()}checkout/">Checkout</a>
-    <p class="eyebrow" style="text-align:center">Secure checkout · UPI, cards &amp; more</p>`
+    <div class="cart-subtotal"><span>Subtotal</span><strong>${formatPrice(subtotal)}</strong></div>
+    <a class="btn btn--primary btn--block" href="${pathPrefix()}checkout/">Checkout · ${formatPrice(subtotal)}</a>
+    <div class="cart-trust-badges">
+      <span>🔒 256-bit Secure</span>
+      <span>•</span>
+      <span>30-Day Guarantee</span>
+      <span>•</span>
+      <span>UPI &amp; Cards</span>
+    </div>`
 }
 
 function renderWishBody(): void {

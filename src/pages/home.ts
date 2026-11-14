@@ -275,6 +275,8 @@ app.innerHTML = `<div data-page-content>
                   <button type="button" class="size-pill is-selected" data-size-pill="S" aria-label="Size S">S</button>
                   <button type="button" class="size-pill" data-size-pill="M" aria-label="Size M">M</button>
                   <button type="button" class="size-pill" data-size-pill="L" aria-label="Size L">L</button>
+                  <button type="button" class="size-pill" data-size-pill="XL" aria-label="Size XL">XL</button>
+                  <button type="button" class="size-pill" data-size-pill="2XL" aria-label="Size 2XL">2XL</button>
                 </div>
 
                 <!-- Add to Bag CTA Button -->
@@ -510,21 +512,40 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section situations" id="situations">
     <div class="container">
-      <div class="section-head section-head--situations">
-        <p class="eyebrow">Shop by situation</p>
-        <h2 class="display">Where the day takes you.</h2>
+      <div class="situations-header">
+        <div class="section-head section-head--situations">
+          <p class="eyebrow">Shop by situation</p>
+          <h2 class="display">Where the day takes you.</h2>
+        </div>
+        <div class="situations-nav" aria-label="Browse situations">
+          <button type="button" class="situations-nav-btn situations-nav-btn--prev" data-situations-prev aria-label="Previous situation">‹</button>
+          <button type="button" class="situations-nav-btn situations-nav-btn--next" data-situations-next aria-label="Next situation">›</button>
+        </div>
+      </div>
+      <div class="situation-pills" role="tablist" aria-label="Filter activewear situations">
+        ${SITUATIONS.map(
+          (s) => `
+          <a class="situation-pill" href="${shopHref({ situation: s.id })}" role="tab" data-situation-pill="${s.id}">
+            <span class="situation-pill__dot" aria-hidden="true"></span>
+            <span>${s.label}</span>
+          </a>`,
+        ).join('')}
       </div>
     </div>
     <div class="situation-runway" role="list" data-situation-rail>
       ${SITUATIONS.map(
-        (s) => `
-        <a class="situation-panel" href="${shopHref({ situation: s.id })}" role="listitem">
-          <img class="situation-panel__img" src="${assetHref(s.image)}" alt="" width="900" height="1200" loading="lazy" />
+        (s, idx) => `
+        <a class="situation-panel" href="${shopHref({ situation: s.id })}" role="listitem" data-situation-card="${s.id}">
+          <img class="situation-panel__img" src="${assetHref(s.image)}" alt="${s.label} activewear edit" width="900" height="1200" loading="lazy" />
           <span class="situation-panel__veil" aria-hidden="true"></span>
+          <span class="situation-panel__top-badge">0${idx + 1} // ${s.id.toUpperCase()}</span>
           <span class="situation-panel__meta">
             <strong class="situation-panel__title">${s.label}</strong>
             <span class="situation-panel__blurb">${s.blurb}</span>
-            <span class="situation-panel__cta">View edit</span>
+            <span class="situation-panel__cta">
+              <span>View edit</span>
+              <span class="situation-panel__arrow" aria-hidden="true">↗</span>
+            </span>
           </span>
         </a>`,
       ).join('')}
@@ -594,14 +615,85 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section collection-home">
+  <section class="section collection-home" id="collection-runway-section">
     <div class="container">
-      <div class="section-head">
-        <p class="eyebrow">Collection</p>
-        <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
+      <div class="collection-header">
+        <div class="section-head section-head--left">
+          <p class="eyebrow">The Complete Collection</p>
+          <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
+        </div>
+        <div class="collection-nav" aria-label="Collection runway navigation">
+          <div class="collection-nav__counter" data-collection-counter aria-live="polite">
+            <span class="collection-nav__index" data-collection-curr>1</span>
+            <span class="collection-nav__sep">/</span>
+            <span class="collection-nav__total">6</span>
+            <span class="collection-nav__label">pieces</span>
+          </div>
+          <div class="collection-nav__actions">
+            <button
+              type="button"
+              class="collection-nav-btn collection-nav-btn--prev"
+              data-collection-prev
+              aria-label="Previous piece"
+              title="Previous piece"
+              disabled
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button
+              type="button"
+              class="collection-nav-btn collection-nav-btn--next"
+              data-collection-next
+              aria-label="Next piece"
+              title="Next piece"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <a class="collection-nav__shop-all" href="${shopHref()}">
+            <span>Explore all 6</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
-      <div class="product-grid">
-        ${products.map((p) => productCardHTML(p)).join('')}
+
+      <div class="collection-runway-wrap">
+        <div
+          class="collection-runway"
+          role="region"
+          aria-label="Six pieces collection runway"
+          tabindex="0"
+          data-collection-rail
+        >
+          ${products.map((p) => productCardHTML(p)).join('')}
+        </div>
+        <div class="collection-runway__progress-track" aria-hidden="true">
+          <div class="collection-runway__progress-thumb" data-collection-thumb></div>
+        </div>
+      </div>
+
+      <div class="collection-trust-strip" role="region" aria-label="Rivlet guarantees">
+        <div class="collection-trust-item">
+          <span class="collection-trust-icon">✦</span>
+          <div>
+            <strong>30-Day Wear &amp; Wash Guarantee</strong>
+            <p>Sweat in it, wash it, live in it. Full refund if not completely in love.</p>
+          </div>
+        </div>
+        <div class="collection-trust-item">
+          <span class="collection-trust-icon">✈</span>
+          <div>
+            <strong>Complimentary Express Shipping</strong>
+            <p>Across India on orders over ₹2,499. Dispatch within 24 hours.</p>
+          </div>
+        </div>
+        <div class="collection-trust-item">
+          <span class="collection-trust-icon">☁</span>
+          <div>
+            <strong>Engineered for 45°C &amp; 90% Humidity</strong>
+            <p>Zero sweat marks, anti-bunching seam architecture, squat-proof opacity.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -637,7 +729,7 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section why-holds" id="why-it-holds">
     <div class="container">
-      <div class="section-head section-head--center">
+      <div class="section-head section-head--left">
         <p class="eyebrow">Why it holds</p>
         <h2 class="display">Built for the climate you live in.</h2>
       </div>
@@ -715,7 +807,7 @@ app.innerHTML = `<div data-page-content>
 
   <section class="section" id="voices">
     <div class="container">
-      <div class="section-head section-head--center">
+      <div class="section-head section-head--left">
         <p class="eyebrow">Early voices</p>
         <h2 class="display">Why women stay in it.</h2>
       </div>
@@ -822,6 +914,95 @@ function bindCommunityJoin(): void {
 }
 
 bindCommunityJoin()
+
+function bindSituationsNav(): void {
+  const rail = document.querySelector<HTMLElement>('[data-situation-rail]')
+  const prev = document.querySelector<HTMLButtonElement>('[data-situations-prev]')
+  const next = document.querySelector<HTMLButtonElement>('[data-situations-next]')
+  if (!rail || !prev || !next) return
+
+  const scrollAmount = 360
+  prev.addEventListener('click', () => {
+    rail.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+  })
+  next.addEventListener('click', () => {
+    rail.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+  })
+}
+
+bindSituationsNav()
+
+function bindCollectionNav(): void {
+  const rail = document.querySelector<HTMLElement>('[data-collection-rail]')
+  const prev = document.querySelector<HTMLButtonElement>('[data-collection-prev]')
+  const next = document.querySelector<HTMLButtonElement>('[data-collection-next]')
+  const currEl = document.querySelector<HTMLElement>('[data-collection-curr]')
+  const thumb = document.querySelector<HTMLElement>('[data-collection-thumb]')
+  if (!rail) return
+
+  const getStep = (): number => {
+    const card = rail.querySelector<HTMLElement>('.product-card')
+    if (!card) return 320
+    const gap = parseFloat(window.getComputedStyle(rail).gap) || 16
+    return card.offsetWidth + gap
+  }
+
+  const updateUI = () => {
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+    const currentScroll = rail.scrollLeft
+
+    if (prev) {
+      prev.disabled = currentScroll <= 6
+    }
+    if (next) {
+      next.disabled = currentScroll >= maxScroll - 6
+    }
+
+    if (thumb && maxScroll > 0) {
+      const track = thumb.parentElement
+      const trackWidth = track ? track.clientWidth : 200
+      const visibleRatio = Math.min(1, Math.max(0.18, rail.clientWidth / rail.scrollWidth))
+      const thumbWidth = Math.max(36, trackWidth * visibleRatio)
+      thumb.style.width = `${thumbWidth}px`
+      const maxThumbTravel = trackWidth - thumbWidth
+      const progress = Math.min(1, Math.max(0, currentScroll / maxScroll))
+      thumb.style.transform = `translateX(${progress * maxThumbTravel}px)`
+    }
+
+    if (currEl) {
+      const step = getStep()
+      const index = Math.min(6, Math.max(1, Math.round(currentScroll / step) + 1))
+      currEl.textContent = String(index)
+    }
+  }
+
+  prev?.addEventListener('click', () => {
+    rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+  })
+
+  next?.addEventListener('click', () => {
+    rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+  })
+
+  rail.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+    }
+  })
+
+  rail.addEventListener('scroll', updateUI, { passive: true })
+  window.addEventListener('resize', updateUI, { passive: true })
+
+  // Initialize
+  requestAnimationFrame(updateUI)
+  setTimeout(updateUI, 250)
+}
+
+bindCollectionNav()
 
 function bindHeroLookInteractivity(): void {
   let currentIndex = 0

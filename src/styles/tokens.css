@@ -20,10 +20,10 @@
   --color-success: #2f5d3a;
   --color-focus: #0c1e34;
 
-  /* Type */
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, monospace;
+  /* Type - Luxury Performance Standard (Alo/Lululemon/On benchmark) */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

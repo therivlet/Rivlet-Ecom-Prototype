@@ -45,11 +45,11 @@ export const COLORS: Record<Colorway, ColorInfo> = {
 export const SIZES: Size[] = ['XS', 'S', 'M', 'L', 'XL', '2XL']
 
 export const SITUATIONS: { id: Situation; label: string; blurb: string; image: string }[] = [
-  { id: 'summer', label: 'Summer', blurb: 'Built for heat and humidity.', image: 'media/products/midnight-tank-1.png' },
-  { id: 'gym', label: 'Gym', blurb: 'Dry under load. Secure through every set.', image: 'media/coords/bra-shorts-midnight-1.png' },
-  { id: 'yoga', label: 'Yoga', blurb: 'Second-skin hold. No ride-up. No dig.', image: 'media/coords/bra-leggings-midnight-1.png' },
-  { id: 'office', label: 'Office', blurb: 'Composed lines that still perform.', image: 'media/products/midnight-tee-1.png' },
-  { id: 'travel', label: 'Travel', blurb: 'Light on the body. Fresh for longer.', image: 'media/coords/tee-shorts-midnight-1.png' },
+  { id: 'gym', label: 'Gym & Training', blurb: 'Dry under load. Zero chafing through every rep.', image: 'media/situations/gym.png' },
+  { id: 'yoga', label: 'Yoga & Studio', blurb: 'Second-skin hold. Zero ride-up through every flow.', image: 'media/situations/yoga.png' },
+  { id: 'summer', label: 'Hot Weather & Run', blurb: 'Engineered sweat barriers for tropical heat.', image: 'media/situations/summer.png' },
+  { id: 'office', label: 'All-Day & Work', blurb: 'Composed, clean lines with hidden performance.', image: 'media/situations/office.png' },
+  { id: 'travel', label: 'Travel & Transit', blurb: 'Light on body. 48-hour silver-ion freshness.', image: 'media/situations/travel.png' },
 ]
 
 export const products: Product[] = [
