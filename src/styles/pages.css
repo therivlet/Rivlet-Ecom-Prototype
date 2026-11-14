@@ -2365,7 +2365,8 @@
   gap: var(--space-4) !important;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.25rem 0.25rem var(--space-3);
+  padding: 0.5rem 0.5rem var(--space-3);
+  scroll-padding-left: 0.5rem;
   scrollbar-width: none;
   outline: none;
 }
@@ -2402,6 +2403,12 @@
   overflow: hidden;
 }
 
+.collection-runway .product-card__media-wrap .platform-badge,
+.look-grid .product-card__media-wrap .platform-badge {
+  top: 0.5rem !important;
+  left: 0.5rem !important;
+}
+
 .collection-runway .product-card__media {
   border-radius: 4px;
   overflow: hidden;
@@ -2409,6 +2416,7 @@
 
 .collection-runway .product-card__body {
   padding-top: 0.65rem;
+  padding-inline: 0.25rem !important;
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
@@ -2510,8 +2518,10 @@
   }
 
   .collection-runway {
-    padding-inline: var(--pad-page) !important;
-    gap: 12px !important;
+    padding-left: clamp(1.25rem, 5.5vw, 2rem) !important;
+    padding-right: clamp(1.25rem, 5.5vw, 2rem) !important;
+    scroll-padding-left: clamp(1.25rem, 5.5vw, 2rem);
+    gap: 14px !important;
     padding-bottom: var(--space-3) !important;
   }
 
@@ -2524,6 +2534,10 @@
     box-shadow: none !important;
   }
 
+  .collection-runway .product-card__body {
+    padding-inline: 0.25rem !important;
+  }
+
   .collection-runway .product-card__name {
     font-size: 0.95rem !important;
     line-height: 1.25 !important;
@@ -2532,8 +2546,8 @@
   }
 
   .collection-runway__progress-track {
-    margin-inline: var(--pad-page);
-    width: calc(100% - (2 * var(--pad-page)));
+    margin-inline: clamp(1.25rem, 5.5vw, 2rem);
+    width: calc(100% - (2 * clamp(1.25rem, 5.5vw, 2rem)));
     margin-top: var(--space-3);
   }
 
@@ -6480,7 +6494,9 @@ html.is-image-zooming .coords-hero__stage {
     gap: var(--space-3);
     margin-top: var(--space-5);
     margin-inline: calc(-1 * var(--pad-page));
-    padding-inline: var(--pad-page);
+    padding-left: clamp(1.25rem, 5.5vw, 2rem) !important;
+    padding-right: clamp(1.25rem, 5.5vw, 2rem) !important;
+    scroll-padding-left: clamp(1.25rem, 5.5vw, 2rem);
     padding-bottom: 0.35rem;
     overflow-x: auto;
     overflow-y: hidden;
@@ -6497,24 +6513,26 @@ html.is-image-zooming .coords-hero__stage {
 
   .coord-home .look-grid--home .look-product-card,
   .coord-home .look-grid--home .product-card {
-    display: grid;
-    flex: 0 0 min(70vw, 15.5rem);
-    width: min(70vw, 15.5rem);
-    max-width: min(70vw, 15.5rem);
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 0 0 clamp(220px, 70vw, 260px) !important;
+    width: clamp(220px, 70vw, 260px) !important;
+    max-width: 260px !important;
     height: auto;
     margin-bottom: 0;
     scroll-snap-align: start;
-    grid-template-rows: auto 1fr;
-    grid-row: auto;
-    gap: var(--space-3);
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
   }
 
   .coord-home .look-grid--home .product-card__body {
-    display: grid;
-    grid-template-rows: auto auto auto auto;
-    grid-row: auto;
-    height: auto;
-    gap: 0.45rem;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    padding-inline: 0.25rem !important;
+    padding-top: 0.65rem !important;
+    gap: 0 !important;
   }
 
   /* Looks PLP: blurb helps choose; pieces duplicate the name */

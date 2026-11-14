@@ -115,6 +115,12 @@ ol {
   padding-top: calc(2.2rem + var(--safe-top));
 }
 
+@media (max-width: 899px) {
+  .page--hero .page__main {
+    padding-top: 0 !important;
+  }
+}
+
 .container {
   width: min(100% - (var(--pad-page) * 2), var(--max-width));
   margin-inline: auto;
