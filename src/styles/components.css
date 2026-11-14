@@ -326,8 +326,7 @@
 @media (max-width: 899px) {
   .site-header__rail {
     gap: 0.1rem;
-    padding-left: 0 !important;
-    padding-right: max(0.25rem, env(safe-area-inset-right, 0px));
+    padding-inline: max(0.5rem, env(safe-area-inset-left, 0px)) max(0.5rem, env(safe-area-inset-right, 0px));
   }
 
   .announce-slide {
@@ -2831,8 +2830,7 @@ button.color-dot:hover {
     justify-content: space-between;
     height: var(--header-bar-h);
     width: 100%;
-    padding-left: 0 !important;
-    padding-right: var(--pad-page);
+    padding-inline: var(--pad-page);
     box-sizing: border-box;
   }
 
@@ -2895,8 +2893,7 @@ button.color-dot:hover {
 
   .site-header__search-row {
     display: block;
-    padding: 0 var(--pad-page) 0.5rem 0 !important;
-    padding-left: 0 !important;
+    padding: 0 var(--pad-page) 0.5rem;
     width: 100%;
     box-sizing: border-box;
   }
@@ -3037,8 +3034,7 @@ button.color-dot:hover {
   .product-card__body {
     height: 100%;
     gap: 0.65rem;
-    padding: 0.35rem 0.2rem 0.15rem 0 !important;
-    padding-left: 0 !important;
+    padding: 0.35rem 0.35rem 0.15rem;
     /* chips · title · price · actions - actions pin to bottom */
     grid-template-rows: auto auto auto 1fr;
   }
@@ -3131,8 +3127,7 @@ button.color-dot:hover {
       grid-row: span 4;
       height: auto;
       gap: 0;
-      padding: 0.4rem 0.25rem 0.2rem 0 !important;
-      padding-left: 0 !important;
+      padding: 0.4rem 0.35rem 0.2rem;
     }
 
     .product-card__meta--chips,
@@ -3215,10 +3210,9 @@ button.color-dot:hover {
     overflow-x: auto;
     overflow-y: hidden;
     gap: 0.35rem;
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-    padding-right: var(--pad-page);
-    scroll-padding-left: 0 !important;
+    margin-inline: calc(var(--pad-page) * -1);
+    padding-inline: var(--pad-page);
+    scroll-padding-inline: var(--pad-page);
     padding-bottom: 0.35rem;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
