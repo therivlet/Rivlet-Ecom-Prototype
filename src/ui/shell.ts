@@ -273,11 +273,11 @@ export function renderHeader(): string {
   <header class="site-header" data-header>
     <div class="site-header__rail" data-announce aria-label="Announcements">
       <div class="announce-bar-reference">
-        <span class="announce-bar-reference__text">Free Express Shipping across India on orders over ₹2,499</span>
+        <span class="announce-bar-reference__text">Free Express Shipping over ₹2,499</span>
         <span class="announce-bar-reference__dot">•</span>
         <span class="announce-bar-reference__text">30-Day Wear-and-Wash Guarantee</span>
-        <span class="announce-bar-reference__dot">•</span>
-        <span class="announce-bar-reference__text"><a href="${whatsappHref}" target="_blank" rel="noreferrer" class="announce-bar-reference__link">Support via WhatsApp ↗</a></span>
+        <span class="announce-bar-reference__dot announce-bar-reference__dot--hide-mobile">•</span>
+        <span class="announce-bar-reference__text announce-bar-reference__text--hide-mobile"><a href="${whatsappHref}" target="_blank" rel="noreferrer" class="announce-bar-reference__link">Support via WhatsApp ↗</a></span>
       </div>
     </div>
     <div class="site-header__bar">
