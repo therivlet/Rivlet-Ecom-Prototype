@@ -271,14 +271,33 @@ export function renderHeader(): string {
 
   return `
   <header class="site-header" data-header>
-    <div class="site-header__rail" data-announce aria-label="Announcements">
-      <div class="announce-bar-reference">
-        <span class="announce-bar-reference__text">Free Express Shipping over ₹2,499</span>
-        <span class="announce-bar-reference__dot">•</span>
-        <span class="announce-bar-reference__text">30-Day Wear-and-Wash Guarantee</span>
-        <span class="announce-bar-reference__dot announce-bar-reference__dot--hide-mobile">•</span>
-        <span class="announce-bar-reference__text announce-bar-reference__text--hide-mobile"><a href="${whatsappHref}" target="_blank" rel="noreferrer" class="announce-bar-reference__link">Support via WhatsApp ↗</a></span>
+    <div class="site-header__rail" data-announce aria-roledescription="carousel" aria-label="Announcements">
+      <button class="announce-nav announce-nav--prev" type="button" data-announce-prev aria-label="Previous announcement">
+        ${icon('chevron-left')}
+      </button>
+      <div class="announce-viewport">
+        <div class="announce-track" data-announce-track>
+          <div class="announce-slide is-active" data-announce-slide aria-hidden="false">
+            <span class="announce-slide__dot" aria-hidden="true">✦</span>
+            <span>Free Express Shipping across India on orders over ₹2,499</span>
+          </div>
+          <div class="announce-slide" data-announce-slide aria-hidden="true">
+            <span class="announce-slide__dot" aria-hidden="true">✦</span>
+            <span>30-Day Wear-and-Wash Guarantee · 100% Risk-Free Trial</span>
+          </div>
+          <div class="announce-slide" data-announce-slide aria-hidden="true">
+            <span class="announce-slide__dot" aria-hidden="true">✦</span>
+            <span>Customer Support · WhatsApp Concierge: <a href="${whatsappHref}" target="_blank" rel="noreferrer" class="announce-slide__link">Chat with us ↗</a></span>
+          </div>
+          <div class="announce-slide" data-announce-slide aria-hidden="true">
+            <span class="announce-slide__dot" aria-hidden="true">✦</span>
+            <span>Engineered for Tropical Climates · Anti-Odor &amp; Zero Sweat Patches</span>
+          </div>
+        </div>
       </div>
+      <button class="announce-nav announce-nav--next" type="button" data-announce-next aria-label="Next announcement">
+        ${icon('chevron-right')}
+      </button>
     </div>
     <div class="site-header__bar">
       <div class="site-header__inner">
@@ -1066,7 +1085,7 @@ function initAnnounceRail(root: ParentNode): void {
     slides.findIndex((s) => s.classList.contains('is-active')),
   )
   let timer: ReturnType<typeof setInterval> | null = null
-  const delay = 4500
+  const delay = 3600
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const show = (next: number) => {

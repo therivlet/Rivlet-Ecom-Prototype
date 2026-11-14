@@ -116,8 +116,26 @@ ol {
 }
 
 @media (max-width: 899px) {
+  body {
+    padding-left: 0 !important;
+  }
+
+  .page__main {
+    padding-left: 0 !important;
+  }
+
   .page--hero .page__main {
     padding-top: 0 !important;
+  }
+
+  .container,
+  .container--narrow {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-right: var(--pad-page);
+    box-sizing: border-box;
   }
 }
 

@@ -503,21 +503,6 @@ app.innerHTML = `<div data-page-content>
           <button type="button" class="situations-nav-btn situations-nav-btn--next" data-situations-next aria-label="Next situation">›</button>
         </div>
       </div>
-      <div class="situation-pills" role="tablist" aria-label="Filter activewear situations">
-        ${SITUATIONS.map(
-          (s, idx) => `
-          <button
-            type="button"
-            class="situation-pill ${idx === 0 ? 'is-active' : ''}"
-            data-situation-tab="${s.id}"
-            role="tab"
-            aria-selected="${idx === 0 ? 'true' : 'false'}"
-          >
-            <span class="situation-pill__dot" aria-hidden="true"></span>
-            <span>${s.label}</span>
-          </button>`,
-        ).join('')}
-      </div>
     </div>
     <div class="situation-runway" role="list" data-situation-rail>
       ${SITUATIONS.map(
@@ -905,31 +890,14 @@ function bindSituationsNav(): void {
   const rail = document.querySelector<HTMLElement>('[data-situation-rail]')
   const prev = document.querySelector<HTMLButtonElement>('[data-situations-prev]')
   const next = document.querySelector<HTMLButtonElement>('[data-situations-next]')
-  if (!rail) return
+  if (!rail || !prev || !next) return
 
   const scrollAmount = 360
-  prev?.addEventListener('click', () => {
+  prev.addEventListener('click', () => {
     rail.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
   })
-  next?.addEventListener('click', () => {
+  next.addEventListener('click', () => {
     rail.scrollBy({ left: scrollAmount, behavior: 'smooth' })
-  })
-
-  const pills = document.querySelectorAll<HTMLButtonElement>('[data-situation-tab]')
-  pills.forEach((pill) => {
-    pill.addEventListener('click', () => {
-      const sitId = pill.dataset.situationTab
-      if (!sitId) return
-      const card = rail.querySelector<HTMLElement>(`[data-situation-card="${sitId}"]`)
-      if (card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-      }
-      pills.forEach((p) => {
-        const isActive = p === pill
-        p.classList.toggle('is-active', isActive)
-        p.setAttribute('aria-selected', String(isActive))
-      })
-    })
   })
 }
 
