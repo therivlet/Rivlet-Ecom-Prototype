@@ -2365,7 +2365,7 @@
 }
 
 .looks-header {
-  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  margin-top: 0;
 }
 
 .collection-nav {
@@ -2459,6 +2459,50 @@
   background: var(--color-canvas-deep);
   border-color: var(--color-ink-soft);
   color: var(--color-ink);
+}
+
+/* Pinned Runway Architecture (Walk-out ready & Collection) */
+.runway-pin-stage {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.runway-pin-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 76px;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 10;
+  background: var(--color-canvas);
+}
+
+@media (max-width: 899px) {
+  .runway-pin-sticky {
+    top: 56px;
+  }
+}
+
+.looks-home-pinned,
+.collection-home-pinned {
+  padding-block: clamp(1.25rem, 3.2vw, 2.75rem);
+}
+
+.coord-editorial {
+  padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.collection-trust-section {
+  padding-block: clamp(1.75rem, 3.5vw, 3rem);
+  border-top: 1px solid var(--color-line);
+  background: var(--color-canvas);
+}
+
+.runway-pin-stage .collection-runway {
+  scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
 }
 
 .collection-runway-wrap {

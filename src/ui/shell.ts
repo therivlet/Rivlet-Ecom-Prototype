@@ -1208,13 +1208,29 @@ export function mountShell(root: HTMLElement): void {
   const mega = shopNav?.querySelector<HTMLElement>('.mega')
   let megaCloseTimer: ReturnType<typeof setTimeout> | null = null
   let situationSwitchTimer: ReturnType<typeof setTimeout> | null = null
+  let revertToDefaultTimer: ReturnType<typeof setTimeout> | null = null
   let showDefaultMegaPanel = () => {}
+
+  const cancelRevertToDefault = () => {
+    if (revertToDefaultTimer) {
+      clearTimeout(revertToDefaultTimer)
+      revertToDefaultTimer = null
+    }
+  }
+
+  const scheduleRevertToDefault = (delay = 200) => {
+    cancelRevertToDefault()
+    revertToDefaultTimer = setTimeout(() => {
+      showDefaultMegaPanel()
+    }, delay)
+  }
 
   const openMega = () => {
     if (megaCloseTimer) {
       clearTimeout(megaCloseTimer)
       megaCloseTimer = null
     }
+    cancelRevertToDefault()
     shopNav?.classList.add('is-open')
   }
   const closeMega = () => {
@@ -1226,6 +1242,7 @@ export function mountShell(root: HTMLElement): void {
       clearTimeout(situationSwitchTimer)
       situationSwitchTimer = null
     }
+    cancelRevertToDefault()
     shopNav?.classList.remove('is-open')
     showDefaultMegaPanel()
   }
@@ -1249,7 +1266,10 @@ export function mountShell(root: HTMLElement): void {
     showDefaultMegaPanel = () => setMegaPanel('default')
 
     shopNav.querySelector('[data-mega-trigger]')?.addEventListener('mouseenter', openMega)
-    mega.addEventListener('mouseenter', openMega)
+    mega.addEventListener('mouseenter', () => {
+      openMega()
+      cancelRevertToDefault()
+    })
     shopNav.addEventListener('mouseleave', () => {
       scheduleCloseMega()
     })
@@ -1269,12 +1289,14 @@ export function mountShell(root: HTMLElement): void {
           clearTimeout(megaCloseTimer)
           megaCloseTimer = null
         }
+        cancelRevertToDefault()
         if (situationSwitchTimer) clearTimeout(situationSwitchTimer)
         situationSwitchTimer = setTimeout(() => {
           setMegaPanel(id)
-        }, 70)
+        }, 110)
       })
       item.addEventListener('focus', () => {
+        cancelRevertToDefault()
         if (situationSwitchTimer) clearTimeout(situationSwitchTimer)
         setMegaPanel(id)
       })
@@ -1282,6 +1304,8 @@ export function mountShell(root: HTMLElement): void {
 
     // Sub-navigation aside panel: keep active sub-navigation panel locked in place while user interacts with it
     const aside = mega.querySelector<HTMLElement>('[data-mega-aside]')
+    const megaCol = mega.querySelector<HTMLElement>('.mega__col')
+
     if (aside) {
       aside.addEventListener('mouseenter', () => {
         if (megaCloseTimer) {
@@ -1292,6 +1316,25 @@ export function mountShell(root: HTMLElement): void {
           clearTimeout(situationSwitchTimer)
           situationSwitchTimer = null
         }
+        cancelRevertToDefault()
+      })
+
+      aside.addEventListener('mouseleave', (e) => {
+        const related = e.relatedTarget as HTMLElement | null
+        if (related && related.closest('[data-mega-situation]')) {
+          return
+        }
+        scheduleRevertToDefault(180)
+      })
+    }
+
+    if (megaCol) {
+      megaCol.addEventListener('mouseleave', (e) => {
+        const related = e.relatedTarget as HTMLElement | null
+        if (related && related.closest('[data-mega-aside]')) {
+          return
+        }
+        scheduleRevertToDefault(220)
       })
     }
 

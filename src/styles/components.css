@@ -863,6 +863,24 @@
   text-decoration: none;
   isolation: isolate;
   background: #0c1e34;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+}
+
+.mega__feature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(12, 30, 52, 0.25);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.mega__feature--soft {
+  background: #1a1208;
+}
+
+.mega__feature--soft:hover {
+  box-shadow: 0 12px 32px rgba(26, 18, 8, 0.28);
 }
 
 .mega__feature-img {

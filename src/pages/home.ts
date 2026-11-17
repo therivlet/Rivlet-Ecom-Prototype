@@ -547,7 +547,8 @@ app.innerHTML = `<div data-page-content>
     </div>
   </section>
 
-  <section class="section coord-home" id="looks">
+  <!-- Looks Editorial Band: One decision. Fully dressed. -->
+  <section class="section coord-editorial" id="coord-editorial">
     <div class="container">
       <div class="coord-band">
         <div class="coord-visual">
@@ -573,109 +574,128 @@ app.innerHTML = `<div data-page-content>
           <a class="btn btn--primary" href="${lookHref(COORD_SET.slug)}">Shop this look</a>
         </div>
       </div>
-
-      <div class="collection-header looks-header">
-        <div class="section-head section-head--left">
-          <p class="eyebrow">Walk-out ready</p>
-          <h2 class="display">Pick the look. Skip the guesswork.</h2>
-        </div>
-        <div class="collection-nav" aria-label="Walk-out ready looks navigation">
-          <div class="collection-nav__actions">
-            <button
-              type="button"
-              class="collection-nav-btn collection-nav-btn--prev"
-              data-looks-prev
-              aria-label="Previous look"
-              title="Previous look"
-              disabled
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button
-              type="button"
-              class="collection-nav-btn collection-nav-btn--next"
-              data-looks-next
-              aria-label="Next look"
-              title="Next look"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-          <a class="collection-nav__shop-all" href="./sets/">
-            <span>Explore all ${COORD_SETS.length}</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="collection-runway-wrap looks-runway-wrap">
-        <div
-          class="collection-runway looks-runway"
-          role="region"
-          aria-label="Walk-out ready looks runway"
-          tabindex="0"
-          data-looks-rail
-        >
-          ${COORD_SETS.map((s) => lookCardHTML(s)).join('')}
-        </div>
-        <div class="collection-runway__progress-track" aria-hidden="true">
-          <div class="collection-runway__progress-thumb" data-looks-thumb></div>
-        </div>
-      </div>
     </div>
   </section>
 
-  <section class="section collection-home" id="collection-runway-section">
-    <div class="container">
-      <div class="collection-header">
-        <div class="section-head section-head--left">
-          <p class="eyebrow">Collection</p>
-          <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
-        </div>
-        <div class="collection-nav" aria-label="Collection runway navigation">
-          <div class="collection-nav__actions">
-            <button
-              type="button"
-              class="collection-nav-btn collection-nav-btn--prev"
-              data-collection-prev
-              aria-label="Previous piece"
-              title="Previous piece"
-              disabled
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button
-              type="button"
-              class="collection-nav-btn collection-nav-btn--next"
-              data-collection-next
-              aria-label="Next piece"
-              title="Next piece"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
+  <!-- Walk-out Ready (Workout Ready) Pinned Runway Stage -->
+  <div class="runway-pin-stage" id="looks-pin-stage" data-pin-stage="looks">
+    <div class="runway-pin-sticky" data-pin-sticky>
+      <section class="section looks-home-pinned" id="looks">
+        <div class="container">
+          <div class="collection-header looks-header">
+            <div class="section-head section-head--left">
+              <p class="eyebrow">Walk-out ready</p>
+              <h2 class="display">Pick the look. Skip the guesswork.</h2>
+            </div>
+            <div class="collection-nav" aria-label="Walk-out ready looks navigation">
+              <div class="collection-nav__actions">
+                <button
+                  type="button"
+                  class="collection-nav-btn collection-nav-btn--prev"
+                  data-looks-prev
+                  aria-label="Previous look"
+                  title="Previous look"
+                  disabled
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button
+                  type="button"
+                  class="collection-nav-btn collection-nav-btn--next"
+                  data-looks-next
+                  aria-label="Next look"
+                  title="Next look"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              </div>
+              <a class="collection-nav__shop-all" href="./sets/">
+                <span>Explore all ${COORD_SETS.length}</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
-          <a class="collection-nav__shop-all" href="${shopHref()}">
-            <span>Explore all 6</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
 
-      <div class="collection-runway-wrap">
-        <div
-          class="collection-runway"
-          role="region"
-          aria-label="Six pieces collection runway"
-          tabindex="0"
-          data-collection-rail
-        >
-          ${products.map((p) => productCardHTML(p)).join('')}
+          <div class="collection-runway-wrap looks-runway-wrap">
+            <div
+              class="collection-runway looks-runway"
+              role="region"
+              aria-label="Walk-out ready looks runway"
+              tabindex="0"
+              data-looks-rail
+            >
+              ${COORD_SETS.map((s) => lookCardHTML(s)).join('')}
+            </div>
+            <div class="collection-runway__progress-track" aria-hidden="true">
+              <div class="collection-runway__progress-thumb" data-looks-thumb></div>
+            </div>
+          </div>
         </div>
-        <div class="collection-runway__progress-track" aria-hidden="true">
-          <div class="collection-runway__progress-thumb" data-collection-thumb></div>
-        </div>
-      </div>
+      </section>
+    </div>
+  </div>
 
+  <!-- Collection Runway Pinned Stage: 6 pieces -->
+  <div class="runway-pin-stage" id="collection-pin-stage" data-pin-stage="collection">
+    <div class="runway-pin-sticky" data-pin-sticky>
+      <section class="section collection-home-pinned" id="collection-runway-section">
+        <div class="container">
+          <div class="collection-header">
+            <div class="section-head section-head--left">
+              <p class="eyebrow">Collection</p>
+              <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
+            </div>
+            <div class="collection-nav" aria-label="Collection runway navigation">
+              <div class="collection-nav__actions">
+                <button
+                  type="button"
+                  class="collection-nav-btn collection-nav-btn--prev"
+                  data-collection-prev
+                  aria-label="Previous piece"
+                  title="Previous piece"
+                  disabled
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button
+                  type="button"
+                  class="collection-nav-btn collection-nav-btn--next"
+                  data-collection-next
+                  aria-label="Next piece"
+                  title="Next piece"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              </div>
+              <a class="collection-nav__shop-all" href="${shopHref()}">
+                <span>Explore all 6</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="collection-runway-wrap">
+            <div
+              class="collection-runway"
+              role="region"
+              aria-label="Six pieces collection runway"
+              tabindex="0"
+              data-collection-rail
+            >
+              ${products.map((p) => productCardHTML(p)).join('')}
+            </div>
+            <div class="collection-runway__progress-track" aria-hidden="true">
+              <div class="collection-runway__progress-thumb" data-collection-thumb></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Guarantees & Trust Strip Section -->
+  <section class="section collection-trust-section">
+    <div class="container">
       <div class="collection-trust-strip" role="region" aria-label="Rivlet guarantees">
         <div class="collection-trust-item">
           <span class="collection-trust-icon">✦</span>
@@ -936,6 +956,29 @@ function bindSituationsNav(): void {
 
 bindSituationsNav()
 
+function syncWindowToRail(rail: HTMLElement, targetScrollLeft?: number): void {
+  const stage = rail.closest<HTMLElement>('.runway-pin-stage')
+  if (!stage) return
+  const isMobile = window.matchMedia('(max-width: 899px)').matches
+  const stickyTop = isMobile ? 56 : 76
+  const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+  if (maxScroll <= 10) return
+  const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
+  const scrollDist = stage.offsetHeight - (stickyEl?.offsetHeight ?? 0)
+  if (scrollDist <= 10) return
+
+  const scrollLeftVal = typeof targetScrollLeft === 'number' ? targetScrollLeft : rail.scrollLeft
+  const progress = Math.min(1, Math.max(0, scrollLeftVal / maxScroll))
+  const stageDocTop = window.scrollY + stage.getBoundingClientRect().top
+  const targetWindowY = stageDocTop - stickyTop + progress * scrollDist
+
+  if (typeof targetScrollLeft === 'number') {
+    window.scrollTo({ top: targetWindowY, behavior: 'smooth' })
+  } else {
+    window.scrollTo({ top: targetWindowY })
+  }
+}
+
 function enableDragToScroll(rail: HTMLElement): void {
   let isDown = false
   let startX = 0
@@ -967,7 +1010,18 @@ function enableDragToScroll(rail: HTMLElement): void {
     if (!isDown) return
     isDown = false
     rail.classList.remove('is-dragging')
+    if (dragged) {
+      syncWindowToRail(rail)
+    }
   })
+
+  rail.addEventListener(
+    'touchend',
+    () => {
+      syncWindowToRail(rail)
+    },
+    { passive: true },
+  )
 
   rail.addEventListener(
     'click',
@@ -1029,20 +1083,30 @@ function bindCollectionNav(): void {
   }
 
   prev?.addEventListener('click', () => {
-    rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+    const target = Math.max(0, rail.scrollLeft - getStep())
+    rail.scrollTo({ left: target, behavior: 'smooth' })
+    syncWindowToRail(rail, target)
   })
 
   next?.addEventListener('click', () => {
-    rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+    const target = Math.min(maxScroll, rail.scrollLeft + getStep())
+    rail.scrollTo({ left: target, behavior: 'smooth' })
+    syncWindowToRail(rail, target)
   })
 
   rail.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault()
-      rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+      const target = Math.max(0, rail.scrollLeft - getStep())
+      rail.scrollTo({ left: target, behavior: 'smooth' })
+      syncWindowToRail(rail, target)
     } else if (e.key === 'ArrowRight') {
       e.preventDefault()
-      rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+      const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+      const target = Math.min(maxScroll, rail.scrollLeft + getStep())
+      rail.scrollTo({ left: target, behavior: 'smooth' })
+      syncWindowToRail(rail, target)
     }
   })
 
@@ -1103,20 +1167,30 @@ function bindLooksNav(): void {
   }
 
   prev?.addEventListener('click', () => {
-    rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+    const target = Math.max(0, rail.scrollLeft - getStep())
+    rail.scrollTo({ left: target, behavior: 'smooth' })
+    syncWindowToRail(rail, target)
   })
 
   next?.addEventListener('click', () => {
-    rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+    const target = Math.min(maxScroll, rail.scrollLeft + getStep())
+    rail.scrollTo({ left: target, behavior: 'smooth' })
+    syncWindowToRail(rail, target)
   })
 
   rail.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault()
-      rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+      const target = Math.max(0, rail.scrollLeft - getStep())
+      rail.scrollTo({ left: target, behavior: 'smooth' })
+      syncWindowToRail(rail, target)
     } else if (e.key === 'ArrowRight') {
       e.preventDefault()
-      rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+      const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+      const target = Math.min(maxScroll, rail.scrollLeft + getStep())
+      rail.scrollTo({ left: target, behavior: 'smooth' })
+      syncWindowToRail(rail, target)
     }
   })
 
@@ -1130,11 +1204,9 @@ function bindLooksNav(): void {
 
 bindLooksNav()
 
-function initScrollLinkedRunways(): void {
-  const looksSection = document.querySelector<HTMLElement>('#looks')
-  const looksRail = document.querySelector<HTMLElement>('[data-looks-rail]')
-  const colSection = document.querySelector<HTMLElement>('#collection-runway-section')
-  const colRail = document.querySelector<HTMLElement>('[data-collection-rail]')
+function initPinnedRunways(): void {
+  const stages = document.querySelectorAll<HTMLElement>('.runway-pin-stage')
+  if (stages.length === 0) return
 
   let userInteracting = false
   let userTimer: ReturnType<typeof setTimeout> | null = null
@@ -1144,10 +1216,11 @@ function initScrollLinkedRunways(): void {
     if (userTimer) clearTimeout(userTimer)
     userTimer = setTimeout(() => {
       userInteracting = false
-    }, 1200)
+    }, 800)
   }
 
-  [looksRail, colRail].forEach((rail) => {
+  stages.forEach((stage) => {
+    const rail = stage.querySelector<HTMLElement>('[data-looks-rail], [data-collection-rail]')
     if (!rail) return
     rail.addEventListener('touchstart', markInteracting, { passive: true })
     rail.addEventListener('mousedown', markInteracting, { passive: true })
@@ -1170,71 +1243,90 @@ function initScrollLinkedRunways(): void {
       btn.addEventListener('click', markInteracting, { passive: true })
     })
 
+  const updateStageHeights = () => {
+    stages.forEach((stage) => {
+      const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
+      const rail = stage.querySelector<HTMLElement>('[data-looks-rail], [data-collection-rail]')
+      if (!stickyEl || !rail) return
+
+      const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+      if (maxScroll <= 10) {
+        stage.style.height = 'auto'
+        return
+      }
+
+      const stickyH = stickyEl.offsetHeight || window.innerHeight
+      // Pinned vertical scroll travel distance: silky smooth 1:1.05 pace
+      const scrollDist = Math.round(maxScroll * 1.05)
+      stage.style.height = `${stickyH + scrollDist}px`
+    })
+  }
+
   let ticking = false
 
-  const updateRunways = () => {
+  const updatePinnedScroll = () => {
     ticking = false
     if (userInteracting) return
 
-    const winH = window.innerHeight
+    const isMobile = window.matchMedia('(max-width: 899px)').matches
+    const stickyTop = isMobile ? 56 : 76
 
-    // 1. Walk-out ready looks runway: driven smoothly by vertical scroll as section passes through viewport
-    if (looksSection && looksRail) {
-      const rect = looksSection.getBoundingClientRect()
-      const startOffset = winH * 0.7
-      const endOffset = -rect.height * 0.2
-      const totalDistance = startOffset - endOffset
+    stages.forEach((stage) => {
+      const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
+      const rail = stage.querySelector<HTMLElement>('[data-looks-rail], [data-collection-rail]')
+      if (!stickyEl || !rail) return
 
-      if (rect.top <= startOffset && rect.bottom >= 0) {
-        const progress = Math.min(1, Math.max(0, (startOffset - rect.top) / totalDistance))
-        const maxScroll = Math.max(0, looksRail.scrollWidth - looksRail.clientWidth)
-        if (maxScroll > 0) {
-          looksRail.scrollLeft = progress * maxScroll
-        }
+      const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+      if (maxScroll <= 10) return
+
+      const stickyH = stickyEl.offsetHeight || window.innerHeight
+      const stageH = stage.offsetHeight
+      const scrollDist = stageH - stickyH
+      if (scrollDist <= 10) return
+
+      const rect = stage.getBoundingClientRect()
+      const pinnedDist = stickyTop - rect.top
+
+      if (pinnedDist <= 0) {
+        rail.scrollLeft = 0
+      } else if (pinnedDist >= scrollDist) {
+        rail.scrollLeft = maxScroll
+      } else {
+        const progress = pinnedDist / scrollDist
+        rail.scrollLeft = Math.round(progress * maxScroll)
       }
-    }
+    })
+  }
 
-    // 2. Collection runway: driven smoothly by vertical scroll as section passes through viewport
-    if (colSection && colRail) {
-      const rect = colSection.getBoundingClientRect()
-      const startOffset = winH * 0.7
-      const endOffset = -rect.height * 0.2
-      const totalDistance = startOffset - endOffset
-
-      if (rect.top <= startOffset && rect.bottom >= 0) {
-        const progress = Math.min(1, Math.max(0, (startOffset - rect.top) / totalDistance))
-        const maxScroll = Math.max(0, colRail.scrollWidth - colRail.clientWidth)
-        if (maxScroll > 0) {
-          colRail.scrollLeft = progress * maxScroll
-        }
-      }
+  const requestUpdate = () => {
+    if (!ticking) {
+      ticking = true
+      requestAnimationFrame(updatePinnedScroll)
     }
   }
 
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (!ticking) {
-        ticking = true
-        requestAnimationFrame(updateRunways)
-      }
-    },
-    { passive: true },
-  )
-
+  window.addEventListener('scroll', requestUpdate, { passive: true })
   window.addEventListener(
     'resize',
     () => {
-      if (!ticking) {
-        ticking = true
-        requestAnimationFrame(updateRunways)
-      }
+      updateStageHeights()
+      requestUpdate()
     },
     { passive: true },
   )
+
+  // Initialize and measure after DOM / fonts / images settle
+  updateStageHeights()
+  requestAnimationFrame(updatePinnedScroll)
+  setTimeout(updateStageHeights, 300)
+  setTimeout(updateStageHeights, 1000)
+  window.addEventListener('load', () => {
+    updateStageHeights()
+    requestAnimationFrame(updatePinnedScroll)
+  })
 }
 
-initScrollLinkedRunways()
+initPinnedRunways()
 
 function bindHeroLookInteractivity(): void {
   let currentIndex = 0
