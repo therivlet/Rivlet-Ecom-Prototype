@@ -1323,10 +1323,15 @@ function bindHeroLookInteractivity(): void {
         const target = document.querySelector(targetSelector)
         if (target) {
           const isSection = target.tagName === 'SECTION' || target.classList.contains('situations')
-          target.scrollIntoView({ behavior: 'smooth', block: isSection ? 'start' : 'nearest', inline: 'center' })
-          if (target.classList.contains('promise-film') || target.classList.contains('promise-accordion__card')) {
+          const isCard = target.classList.contains('promise-film') || target.classList.contains('promise-accordion__card')
+          target.scrollIntoView({ behavior: 'smooth', block: isSection ? 'start' : 'nearest', inline: isCard ? 'start' : 'center' })
+          if (isCard) {
             target.classList.add('is-highlighted')
             setTimeout(() => target.classList.remove('is-highlighted'), 2200)
+            const vid = target.querySelector<HTMLVideoElement>('video')
+            if (vid && vid.paused) {
+              vid.play().catch(() => {})
+            }
             const promiseId = (target as HTMLElement).dataset.promiseId
             if (promiseId) {
               window.dispatchEvent(new CustomEvent('expand-promise', { detail: { id: promiseId } }))
