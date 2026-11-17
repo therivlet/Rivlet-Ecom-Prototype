@@ -216,7 +216,6 @@ app.innerHTML = `<div data-page-content>
         <!-- Left Column: Brand, Tagline, Vision & Conversion Action -->
         <div class="hero__lead">
           <div class="hero__eyebrow-wrap">
-            <img src="${assetHref('brand/rivlet-mark-light.png')}" alt="" class="hero__wave-mark-icon" width="22" height="22" aria-hidden="true" />
             <p class="hero__eyebrow-ref">WOMEN'S COLLECTION</p>
           </div>
 
@@ -234,20 +233,6 @@ app.innerHTML = `<div data-page-content>
             <a class="btn-hero btn-hero--primary" href="${shopHref()}">
               <span>EXPLORE COLLECTION</span>
               <span class="btn-hero__arrow" aria-hidden="true">↗</span>
-            </a>
-          </div>
-
-          <!-- Bottom Meta Metrics & Review Proof -->
-          <div class="hero__meta-row">
-            <div class="hero__slide-counter" aria-label="Slide 1 of 5">
-              <span class="hero__slide-curr" data-hero-curr>01</span>
-              <span class="hero__slide-sep">/</span>
-              <span class="hero__slide-total">05</span>
-            </div>
-
-            <a class="hero__scroll-down" href="#the-friction" data-scroll-to="#the-friction" aria-label="Scroll to discover">
-              <span>SCROLL TO DISCOVER</span>
-              <span class="hero__scroll-arrow" aria-hidden="true">↓</span>
             </a>
           </div>
         </div>
@@ -595,12 +580,6 @@ app.innerHTML = `<div data-page-content>
           <h2 class="display">Pick the look. Skip the guesswork.</h2>
         </div>
         <div class="collection-nav" aria-label="Walk-out ready looks navigation">
-          <div class="collection-nav__counter" aria-live="polite">
-            <span class="collection-nav__index" data-looks-curr>1</span>
-            <span class="collection-nav__sep">/</span>
-            <span class="collection-nav__total">${COORD_SETS.length}</span>
-            <span class="collection-nav__label">looks</span>
-          </div>
           <div class="collection-nav__actions">
             <button
               type="button"
@@ -654,12 +633,6 @@ app.innerHTML = `<div data-page-content>
           <h2 class="display">Six pieces. Fifteen daily problems owned.</h2>
         </div>
         <div class="collection-nav" aria-label="Collection runway navigation">
-          <div class="collection-nav__counter" data-collection-counter aria-live="polite">
-            <span class="collection-nav__index" data-collection-curr>1</span>
-            <span class="collection-nav__sep">/</span>
-            <span class="collection-nav__total">6</span>
-            <span class="collection-nav__label">pieces</span>
-          </div>
           <div class="collection-nav__actions">
             <button
               type="button"
@@ -963,6 +936,52 @@ function bindSituationsNav(): void {
 
 bindSituationsNav()
 
+function enableDragToScroll(rail: HTMLElement): void {
+  let isDown = false
+  let startX = 0
+  let scrollLeft = 0
+  let dragged = false
+
+  rail.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return
+    const target = e.target as HTMLElement
+    if (target.closest('button, [data-quick-add], [data-quick-add-look]')) return
+    isDown = true
+    dragged = false
+    startX = e.pageX - rail.offsetLeft
+    scrollLeft = rail.scrollLeft
+    rail.classList.add('is-dragging')
+  })
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDown) return
+    const x = e.pageX - rail.offsetLeft
+    const walk = (x - startX) * 1.5
+    if (Math.abs(walk) > 5) {
+      dragged = true
+    }
+    rail.scrollLeft = scrollLeft - walk
+  })
+
+  window.addEventListener('mouseup', () => {
+    if (!isDown) return
+    isDown = false
+    rail.classList.remove('is-dragging')
+  })
+
+  rail.addEventListener(
+    'click',
+    (e) => {
+      if (dragged) {
+        e.preventDefault()
+        e.stopPropagation()
+        dragged = false
+      }
+    },
+    true,
+  )
+}
+
 function bindCollectionNav(): void {
   const rail = document.querySelector<HTMLElement>('[data-collection-rail]')
   const prev = document.querySelector<HTMLButtonElement>('[data-collection-prev]')
@@ -970,6 +989,8 @@ function bindCollectionNav(): void {
   const currEl = document.querySelector<HTMLElement>('[data-collection-curr]')
   const thumb = document.querySelector<HTMLElement>('[data-collection-thumb]')
   if (!rail) return
+
+  enableDragToScroll(rail)
 
   const getStep = (): number => {
     const card = rail.querySelector<HTMLElement>('.product-card')
@@ -1043,6 +1064,8 @@ function bindLooksNav(): void {
   const thumb = document.querySelector<HTMLElement>('[data-looks-thumb]')
   if (!rail) return
 
+  enableDragToScroll(rail)
+
   const getStep = (): number => {
     const card = rail.querySelector<HTMLElement>('.product-card')
     if (!card) return 320
@@ -1107,6 +1130,112 @@ function bindLooksNav(): void {
 
 bindLooksNav()
 
+function initScrollLinkedRunways(): void {
+  const looksSection = document.querySelector<HTMLElement>('#looks')
+  const looksRail = document.querySelector<HTMLElement>('[data-looks-rail]')
+  const colSection = document.querySelector<HTMLElement>('#collection-runway-section')
+  const colRail = document.querySelector<HTMLElement>('[data-collection-rail]')
+
+  let userInteracting = false
+  let userTimer: ReturnType<typeof setTimeout> | null = null
+
+  const markInteracting = () => {
+    userInteracting = true
+    if (userTimer) clearTimeout(userTimer)
+    userTimer = setTimeout(() => {
+      userInteracting = false
+    }, 1200)
+  }
+
+  [looksRail, colRail].forEach((rail) => {
+    if (!rail) return
+    rail.addEventListener('touchstart', markInteracting, { passive: true })
+    rail.addEventListener('mousedown', markInteracting, { passive: true })
+    rail.addEventListener(
+      'wheel',
+      (e) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          markInteracting()
+        }
+      },
+      { passive: true },
+    )
+  })
+
+  document
+    .querySelectorAll(
+      '[data-looks-prev], [data-looks-next], [data-collection-prev], [data-collection-next]',
+    )
+    .forEach((btn) => {
+      btn.addEventListener('click', markInteracting, { passive: true })
+    })
+
+  let ticking = false
+
+  const updateRunways = () => {
+    ticking = false
+    if (userInteracting) return
+
+    const winH = window.innerHeight
+
+    // 1. Walk-out ready looks runway: driven smoothly by vertical scroll as section passes through viewport
+    if (looksSection && looksRail) {
+      const rect = looksSection.getBoundingClientRect()
+      const startOffset = winH * 0.7
+      const endOffset = -rect.height * 0.2
+      const totalDistance = startOffset - endOffset
+
+      if (rect.top <= startOffset && rect.bottom >= 0) {
+        const progress = Math.min(1, Math.max(0, (startOffset - rect.top) / totalDistance))
+        const maxScroll = Math.max(0, looksRail.scrollWidth - looksRail.clientWidth)
+        if (maxScroll > 0) {
+          looksRail.scrollLeft = progress * maxScroll
+        }
+      }
+    }
+
+    // 2. Collection runway: driven smoothly by vertical scroll as section passes through viewport
+    if (colSection && colRail) {
+      const rect = colSection.getBoundingClientRect()
+      const startOffset = winH * 0.7
+      const endOffset = -rect.height * 0.2
+      const totalDistance = startOffset - endOffset
+
+      if (rect.top <= startOffset && rect.bottom >= 0) {
+        const progress = Math.min(1, Math.max(0, (startOffset - rect.top) / totalDistance))
+        const maxScroll = Math.max(0, colRail.scrollWidth - colRail.clientWidth)
+        if (maxScroll > 0) {
+          colRail.scrollLeft = progress * maxScroll
+        }
+      }
+    }
+  }
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(updateRunways)
+      }
+    },
+    { passive: true },
+  )
+
+  window.addEventListener(
+    'resize',
+    () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(updateRunways)
+      }
+    },
+    { passive: true },
+  )
+}
+
+initScrollLinkedRunways()
+
 function bindHeroLookInteractivity(): void {
   let currentIndex = 0
   let selectedSize: Size = 'S'
@@ -1142,11 +1271,14 @@ function bindHeroLookInteractivity(): void {
   playVideos()
 
   // Size pill selection
+  const selectedSizeEl = document.querySelector<HTMLElement>('[data-selected-hero-size]')
   sizePills.forEach((pill) => {
-    pill.addEventListener('click', () => {
+    pill.addEventListener('click', (e) => {
+      e.stopPropagation()
       sizePills.forEach((p) => p.classList.remove('is-selected'))
       pill.classList.add('is-selected')
       selectedSize = (pill.dataset.sizePill as Size) || 'S'
+      if (selectedSizeEl) selectedSizeEl.textContent = selectedSize
     })
   })
 

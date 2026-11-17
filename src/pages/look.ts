@@ -379,6 +379,50 @@ if (!look) {
         </div>
       </div>`
 
+      const scrollToSizeBlock = () => {
+        const sizeBlock = content!.querySelector<HTMLElement>('[data-pdp-size-block], .pdp-size-head')
+        if (sizeBlock) {
+          sizeBlock.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          const grid = content!.querySelector<HTMLElement>('.size-grid')
+          if (grid) {
+            grid.classList.add('is-highlight-pulse')
+            setTimeout(() => grid.classList.remove('is-highlight-pulse'), 1400)
+          }
+        }
+      }
+
+      const selectSizeInPlace = (chosenSize: Size) => {
+        size = chosenSize
+
+        // 1. Update size grid buttons in-place
+        content!.querySelectorAll<HTMLButtonElement>('[data-size]').forEach((b) => {
+          const active = b.dataset.size === chosenSize
+          b.classList.toggle('is-selected', active)
+          b.setAttribute('aria-pressed', String(active))
+        })
+
+        // 2. Update size label display
+        const statusEl = content!.querySelector<HTMLElement>('[data-pdp-size-status]')
+        if (statusEl) {
+          statusEl.innerHTML = `· <strong class="pdp-size-head__chosen" data-pdp-size-val>${chosenSize}</strong>`
+        }
+
+        // 3. Enable and update main ATC button
+        const atcBtn = content!.querySelector<HTMLButtonElement>('[data-add-look]')
+        if (atcBtn) {
+          atcBtn.removeAttribute('disabled')
+          atcBtn.textContent = 'Add look to bag'
+        }
+
+        // 4. Update sticky ATC button
+        const stickyBtn = content!.querySelector<HTMLButtonElement>('[data-sticky-atc-btn]')
+        if (stickyBtn) {
+          stickyBtn.setAttribute('data-needs-size', 'false')
+          stickyBtn.classList.remove('pdp-sticky-atc__btn--prompt')
+          stickyBtn.textContent = 'Add to bag'
+        }
+      }
+
       content!.querySelectorAll<HTMLElement>('[data-color]').forEach((btn) => {
         btn.addEventListener('click', () => {
           color = btn.dataset.color as Colorway
@@ -389,14 +433,24 @@ if (!look) {
       })
       content!.querySelectorAll<HTMLElement>('[data-size]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          size = btn.dataset.size as Size
-          paint()
+          const picked = btn.dataset.size as Size
+          if (picked) selectSizeInPlace(picked)
         })
       })
-      content!.querySelector('[data-add-look]')?.addEventListener('click', addLook)
+      content!.querySelector('[data-add-look]')?.addEventListener('click', () => {
+        if (!size) {
+          scrollToSizeBlock()
+          return
+        }
+        addLook()
+      })
 
       bindSizeGuideTriggers(content!)
-      unbindSticky = bindStickyAtc({ root: content!, onAdd: addLook })
+      unbindSticky = bindStickyAtc({
+        root: content!,
+        onAdd: addLook,
+        onNeedsSize: scrollToSizeBlock,
+      })
       bindGalleryInteractions(gallery)
       initReviewRails(content!)
 

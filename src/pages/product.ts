@@ -1,4 +1,4 @@
-﻿import '../styles/tokens.css'
+import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/components.css'
 import '../styles/pages.css'
@@ -355,6 +355,50 @@ if (!product) {
         </div>
       </div>`
 
+    const scrollToSizeBlock = () => {
+      const sizeBlock = content!.querySelector<HTMLElement>('[data-pdp-size-block], .pdp-size-head')
+      if (sizeBlock) {
+        sizeBlock.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        const grid = content!.querySelector<HTMLElement>('.size-grid')
+        if (grid) {
+          grid.classList.add('is-highlight-pulse')
+          setTimeout(() => grid.classList.remove('is-highlight-pulse'), 1400)
+        }
+      }
+    }
+
+    const selectSizeInPlace = (chosenSize: Size) => {
+      size = chosenSize
+
+      // 1. Update size grid buttons in-place
+      content!.querySelectorAll<HTMLButtonElement>('[data-size]').forEach((b) => {
+        const active = b.dataset.size === chosenSize
+        b.classList.toggle('is-selected', active)
+        b.setAttribute('aria-pressed', String(active))
+      })
+
+      // 2. Update size label display
+      const statusEl = content!.querySelector<HTMLElement>('[data-pdp-size-status]')
+      if (statusEl) {
+        statusEl.innerHTML = `· <strong class="pdp-size-head__chosen" data-pdp-size-val>${chosenSize}</strong>`
+      }
+
+      // 3. Enable and update main ATC button
+      const atcBtn = content!.querySelector<HTMLButtonElement>('[data-atc]')
+      if (atcBtn) {
+        atcBtn.removeAttribute('disabled')
+        atcBtn.textContent = 'Add to bag'
+      }
+
+      // 4. Update sticky ATC button
+      const stickyBtn = content!.querySelector<HTMLButtonElement>('[data-sticky-atc-btn]')
+      if (stickyBtn) {
+        stickyBtn.setAttribute('data-needs-size', 'false')
+        stickyBtn.classList.remove('pdp-sticky-atc__btn--prompt')
+        stickyBtn.textContent = 'Add to bag'
+      }
+    }
+
     content!.querySelectorAll<HTMLElement>('[data-color]').forEach((btn) => {
       btn.addEventListener('click', () => {
         color = btn.dataset.color as Colorway
@@ -365,18 +409,28 @@ if (!product) {
     })
     content!.querySelectorAll<HTMLElement>('[data-size]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        size = btn.dataset.size as Size
-        paint()
+        const picked = btn.dataset.size as Size
+        if (picked) selectSizeInPlace(picked)
       })
     })
-    content!.querySelector('[data-atc]')?.addEventListener('click', addProduct)
+    content!.querySelector('[data-atc]')?.addEventListener('click', () => {
+      if (!size) {
+        scrollToSizeBlock()
+        return
+      }
+      addProduct()
+    })
     content!.querySelector('[data-pdp-wish]')?.addEventListener('click', () => {
       toggleWishlist(product!.id, color)
       paint()
     })
 
     bindSizeGuideTriggers(content!)
-    unbindSticky = bindStickyAtc({ root: content!, onAdd: addProduct })
+    unbindSticky = bindStickyAtc({
+      root: content!,
+      onAdd: addProduct,
+      onNeedsSize: scrollToSizeBlock,
+    })
     bindGalleryInteractions(gallery)
     initReviewRails(content!)
 

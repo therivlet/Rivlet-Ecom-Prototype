@@ -1207,6 +1207,9 @@ export function mountShell(root: HTMLElement): void {
   const shopNav = root.querySelector<HTMLElement>('.site-nav__shop')
   const mega = shopNav?.querySelector<HTMLElement>('.mega')
   let megaCloseTimer: ReturnType<typeof setTimeout> | null = null
+  let situationSwitchTimer: ReturnType<typeof setTimeout> | null = null
+  let showDefaultMegaPanel = () => {}
+
   const openMega = () => {
     if (megaCloseTimer) {
       clearTimeout(megaCloseTimer)
@@ -1219,11 +1222,17 @@ export function mountShell(root: HTMLElement): void {
       clearTimeout(megaCloseTimer)
       megaCloseTimer = null
     }
+    if (situationSwitchTimer) {
+      clearTimeout(situationSwitchTimer)
+      situationSwitchTimer = null
+    }
     shopNav?.classList.remove('is-open')
+    showDefaultMegaPanel()
   }
   const scheduleCloseMega = () => {
     if (megaCloseTimer) clearTimeout(megaCloseTimer)
-    megaCloseTimer = setTimeout(closeMega, 120)
+    // 380ms travel buffer ensures diagonal mouse movement to sub-nav never closes menu prematurely
+    megaCloseTimer = setTimeout(closeMega, 380)
   }
   if (shopNav && mega) {
     const megaTrigger = shopNav.querySelector<HTMLElement>('[data-mega-trigger]')
@@ -1237,38 +1246,55 @@ export function mountShell(root: HTMLElement): void {
         item.classList.toggle('is-active', item.dataset.megaSituation === id)
       })
     }
-    const showDefaultMegaPanel = () => setMegaPanel('default')
+    showDefaultMegaPanel = () => setMegaPanel('default')
 
     shopNav.querySelector('[data-mega-trigger]')?.addEventListener('mouseenter', openMega)
     mega.addEventListener('mouseenter', openMega)
     shopNav.addEventListener('mouseleave', () => {
       scheduleCloseMega()
-      showDefaultMegaPanel()
     })
     shopNav.addEventListener('focusin', openMega)
     shopNav.addEventListener('focusout', (e) => {
       if (!shopNav.contains(e.relatedTarget as Node)) {
         closeMega()
-        showDefaultMegaPanel()
       }
     })
+
+    // Debounced situation switching so diagonal movement across items doesn't cause flickering or premature switches
     mega.querySelectorAll<HTMLElement>('[data-mega-situation]').forEach((item) => {
       const id = item.dataset.megaSituation
       if (!id) return
-      item.addEventListener('mouseenter', () => setMegaPanel(id))
-      item.addEventListener('focus', () => setMegaPanel(id))
+      item.addEventListener('mouseenter', () => {
+        if (megaCloseTimer) {
+          clearTimeout(megaCloseTimer)
+          megaCloseTimer = null
+        }
+        if (situationSwitchTimer) clearTimeout(situationSwitchTimer)
+        situationSwitchTimer = setTimeout(() => {
+          setMegaPanel(id)
+        }, 70)
+      })
+      item.addEventListener('focus', () => {
+        if (situationSwitchTimer) clearTimeout(situationSwitchTimer)
+        setMegaPanel(id)
+      })
     })
-    mega.querySelector('[data-mega-aside]')?.addEventListener('mouseenter', (e) => {
-      const target = e.target as HTMLElement
-      if (target.closest('[data-mega-panel="default"]') || target.closest('.mega__feature')) {
-        showDefaultMegaPanel()
-      }
-    })
-    mega.querySelector('.mega__col')?.addEventListener('mouseleave', (e) => {
-      const related = (e as MouseEvent).relatedTarget as Node | null
-      if (related && mega.querySelector('[data-mega-aside]')?.contains(related)) return
-      showDefaultMegaPanel()
-    })
+
+    // Sub-navigation aside panel: keep active sub-navigation panel locked in place while user interacts with it
+    const aside = mega.querySelector<HTMLElement>('[data-mega-aside]')
+    if (aside) {
+      aside.addEventListener('mouseenter', () => {
+        if (megaCloseTimer) {
+          clearTimeout(megaCloseTimer)
+          megaCloseTimer = null
+        }
+        if (situationSwitchTimer) {
+          clearTimeout(situationSwitchTimer)
+          situationSwitchTimer = null
+        }
+      })
+    }
+
     megaTrigger?.addEventListener('click', (e) => {
       // Keep link usable; open mega on intentional click without leaving yet on desktop hover devices
       if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -1282,13 +1308,11 @@ export function mountShell(root: HTMLElement): void {
     document.addEventListener('click', (e) => {
       if (!shopNav.contains(e.target as Node)) {
         closeMega()
-        showDefaultMegaPanel()
       }
     })
     root.querySelectorAll<HTMLElement>('.site-nav > .site-nav__link').forEach((link) => {
       link.addEventListener('mouseenter', () => {
         closeMega()
-        showDefaultMegaPanel()
       })
     })
   }

@@ -106,18 +106,23 @@ export function sizeBlockHTML(opts: {
   fitNote: string
   guideTab: ReturnType<typeof sizeGuideTabForCategory> | 'tops' | 'bottoms' | 'bra'
 }): string {
-  const label = opts.bothPieces
+  const baseLabel = opts.bothPieces
     ? 'Size · both pieces'
     : `Select size${opts.cupInclusive ? ' · cup-inclusive' : ''}`
   return `
-    <div>
+    <div class="pdp-size-block" data-pdp-size-block>
       <div class="pdp-size-head">
-        <p class="eyebrow pdp-buy__label">${label}</p>
+        <p class="eyebrow pdp-buy__label">
+          <span>${baseLabel}</span>
+          <span class="pdp-size-head__status" data-pdp-size-status>
+            ${opts.selected ? `· <strong class="pdp-size-head__chosen" data-pdp-size-val>${opts.selected}</strong>` : '· <span class="pdp-size-head__prompt" data-pdp-size-val>Select a size</span>'}
+          </span>
+        </p>
         <button type="button" class="pdp-size-guide" data-size-guide-open data-sg-initial="${opts.guideTab}">
           Size guide
         </button>
       </div>
-      <div class="size-grid">
+      <div class="size-grid" data-pdp-size-grid>
         ${opts.sizes
           .map(
             (s) =>
@@ -243,7 +248,7 @@ export function stickyAtcHTML(opts: { price: string; label: string; disabled: bo
     <div class="pdp-sticky-atc" data-sticky-atc hidden>
       <div class="pdp-sticky-atc__inner">
         <span class="pdp-sticky-atc__price">${opts.price}</span>
-        <button class="btn btn--primary" type="button" data-sticky-atc-btn ${opts.disabled ? 'disabled' : ''}>
+        <button class="btn btn--primary ${opts.disabled ? 'pdp-sticky-atc__btn--prompt' : ''}" type="button" data-sticky-atc-btn data-needs-size="${opts.disabled}">
           ${opts.label}
         </button>
       </div>
@@ -263,6 +268,7 @@ export function bindStickyAtc(opts: {
   root: ParentNode
   buySelector?: string
   onAdd: () => void
+  onNeedsSize?: () => void
 }): () => void {
   const bar = opts.root.querySelector<HTMLElement>('[data-sticky-atc]')
   const buy = opts.root.querySelector<HTMLElement>(opts.buySelector ?? '.pdp-buy')
@@ -279,8 +285,29 @@ export function bindStickyAtc(opts: {
     bar.hidden = !out
   }
 
-  const onStickyClick = () => opts.onAdd()
-  bar.querySelector('[data-sticky-atc-btn]')?.addEventListener('click', onStickyClick)
+  const btn = bar.querySelector<HTMLButtonElement>('[data-sticky-atc-btn]')
+  const onStickyClick = (e: MouseEvent) => {
+    e.preventDefault()
+    if (btn?.getAttribute('data-needs-size') === 'true') {
+      if (opts.onNeedsSize) {
+        opts.onNeedsSize()
+      } else {
+        const sizeBlock = opts.root.querySelector<HTMLElement>('.pdp-size-head, [data-pdp-size-block], .size-grid')
+        if (sizeBlock) {
+          sizeBlock.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          const grid = opts.root.querySelector<HTMLElement>('.size-grid')
+          if (grid) {
+            grid.classList.add('is-highlight-pulse')
+            setTimeout(() => grid.classList.remove('is-highlight-pulse'), 1400)
+          }
+        }
+      }
+      return
+    }
+    opts.onAdd()
+  }
+
+  btn?.addEventListener('click', onStickyClick)
   window.addEventListener('scroll', sync, { passive: true })
   window.addEventListener('resize', sync)
   sync()
