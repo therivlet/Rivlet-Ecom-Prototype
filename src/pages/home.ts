@@ -33,6 +33,7 @@ const [coordCardamomFront, coordCardamomAlt] = getCoordImages(COORD_SET, 'cardam
 interface HeroLook {
   index: string
   title: string
+  slug: string
   price: string
   mrp: number
   color: 'cardamom' | 'midnight'
@@ -51,7 +52,8 @@ interface HeroLook {
 const HERO_LOOKS: HeroLook[] = [
   {
     index: '01',
-    title: 'Crop + Leggings Set • Cardamom',
+    title: 'Crop + Leggings Set',
+    slug: 'crop-leggings',
     price: formatPrice(3298),
     mrp: 3298,
     color: 'cardamom',
@@ -66,7 +68,8 @@ const HERO_LOOKS: HeroLook[] = [
   },
   {
     index: '02',
-    title: 'Sports Bra + Leggings Set • Cardamom',
+    title: 'Sports Bra + Leggings Set',
+    slug: 'bra-leggings',
     price: formatPrice(3398),
     mrp: 3398,
     color: 'cardamom',
@@ -81,7 +84,8 @@ const HERO_LOOKS: HeroLook[] = [
   },
   {
     index: '03',
-    title: 'Sports Bra + Shorts Set • Midnight',
+    title: 'Sports Bra + Shorts Set',
+    slug: 'bra-shorts',
     price: formatPrice(3198),
     mrp: 3198,
     color: 'midnight',
@@ -96,7 +100,8 @@ const HERO_LOOKS: HeroLook[] = [
   },
   {
     index: '04',
-    title: 'Crop + Shorts Set • Cardamom',
+    title: 'Crop + Shorts Set',
+    slug: 'crop-shorts',
     price: formatPrice(3098),
     mrp: 3098,
     color: 'cardamom',
@@ -111,7 +116,8 @@ const HERO_LOOKS: HeroLook[] = [
   },
   {
     index: '05',
-    title: 'Motion Movement Set • Cardamom',
+    title: 'Motion Movement Set',
+    slug: 'crop-leggings',
     price: formatPrice(3298),
     mrp: 3298,
     color: 'cardamom',
@@ -254,18 +260,28 @@ app.innerHTML = `<div data-page-content>
             </div>
 
             <div class="shop-look-card__body">
-              <div class="shop-look-card__thumb-wrap">
+              <a
+                class="shop-look-card__thumb-wrap shop-look-card__thumb-link"
+                href="${lookHref(HERO_LOOKS[0].slug)}"
+                data-look-link
+                aria-label="View ${HERO_LOOKS[0].title}"
+              >
                 <img
                   class="shop-look-card__thumb"
                   src="${assetHref(HERO_LOOKS[0].thumb)}"
                   alt="${HERO_LOOKS[0].title}"
                   data-look-thumb
                 />
-              </div>
+              </a>
 
               <div class="shop-look-card__details">
-                <h3 class="shop-look-card__title" data-look-title>
-                  ${HERO_LOOKS[0].title}
+                <h3 class="shop-look-card__title">
+                  <a
+                    class="shop-look-card__title-link"
+                    href="${lookHref(HERO_LOOKS[0].slug)}"
+                    data-look-link
+                    data-look-title
+                  >${HERO_LOOKS[0].title}</a>
                 </h3>
                 <p class="shop-look-card__price" data-look-price>${HERO_LOOKS[0].price}</p>
 
@@ -573,16 +589,60 @@ app.innerHTML = `<div data-page-content>
         </div>
       </div>
 
-      <div class="section-head coord-home__gallery-head">
-        <p class="eyebrow">Walk-out ready</p>
-        <h2 class="display">Pick the look. Skip the guesswork.</h2>
+      <div class="collection-header looks-header">
+        <div class="section-head section-head--left">
+          <p class="eyebrow">Walk-out ready</p>
+          <h2 class="display">Pick the look. Skip the guesswork.</h2>
+        </div>
+        <div class="collection-nav" aria-label="Walk-out ready looks navigation">
+          <div class="collection-nav__counter" aria-live="polite">
+            <span class="collection-nav__index" data-looks-curr>1</span>
+            <span class="collection-nav__sep">/</span>
+            <span class="collection-nav__total">${COORD_SETS.length}</span>
+            <span class="collection-nav__label">looks</span>
+          </div>
+          <div class="collection-nav__actions">
+            <button
+              type="button"
+              class="collection-nav-btn collection-nav-btn--prev"
+              data-looks-prev
+              aria-label="Previous look"
+              title="Previous look"
+              disabled
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button
+              type="button"
+              class="collection-nav-btn collection-nav-btn--next"
+              data-looks-next
+              aria-label="Next look"
+              title="Next look"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <a class="collection-nav__shop-all" href="./sets/">
+            <span>Explore all ${COORD_SETS.length}</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
-      <div class="product-grid look-grid look-grid--home" aria-label="Walk-out ready looks">
-        ${COORD_SETS.map((s) => lookCardHTML(s)).join('')}
+
+      <div class="collection-runway-wrap looks-runway-wrap">
+        <div
+          class="collection-runway looks-runway"
+          role="region"
+          aria-label="Walk-out ready looks runway"
+          tabindex="0"
+          data-looks-rail
+        >
+          ${COORD_SETS.map((s) => lookCardHTML(s)).join('')}
+        </div>
+        <div class="collection-runway__progress-track" aria-hidden="true">
+          <div class="collection-runway__progress-thumb" data-looks-thumb></div>
+        </div>
       </div>
-      <p class="looks-more">
-        <a class="btn btn--primary" href="./sets/">Explore all looks</a>
-      </p>
     </div>
   </section>
 
@@ -975,6 +1035,78 @@ function bindCollectionNav(): void {
 
 bindCollectionNav()
 
+function bindLooksNav(): void {
+  const rail = document.querySelector<HTMLElement>('[data-looks-rail]')
+  const prev = document.querySelector<HTMLButtonElement>('[data-looks-prev]')
+  const next = document.querySelector<HTMLButtonElement>('[data-looks-next]')
+  const currEl = document.querySelector<HTMLElement>('[data-looks-curr]')
+  const thumb = document.querySelector<HTMLElement>('[data-looks-thumb]')
+  if (!rail) return
+
+  const getStep = (): number => {
+    const card = rail.querySelector<HTMLElement>('.product-card')
+    if (!card) return 320
+    const gap = parseFloat(window.getComputedStyle(rail).gap) || 16
+    return card.offsetWidth + gap
+  }
+
+  const updateUI = () => {
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
+    const currentScroll = rail.scrollLeft
+
+    if (prev) {
+      prev.disabled = currentScroll <= 6
+    }
+    if (next) {
+      next.disabled = currentScroll >= maxScroll - 6
+    }
+
+    if (thumb && maxScroll > 0) {
+      const track = thumb.parentElement
+      const trackWidth = track ? track.clientWidth : 200
+      const visibleRatio = Math.min(1, Math.max(0.18, rail.clientWidth / rail.scrollWidth))
+      const thumbWidth = Math.max(36, trackWidth * visibleRatio)
+      const scrollRatio = currentScroll / maxScroll
+      const maxTranslate = trackWidth - thumbWidth
+      thumb.style.width = `${thumbWidth}px`
+      thumb.style.transform = `translateX(${scrollRatio * maxTranslate}px)`
+    }
+
+    if (currEl) {
+      const step = getStep()
+      const index = Math.min(COORD_SETS.length, Math.max(1, Math.round(currentScroll / step) + 1))
+      currEl.textContent = String(index)
+    }
+  }
+
+  prev?.addEventListener('click', () => {
+    rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+  })
+
+  next?.addEventListener('click', () => {
+    rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+  })
+
+  rail.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      rail.scrollBy({ left: -getStep(), behavior: 'smooth' })
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      rail.scrollBy({ left: getStep(), behavior: 'smooth' })
+    }
+  })
+
+  rail.addEventListener('scroll', updateUI, { passive: true })
+  window.addEventListener('resize', updateUI, { passive: true })
+
+  // Initialize
+  requestAnimationFrame(updateUI)
+  setTimeout(updateUI, 250)
+}
+
+bindLooksNav()
+
 function bindHeroLookInteractivity(): void {
   let currentIndex = 0
   let selectedSize: Size = 'S'
@@ -1083,6 +1215,10 @@ function bindHeroLookInteractivity(): void {
     }
     if (currIndexEl) currIndexEl.textContent = look.index
     if (progressFill) progressFill.style.width = '0%'
+
+    document.querySelectorAll<HTMLAnchorElement>('[data-look-link]').forEach((a) => {
+      a.href = lookHref(look.slug)
+    })
   }
 
   // Live Auto-Advance & Progress Loop with requestAnimationFrame
@@ -1104,6 +1240,17 @@ function bindHeroLookInteractivity(): void {
 
   // Pause auto-advance on user hover or focus on the shop card
   if (shopCard) {
+    // Clicking anywhere on the card (except size pills or add to bag) navigates to look PDP
+    shopCard.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      if (target.closest('.size-pill') || target.closest('[data-add-look-btn]')) {
+        return
+      }
+      const currentSlug = HERO_LOOKS[currentIndex]?.slug || 'crop-leggings'
+      window.location.href = lookHref(currentSlug)
+    })
+
     shopCard.addEventListener('mouseenter', () => {
       if (!isPaused) {
         pausedElapsed += performance.now() - slideStartTime
