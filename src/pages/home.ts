@@ -960,22 +960,43 @@ function isDesktopMouse(): boolean {
   return window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches
 }
 
+function computeStickyTop(stage: HTMLElement): number {
+  const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
+  if (!stickyEl) return 0
+  const h2 = stage.querySelector<HTMLElement>('h2.display')
+  const headerBottom = 76 // Fixed site header height (var(--header-h))
+
+  if (!h2) {
+    return headerBottom
+  }
+
+  const stickyRect = stickyEl.getBoundingClientRect()
+  const h2Rect = h2.getBoundingClientRect()
+  // Relative distance from the top of stickyEl to the heading line ("guesswork" / "daily problems owned")
+  // Vertical scroll stops immediately when this heading line reaches the header
+  const headingBottomRel = h2Rect.bottom - stickyRect.top
+  return Math.round(headerBottom - headingBottomRel)
+}
+
 function syncWindowToRail(rail: HTMLElement, targetScrollLeft?: number): void {
   if (!isDesktopMouse()) return
   const stage = rail.closest<HTMLElement>('.runway-pin-stage')
   if (!stage) return
-  const stickyTop = 76
+  const stickyTop = Number(stage.dataset.stickyTop) || computeStickyTop(stage)
   const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
   if (maxScroll <= 10) return
   const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
-  const paddingTop = parseFloat(window.getComputedStyle(stage).paddingTop) || 0
-  const scrollDist = stage.offsetHeight - (stickyEl?.offsetHeight ?? 0) - paddingTop
-  if (scrollDist <= 10) return
+  const totalScrollDist = stage.offsetHeight - (stickyEl?.offsetHeight ?? 0)
+  if (totalScrollDist <= 10) return
+
+  const startDelay = 85
+  const endDelay = 45
+  const activeDist = Math.max(10, totalScrollDist - startDelay - endDelay)
 
   const scrollLeftVal = typeof targetScrollLeft === 'number' ? targetScrollLeft : rail.scrollLeft
   const progress = Math.min(1, Math.max(0, scrollLeftVal / maxScroll))
   const stageDocTop = window.scrollY + stage.getBoundingClientRect().top
-  const targetWindowY = stageDocTop + paddingTop - stickyTop + progress * scrollDist
+  const targetWindowY = stageDocTop - stickyTop + startDelay + progress * activeDist
 
   if (typeof targetScrollLeft === 'number') {
     window.scrollTo({ top: targetWindowY, behavior: 'smooth' })
@@ -1254,6 +1275,9 @@ function initPinnedRunways(): void {
     if (!isDesktopMouse()) {
       stages.forEach((stage) => {
         stage.style.height = ''
+        stage.dataset.stickyTop = ''
+        const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
+        if (stickyEl) stickyEl.style.top = ''
       })
       return
     }
@@ -1266,14 +1290,24 @@ function initPinnedRunways(): void {
       const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
       if (maxScroll <= 10) {
         stage.style.height = 'auto'
+        stickyEl.style.top = ''
+        stage.dataset.stickyTop = ''
         return
       }
 
+      // Dynamically align stickyEl so the product image is vertically centered in the viewport
+      const stickyTop = computeStickyTop(stage)
+      stage.dataset.stickyTop = String(stickyTop)
+      stickyEl.style.top = `${stickyTop}px`
+
       const stickyH = stickyEl.offsetHeight || window.innerHeight
-      const paddingTop = parseFloat(window.getComputedStyle(stage).paddingTop) || 0
       // Pinned vertical scroll travel distance: silky smooth 1:1.05 pace
-      const scrollDist = Math.round(maxScroll * 1.05)
-      stage.style.height = `${paddingTop + stickyH + scrollDist}px`
+      // + startDelay (85px): resting buffer so user registers the first products before horizontal scroll begins
+      // + endDelay (45px): dwell buffer before moving downward
+      const startDelay = 85
+      const endDelay = 45
+      const scrollDist = Math.round(maxScroll * 1.05) + startDelay + endDelay
+      stage.style.height = `${stickyH + scrollDist}px`
     })
   }
 
@@ -1284,8 +1318,6 @@ function initPinnedRunways(): void {
     if (!isDesktopMouse()) return
     if (userInteracting) return
 
-    const stickyTop = 76
-
     stages.forEach((stage) => {
       const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
       const rail = stage.querySelector<HTMLElement>('[data-looks-rail], [data-collection-rail]')
@@ -1294,22 +1326,27 @@ function initPinnedRunways(): void {
       const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
       if (maxScroll <= 10) return
 
+      const stickyTop = Number(stage.dataset.stickyTop) || computeStickyTop(stage)
       const stickyH = stickyEl.offsetHeight || window.innerHeight
-      const paddingTop = parseFloat(window.getComputedStyle(stage).paddingTop) || 0
       const stageH = stage.offsetHeight
-      const scrollDist = stageH - stickyH - paddingTop
+      const scrollDist = stageH - stickyH
       if (scrollDist <= 10) return
 
-      const rect = stage.getBoundingClientRect()
-      // Pinning starts after user scrolls through the downward lead-in boundary (paddingTop)
-      const pinnedDist = stickyTop - (rect.top + paddingTop)
+      const startDelay = 85
+      const endDelay = 45
+      const activeDist = Math.max(10, scrollDist - startDelay - endDelay)
 
-      if (pinnedDist <= 0) {
+      const rect = stage.getBoundingClientRect()
+      // Pinning starts exactly when the section settles with the product image at the center of the screen
+      const pinnedDist = stickyTop - rect.top
+
+      if (pinnedDist <= startDelay) {
+        // Resting delay buffer: first products stay stationary for user attention
         rail.scrollLeft = 0
-      } else if (pinnedDist >= scrollDist) {
+      } else if (pinnedDist >= scrollDist - endDelay) {
         rail.scrollLeft = maxScroll
       } else {
-        const progress = pinnedDist / scrollDist
+        const progress = (pinnedDist - startDelay) / activeDist
         rail.scrollLeft = Math.round(progress * maxScroll)
       }
     })
@@ -1340,6 +1377,21 @@ function initPinnedRunways(): void {
   window.addEventListener('load', () => {
     updateStageHeights()
     requestAnimationFrame(updatePinnedScroll)
+  })
+
+  // Re-measure when product images load to ensure sub-pixel accuracy
+  stages.forEach((stage) => {
+    const img = stage.querySelector<HTMLImageElement>('.product-card__media-wrap img')
+    if (img && !img.complete) {
+      img.addEventListener(
+        'load',
+        () => {
+          updateStageHeights()
+          requestAnimationFrame(updatePinnedScroll)
+        },
+        { once: true },
+      )
+    }
   })
 }
 

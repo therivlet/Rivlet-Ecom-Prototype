@@ -2489,22 +2489,37 @@
     position: relative;
     width: 100%;
     box-sizing: border-box;
-    padding-top: clamp(80px, 12vh, 130px); /* Downward stopping boundary: let user scroll deeper into the section before pinning */
+    padding-top: 0;
   }
 
   .runway-pin-sticky {
     position: -webkit-sticky;
     position: sticky;
-    top: 76px;
+    top: 0;
     width: 100%;
     box-sizing: border-box;
     z-index: 10;
     background: var(--color-canvas);
   }
 
+  .runway-pin-stage .looks-home-pinned,
+  .runway-pin-stage .collection-home-pinned {
+    padding-block: clamp(0.5rem, 1.2vh, 1rem) clamp(1rem, 2vh, 1.5rem);
+  }
+
+  .runway-pin-stage .collection-header {
+    margin-bottom: clamp(0.5rem, 1.2vh, 0.85rem);
+  }
+
   .runway-pin-stage .collection-runway {
     scroll-behavior: auto !important;
     scroll-snap-type: none !important;
+    padding-block: 0.25rem 0.5rem !important;
+  }
+
+  .runway-pin-stage .collection-runway .product-card {
+    flex: 0 0 clamp(280px, 20.5vw, 330px) !important;
+    max-width: 330px !important;
   }
 }
 
