@@ -52,10 +52,10 @@
   --space-10: 8rem;
 
   --pad-section: clamp(2.5rem, 5vw, 4.5rem);
-  --pad-page: clamp(1rem, 3.5vw, 2.5rem);
-  --max-width: 76rem;
-  --max-wide: 84rem;
-  --max-narrow: 44rem;
+  --pad-page: clamp(1.25rem, 3.2vw, 3rem);
+  --max-width: 112rem;
+  --max-wide: 124rem;
+  --max-narrow: 56rem;
   --header-h: 4.25rem;
   --header-rail-h: 2.4rem;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -70,6 +70,27 @@
 
   /* Elevation - barely there */
   --shadow-soft: 0 12px 40px rgba(14, 11, 7, 0.06);
+}
+
+/* Progressive edge padding on larger viewports to utilize the entire width gracefully */
+@media (min-width: 1280px) {
+  :root {
+    --pad-page: clamp(2.5rem, 3.8vw, 4.5rem);
+    --pad-section: clamp(3rem, 4.5vw, 5.5rem);
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --pad-page: clamp(3.5rem, 4.5vw, 6rem);
+    --pad-section: clamp(3.5rem, 5vw, 6.5rem);
+  }
+}
+
+@media (min-width: 2000px) {
+  :root {
+    --pad-page: clamp(4.5rem, 5vw, 8rem);
+  }
 }
 
 @media (max-width: 899px) {

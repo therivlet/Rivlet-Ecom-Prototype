@@ -126,8 +126,18 @@ ol {
   margin-inline: auto;
 }
 
+.container--wide {
+  width: min(100% - (var(--pad-page) * 2), var(--max-wide));
+  margin-inline: auto;
+}
+
 .container--narrow {
   width: min(100% - (var(--pad-page) * 2), var(--max-narrow));
+  margin-inline: auto;
+}
+
+.container--fluid {
+  width: calc(100% - (var(--pad-page) * 2));
   margin-inline: auto;
 }
 
