@@ -956,21 +956,26 @@ function bindSituationsNav(): void {
 
 bindSituationsNav()
 
+function isDesktopMouse(): boolean {
+  return window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches
+}
+
 function syncWindowToRail(rail: HTMLElement, targetScrollLeft?: number): void {
+  if (!isDesktopMouse()) return
   const stage = rail.closest<HTMLElement>('.runway-pin-stage')
   if (!stage) return
-  const isMobile = window.matchMedia('(max-width: 899px)').matches
-  const stickyTop = isMobile ? 56 : 76
+  const stickyTop = 76
   const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth)
   if (maxScroll <= 10) return
   const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
-  const scrollDist = stage.offsetHeight - (stickyEl?.offsetHeight ?? 0)
+  const paddingTop = parseFloat(window.getComputedStyle(stage).paddingTop) || 0
+  const scrollDist = stage.offsetHeight - (stickyEl?.offsetHeight ?? 0) - paddingTop
   if (scrollDist <= 10) return
 
   const scrollLeftVal = typeof targetScrollLeft === 'number' ? targetScrollLeft : rail.scrollLeft
   const progress = Math.min(1, Math.max(0, scrollLeftVal / maxScroll))
   const stageDocTop = window.scrollY + stage.getBoundingClientRect().top
-  const targetWindowY = stageDocTop - stickyTop + progress * scrollDist
+  const targetWindowY = stageDocTop + paddingTop - stickyTop + progress * scrollDist
 
   if (typeof targetScrollLeft === 'number') {
     window.scrollTo({ top: targetWindowY, behavior: 'smooth' })
@@ -1010,7 +1015,7 @@ function enableDragToScroll(rail: HTMLElement): void {
     if (!isDown) return
     isDown = false
     rail.classList.remove('is-dragging')
-    if (dragged) {
+    if (dragged && isDesktopMouse()) {
       syncWindowToRail(rail)
     }
   })
@@ -1018,7 +1023,9 @@ function enableDragToScroll(rail: HTMLElement): void {
   rail.addEventListener(
     'touchend',
     () => {
-      syncWindowToRail(rail)
+      if (isDesktopMouse()) {
+        syncWindowToRail(rail)
+      }
     },
     { passive: true },
   )
@@ -1244,6 +1251,13 @@ function initPinnedRunways(): void {
     })
 
   const updateStageHeights = () => {
+    if (!isDesktopMouse()) {
+      stages.forEach((stage) => {
+        stage.style.height = ''
+      })
+      return
+    }
+
     stages.forEach((stage) => {
       const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
       const rail = stage.querySelector<HTMLElement>('[data-looks-rail], [data-collection-rail]')
@@ -1256,9 +1270,10 @@ function initPinnedRunways(): void {
       }
 
       const stickyH = stickyEl.offsetHeight || window.innerHeight
+      const paddingTop = parseFloat(window.getComputedStyle(stage).paddingTop) || 0
       // Pinned vertical scroll travel distance: silky smooth 1:1.05 pace
       const scrollDist = Math.round(maxScroll * 1.05)
-      stage.style.height = `${stickyH + scrollDist}px`
+      stage.style.height = `${paddingTop + stickyH + scrollDist}px`
     })
   }
 
@@ -1266,10 +1281,10 @@ function initPinnedRunways(): void {
 
   const updatePinnedScroll = () => {
     ticking = false
+    if (!isDesktopMouse()) return
     if (userInteracting) return
 
-    const isMobile = window.matchMedia('(max-width: 899px)').matches
-    const stickyTop = isMobile ? 56 : 76
+    const stickyTop = 76
 
     stages.forEach((stage) => {
       const stickyEl = stage.querySelector<HTMLElement>('[data-pin-sticky]')
@@ -1280,12 +1295,14 @@ function initPinnedRunways(): void {
       if (maxScroll <= 10) return
 
       const stickyH = stickyEl.offsetHeight || window.innerHeight
+      const paddingTop = parseFloat(window.getComputedStyle(stage).paddingTop) || 0
       const stageH = stage.offsetHeight
-      const scrollDist = stageH - stickyH
+      const scrollDist = stageH - stickyH - paddingTop
       if (scrollDist <= 10) return
 
       const rect = stage.getBoundingClientRect()
-      const pinnedDist = stickyTop - rect.top
+      // Pinning starts after user scrolls through the downward lead-in boundary (paddingTop)
+      const pinnedDist = stickyTop - (rect.top + paddingTop)
 
       if (pinnedDist <= 0) {
         rail.scrollLeft = 0

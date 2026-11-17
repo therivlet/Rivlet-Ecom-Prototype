@@ -2461,26 +2461,50 @@
   color: var(--color-ink);
 }
 
-/* Pinned Runway Architecture (Walk-out ready & Collection) */
+/* Mobile & Tablet: Standard, native e-commerce horizontal scroll runway (Lululemon / Alo benchmark) */
 .runway-pin-stage {
   position: relative;
   width: 100%;
   box-sizing: border-box;
+  height: auto;
+  padding-top: 0;
 }
 
 .runway-pin-sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 76px;
+  position: static;
   width: 100%;
   box-sizing: border-box;
-  z-index: 10;
   background: var(--color-canvas);
 }
 
-@media (max-width: 899px) {
+.runway-pin-stage .collection-runway {
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth;
+}
+
+/* Large Screens (Laptops & Desktops with Mouse/Trackpad): Pinned Vertical-to-Horizontal Runway */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .runway-pin-stage {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding-top: clamp(80px, 12vh, 130px); /* Downward stopping boundary: let user scroll deeper into the section before pinning */
+  }
+
   .runway-pin-sticky {
-    top: 56px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 76px;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 10;
+    background: var(--color-canvas);
+  }
+
+  .runway-pin-stage .collection-runway {
+    scroll-behavior: auto !important;
+    scroll-snap-type: none !important;
   }
 }
 
@@ -2498,11 +2522,6 @@
   padding-block: clamp(1.75rem, 3.5vw, 3rem);
   border-top: 1px solid var(--color-line);
   background: var(--color-canvas);
-}
-
-.runway-pin-stage .collection-runway {
-  scroll-behavior: auto !important;
-  scroll-snap-type: none !important;
 }
 
 .collection-runway-wrap {
